@@ -1,0 +1,14 @@
+{
+  "_id": "_design/event",
+  "views": {
+    "byShortname": {
+      "map": "function (doc) { if (doc.shortname) { emit(doc.shortname, doc) } } "
+    },
+    "byPhonenumber": {
+      "map": "function (doc) { if (doc.phonenumber) { emit(doc.phonenumber, doc) } } "
+    },
+    "all": {
+      "map": "function (doc) { if (doc.name) emit(doc.name, doc); }"
+    }
+  }
+}
