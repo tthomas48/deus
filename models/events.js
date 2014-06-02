@@ -38,10 +38,10 @@ var config = require('../config')
 
       var event;
 
-      if (event = eventsCache[view+JSON.stringify(params)]) {
-        callback(null, event);
-      }
-      else {
+      //if (event = eventsCache[view+JSON.stringify(params)]) {
+      //  callback(null, event);
+      //}
+      //else {
         
         getDb().view('event', view, params, function(err, body) {
           if (err) {
@@ -55,13 +55,21 @@ var config = require('../config')
               callback(msg, null);              
             }
             else {
+console.log(body.rows);
               event = body.rows[0].value;
-              eventsCache[view+JSON.stringify(params)] = event;
+              if (body.rows.length > 1) {
+                 for (var i = 0; i < body.rows.length; i++) {
+                   if (body.rows[i].value.state != 'off') {
+                     event = body.rows[i].value;
+                   }
+                 }
+              }
+              //eventsCache[view+JSON.stringify(params)] = event;
               callback(null, event);
             }
           }
         });
-      }
+      //}
     }
 
   , save = exports.save = function(cookie, event, callback) {
@@ -155,6 +163,10 @@ var config = require('../config')
 
   , invalidateEvents = function() {
       eventsCache = {};
+    }
+
+  , toggleState = function() {
+      console.log('here');
     }
 
   , invalidateEventsJob = setInterval(invalidateEvents, 1000*secondsToInvalidateEvents)

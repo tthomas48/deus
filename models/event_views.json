@@ -1,8 +1,9 @@
 {
   "_id": "_design/event",
+  "_rev": "1-d298a4614c86cf212218dfe4f6c2457c",
   "views": {
     "byPhonenumber": {
-      "map": "function (doc) { if (doc.type == 'event') { emit(doc.phonenumber, {_id: doc._id}) } } "
+      "map": "function (doc) { if (doc.type == 'event') { emit(doc.phonenumber, {_id: doc._id, state: doc.state}) } } "
     },
     "all": {
       "map": "function (doc) { if (doc.type == 'event'){ emit([doc._id], doc); } else if (doc.type == 'vote') { emit([doc.event_id, doc.vote, doc._id], doc); } }",

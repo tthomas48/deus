@@ -84,6 +84,15 @@ app.controller('EventListCtrl', function($scope, $location, EventService) {
     }
   };
 
+  $scope.toggleEventState = function(event) {
+    $scope.events.forEach(function(e) {
+      if (e._id === event._id) {
+        e.$save();
+      }
+    });          
+
+  };
+
   $scope.save = function() {
     if (!$scope.event._id) {
       var newEvent = new EventService($scope.event);
