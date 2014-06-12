@@ -5,6 +5,7 @@ var app = angular.module('votr', ['ngResource', 'ngRoute']);
 app.config(function($routeProvider) {
   $routeProvider
     .when('/', {templateUrl: 'event-list.html', controller: 'EventListCtrl'})
+    .when('/voters', {templateUrl: 'voter-list.html', controller: 'VoterListCtrl'})
     .when('/login', {templateUrl: 'login.html', controller: 'LoginCtrl'})
     // AngularJS does not allow template-less controllers, so we are specifying a
     // template that we know we won't use. Here is more info on this
@@ -39,6 +40,11 @@ app.config(function($httpProvider) {
 app.factory('EventService', function($resource) {
   return $resource('/api/events/:id');
 });
+
+app.factory('VoterService', function($resource) {
+  return $resource('/api/voters/:id');
+});
+
 
 app.factory('SessionService', function($resource) {
   return $resource('/api/sessions');
@@ -76,7 +82,7 @@ app.controller('EventListCtrl', function($scope, $location, EventService) {
 
     if (event === 'new') {
       $scope.newEvent = true;
-      $scope.event = {name: '', shortname: '', phonenumber: '', state: '', voteoptions: [{id:1, name: ''}]};
+      $scope.event = {name: '', shortname: '', phonenumber: '', state: '', timer: 0, voteoptions: [{id:1, name: ''}]};
     }
     else {
       $scope.newEvent = false;
@@ -84,13 +90,22 @@ app.controller('EventListCtrl', function($scope, $location, EventService) {
     }
   };
 
-  $scope.toggleEventState = function(event) {
-    $scope.events.forEach(function(e) {
-      if (e._id === event._id) {
-        e.$save();
-      }
-    });          
+  $scope.updateTimeout = function(event) {
 
+    $scope.event.expiration -= 1;
+    if ($scope.event.expiration > 0 && $scope.event.state == 'on') {
+      //$http({method: 'POST', url: '/api/events/'+ $scope.event._id + '/timer/' + $scope.event.expiration}).
+      setTimeout($scope.updateTimeout, 1000);
+    } else {
+      $scope.event.state = 'off';
+      $scope.save();
+    }
+  };
+
+  $scope.toggleState = function(event) {
+
+    $scope.event = event;
+    $scope.save();
   };
 
   $scope.save = function() {
@@ -130,5 +145,12 @@ app.controller('EventListCtrl', function($scope, $location, EventService) {
       vo.id = index+1;
     });
   };
+});
+
+app.controller('VoterListCtrl', function($scope, $location, VoterService) {
+  
+  VoterService.query(function(voters){
+    $scope.voters = voters;
+  });
 });
 

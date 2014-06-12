@@ -14,6 +14,8 @@
       <input type='text' ng-model="event.phonenumber"/>
       <label>State</label>
       <select ng-model="event.state" ng-options="opt for opt in opts"></select>
+      <label title="if greater than 0 will time out after this many seconds">Timed Expiration</label>
+      <input type='text' ng-model="event.timer"/>
       <label>Options</label>
       <div ng-repeat="vo in event.voteoptions">
       	<input type='text' ng-model="vo.name"/>

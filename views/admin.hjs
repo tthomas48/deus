@@ -20,7 +20,8 @@
           <div style="margin-left:20px">
           <a class="brand" href="#/">Votr Admin</a>
           <ul class="nav">
-            <li><a href="#/">Home</a></li>
+            <li><a href="#/">Events</a></li>
+            <li><a href="#/voters">Voters</a></li>
             <li ng-show="loggedIn"><a href="#/logout">Logout</a></li>
           </ul>
           </div>

@@ -2,11 +2,13 @@ var config = require('../config')
   , twilio = require('twilio')
   , sessions = require('../models/sessions')
   , events
+  , voters
   , io;
 
 module.exports = function(socketio) {
   io = socketio;
   events = require('../models/events')(io);
+  voters = require('../models/voters')(io);
   return exports;
 };
 
@@ -123,6 +125,18 @@ var smsify = function(str) {
       }
     });
   }
+
+, getVoterList = exports.getVoterList = function(req, res) {
+    voters.list(req.cookies['AuthSession'], function(err, list) {
+      if (err) {
+        res.send(401, JSON.stringify({error: true}));
+      }
+      else {
+        res.send(list);
+      }
+    });
+  }
+
 
 , login = exports.login = function(req, res) {
     sessions.login(req.body.username, req.body.password, function(err, cookie) {

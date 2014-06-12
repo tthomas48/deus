@@ -3,8 +3,6 @@ var config = require('../config')
   , client = require('twilio')(config.twilio.sid, config.twilio.key)
 
   // Local caches for event and voting information (will be periodically flushed)    
-  , eventsCache = {}
-  , secondsToInvalidateEvents = config.couchdb.secondsToInvalidateEvents
 
   , votesCache = {}
   , secondsToFlushVotes = config.couchdb.secondsToFlushVotes
@@ -36,14 +34,9 @@ var config = require('../config')
 
   , findBy = exports.findBy = function(view, params, callback) {
 
-      var event;
+      var voter;
 
-      //if (event = eventsCache[view+JSON.stringify(params)]) {
-      //  callback(null, event);
-      //}
-      //else {
-        
-        getDb().view('event', view, params, function(err, body) {
+        getDb().view('events', view, params, function(err, body) {
           if (err) {
             console.log(err);
             callback(err, null);
@@ -63,19 +56,16 @@ var config = require('../config')
                    }
                  }
               }
-              //eventsCache[view+JSON.stringify(params)] = event;
               callback(null, event);
             }
           }
         });
-      //}
     }
-
+  /*
   , save = exports.save = function(cookie, event, callback) {
       if (!event._id) { event._id = 'event:' + event.shortname }
       if (!event.type) { event.type = 'event' } 
       getDb(cookie).insert(event, function(err, body) {
-        startTimer(event);
         callback(err, body);
       });
     }
@@ -85,20 +75,21 @@ var config = require('../config')
         callback(err, body);
       });
     }
+  */
 
   , list = exports.list = function(cookie, callback) {
-      getDb(cookie).view('event', 'list', function(err, body) {
+      getDb(cookie).view('event', 'voters', function(err, body) {
         if (err) {
           console.log(err);
           callback(err);
         }
         else {
-          var events = _und.map(body.rows, function(row) {return row.value});
-          callback(null, events);
+          var voters = _und.map(body.rows, function(row) {return row.value});
+          callback(null, voters);
         }
       });
     }
-
+  /*
   , voteCounts = exports.voteCounts = function(event, callback) {
       getDb().view('event', 'all', {startkey: [event._id], endkey: [event._id, {}, {}], group_level: 2}, function(err, body) {
         if (err) {
@@ -123,7 +114,6 @@ var config = require('../config')
         type: 'vote',
         event_id: event._id,
         event_phonenumber: event.phonenumber,
-        event_timer: event.timer,
         vote: vote,
         phonenumber: from
       };
@@ -161,30 +151,14 @@ var config = require('../config')
         });
       }
     }
-  , startTimer = exports.startTimer = function(event) {
-    if(event.state == 'on' && event.timer > 0) {
-      console.log('starting timer');
-      updateTimer(event, event.timer);
-    }
-  }
-  , updateTimer = exports.updateTimer = function(event, expiration) {
-console.log("In here " + expiration);
-      expiration -= 1;
-      io.sockets.in(event._id).emit('timer', expiration);
-      if(expiration > 0 && event.state == 'on') {
-        console.log(expiration);
-        setTimeout(updateTimer.bind(null, event, expiration), 1000);
-      } else {
-        event.state = 'off';
-        //HOW DO WE SAVE?
-      }
-  }
-  , invalidateEvents = function() {
-      eventsCache = {};
+
+  , toggleState = function() {
+      console.log('here');
     }
 
   , invalidateEventsJob = setInterval(invalidateEvents, 1000*secondsToInvalidateEvents)
   , flushVotesJob = setInterval(flushVotes, 1000*secondsToFlushVotes)
+   */
   , io;
 
 module.exports = function(socketio) {

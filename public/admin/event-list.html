@@ -17,7 +17,7 @@
       <td>{{event.phonenumber}}</td>
       <td>
         <div class="onoffswitch">
-          <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onoff-{{event._id}}" ng-change="toggleEventState(event)" ng-model="event.state" ng-true-value="on" ng-false-value="off"/>
+          <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onoff-{{event._id}}" ng-change="toggleState(event)" ng-model="event.state" ng-true-value="on" ng-false-value="off"/>
           <label class="onoffswitch-label" for="onoff-{{event._id}}">
             <span class="onoffswitch-inner"></span>
             <span class="onoffswitch-switch"></span>

@@ -9,13 +9,12 @@
 </head>
 <body>
 	<div class="container">
-		<h1>{{ name }}</h1>
 		<div><span class="cta {{ state }}">SMS or Call </span>
 		<span class="phone {{ state }}"> {{ phonenumber }} </span>
 		<span class="cta {{ state }}"> to Vote!</span></div>
-		<h2 class="{{ state }}">Voting is: {{ state }}</h2>
+		<h2 class="{{ state }} countdown"></h2>
 		<div id="chart" style="min-width: 400px; height: 500px; margin: 0 auto"></div>
-		<div class="footer"><a href="http://twilio.com/api"><img src="/img/twilio.png"></a><a href="http://nodejitsu.com"><img src="/img/nodejitsu.png"></a><a href="http://cloudant.com"><img src="/img/cloudant.png"></a></div>
+		<!--div class="footer"><a href="http://twilio.com/api"><img src="/img/twilio.png"></a><a href="http://nodejitsu.com"><img src="/img/nodejitsu.png"></a><a href="http://cloudant.com"><img src="/img/cloudant.png"></a></div-->
     </div>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="/javascripts/jquery.js"></script>
@@ -40,6 +39,7 @@
 	var voting = JSON.parse(voting_string);
 	// our live chart
 	var chart;
+        $('.countdown').html("Voting is " + ('{{state}}' == 'on' ? 'open' : 'closed'));
 
 	// Attach a handler to the window load event.
 	$(document).ready(function() {
@@ -61,11 +61,7 @@
 		    },
 
 		    title: {
-		        text: 'SMS and Voice Voting'
-		    },
-
-		    subtitle: {
-		        text: 'Powered by Twilio, Nodejitsu & Cloudant'
+		        text: '{{ name }}'
 		    },
 
 		    xAxis: {
@@ -119,7 +115,15 @@
 		    series: [{name: 'Votes',data: chartdata}]
 		});		
 
-	    socket.on('vote', function(data) {
+                socket.on('timer', function(data) {
+                   console.log('Timer update', data);
+                   if (data == 0) {
+                      $('.countdown').html("Voting is closed");
+                      return;
+                   }
+                   $('.countdown').html("Voting ends in " + data + " seconds");
+                });
+	        socket.on('vote', function(data) {
 			console.log('Incoming vote!', data);
 			vote = parseInt(data);
 			index = vote - 1;
