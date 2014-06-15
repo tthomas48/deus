@@ -3,15 +3,17 @@ var request = require('request'),
     Buffer = require('buffer').Buffer;
 
 var number = process.argv[2]
-  , vote = process.argv[3]
-  , iterations = parseInt(process.argv[4]);
+  , phonePrefix = process.argv[3]
+  , options = process.argv[4]
+  , iterations = parseInt(process.argv[5]);
 
 var attack = function(i) {
-  var dataHash = {Body: vote, From: vote + "-" + i, To: number},
+  var vote = Math.floor(Math.random() * options) + 1;
+  var dataHash = {Body: vote, From: phonePrefix + vote + "-" + i, To: number},
       body = querystring.stringify(dataHash),
       headers = {'Content-Type': 'application/x-www-form-urlencoded'};
 
-  request.post({uri: 'http://votr-part3.jit.su/vote/sms', headers: headers, body: body},
+  request.post({uri: 'http://162.221.181.72:3000/vote/sms', headers: headers, body: body},
     function (err, response, body) {
       if (err) {
          console.log("ERROR: ", err);

@@ -48,6 +48,10 @@ app.factory('VoterService', function($resource) {
 
 app.factory('SessionService', function($resource) {
   return $resource('/api/sessions');
+});
+
+app.factory('SimulatorService', function($resource) {
+  return $resource('/api/simulator');
 });  
 
 app.controller('LoginCtrl', function($scope, $rootScope, $location, SessionService) {
@@ -71,11 +75,35 @@ app.controller('LogoutCtrl', function($rootScope, $location, SessionService) {
 });
 
 
-app.controller('EventListCtrl', function($scope, $location, EventService) {
-  
+app.controller('EventListCtrl', function($scope, $location, SimulatorService, EventService) {
+  var socket = io.connect();
+
+  function init() {
+
+    socket.on('connect', function() {
+      console.log("Connected, lets sign-up for updates about this event");
+      $scope.events.forEach(function(e) {
+        socket.emit('event', e._id);
+      });
+    });
+
+    socket.on('stateUpdate', function(data) {
+      console.log("Event updated.", data);
+      $scope.events.forEach(function(e, index) {
+        if (e._id == data.id) {
+          e._rev = data.rev;
+          e.state = data.state;
+          $scope.$apply();
+        }
+      });
+    });
+  };
+   
   EventService.query(function(events){
     $scope.events = events;
+    init();
   });
+
 
   $scope.editEvent = function(event) {
     $scope.opts = ['on', 'off'];
@@ -90,17 +118,13 @@ app.controller('EventListCtrl', function($scope, $location, EventService) {
     }
   };
 
-  $scope.updateTimeout = function(event) {
+  $scope.duplicateEvent = function(event) {
+    $scope.opts = ['on', 'off'];
 
-    $scope.event.expiration -= 1;
-    if ($scope.event.expiration > 0 && $scope.event.state == 'on') {
-      //$http({method: 'POST', url: '/api/events/'+ $scope.event._id + '/timer/' + $scope.event.expiration}).
-      setTimeout($scope.updateTimeout, 1000);
-    } else {
-      $scope.event.state = 'off';
-      $scope.save();
-    }
+    $scope.newEvent = true;
+    $scope.event = {name: event.name, shortname: '', phonenumber: event.phonenumber, state: 'off', timer: event.timer, voteoptions: event.voteoptions};
   };
+
 
   $scope.toggleState = function(event) {
 
@@ -143,6 +167,15 @@ app.controller('EventListCtrl', function($scope, $location, EventService) {
     // need to make sure id values run from 1..x (web service constraint)
     $scope.event.voteoptions.forEach(function(vo, index) {
       vo.id = index+1;
+    });
+  };
+  $scope.simulateVotes = function() {
+    SimulatorService.save({
+      "phonenumber": $("input[name='generate.phonenumber'").val(),
+      "options": $("input[name='generate.options'").val(),
+      "users": $("input[name='generate.users'").val()
+    }, function(response) {
+      console.log(response);
     });
   };
 });

@@ -2,24 +2,48 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Votr - {{ name }}</title>
+    <title>{{ name }}</title>
     <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
     <link href="/stylesheets/bootstrap-responsive.min.css" rel="stylesheet">
     <link href="/stylesheets/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/animations.css">
+    <style>
+      g.highcharts-legend-item {
+        display: none;
+      }
+      g.highcharts-xaxis-labels {
+        display: none;
+      }
+      body {
+        background-image: url(/img/scroll.jpg);
+        background-size: 100%;
+        background-repeat: no-repeat;
+      }
+      .container {
+        padding: 40px;
+      }
+      svg > text {
+        display: none;
+      }
+    </style>
 </head>
 <body>
 	<div class="container">
-		<div><span class="cta {{ state }}">SMS or Call </span>
+		<div><span class="{{ state }}">SMS or Call</span>
 		<span class="phone {{ state }}"> {{ phonenumber }} </span>
-		<span class="cta {{ state }}"> to Vote!</span></div>
+		<span class="{{ state }}"> to Vote!</span></div>
 		<h2 class="{{ state }} countdown"></h2>
-		<div id="chart" style="min-width: 400px; height: 500px; margin: 0 auto"></div>
+                <div style="min-width: 400px; margin: 0; max-width: 95%;">
+  		  <div id="chart" style="min-width: 400px; height: 500px; margin: 0 auto;"></div>
+                </div>
 		<!--div class="footer"><a href="http://twilio.com/api"><img src="/img/twilio.png"></a><a href="http://nodejitsu.com"><img src="/img/nodejitsu.png"></a><a href="http://cloudant.com"><img src="/img/cloudant.png"></a></div-->
     </div>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="/javascripts/jquery.js"></script>
-	<script src="/javascripts/highcharts.js"></script>
+	<script src="http://code.highcharts.com/highcharts.js"></script>
+	<script src="http://code.highcharts.com/modules/exporting.js"></script>
 	<script>
+        var timer = {{timer}};
 	String.prototype.unescapeHtml = function () {
     	var temp = document.createElement("div");
     	temp.innerHTML = this;
@@ -43,99 +67,167 @@
 
 	// Attach a handler to the window load event.
 	$(document).ready(function() {
-		
-		var chartdata = [], 
-		    labels = [];
-		
-		voting.forEach(function(vo, i) {
-			// the number of votes
-			chartdata.push(vo.votes);
-			// the label for this data point
-			labels.push(vo.name+' - '+(i+1));
-		});	
+ Highcharts.setOptions({
+            global: {
+                useUTC: false
+            }
+        });
 
-		chart = new Highcharts.Chart({
-		    chart: {
-		        renderTo: 'chart',
-		        type: 'bar'
-		    },
+        var series = [];
 
-		    title: {
-		        text: '{{ name }}'
-		    },
+        voting.forEach(function(vo, i) {
+          // the number of votes
+          series.push({
+                name: (i+1) + ' ' + vo.name,
+                data: (function() {
+                    // generate an array of random data
+                    var data = [],
+                        time = (new Date()).getTime(),
+                        j;
+    
+                    for (j = -19; j <= 0; j++) {
+                        data.push({
+                            x: time + j * 1000,
+                            y: 0
+                        });
+                    }
+                    return data;
+                })()
+          });
+        });	
+    
+        $('#chart').highcharts({
+            chart: {
+                type: 'spline',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                animation: Highcharts.svg, // don't animate in old IE
+                marginRight: 10,
+                /*
+                events: {
+                    load: function() {
+                        
+                        // set up the updating of the chart each second
+                        for(var i = 0; i < this.series.length; i++) {
+                          var s = this.series[i];
+                          setInterval(function(s) {
+                            var x = (new Date()).getTime(), // current time
+                                y = Math.random();
+                            .addPoint([x, y], true, true);
+                          }, 1500);
+                        }
+                    }
+                }
+                */
+            },
+            plotOptions: {
+              spline: {
+                  lineWidth: 12,
+                  marker: {
+                    enabled: false
+                  },
+              },
+            },
+            title: {
+                text: '{{ name }}'
+            },
+            xAxis: {
+                type: 'datetime',
+		dateTimeLabelFormats: '%s',
+                tickPixelInterval: 150
+            },
+            yAxis: {
+                min: 0,
+                minRange: 0,
+		allowDecimals: false,
+                title: {
+                    text: 'Value'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            },
+            tooltip: {
+                formatter: function() {
+                        return '<b>'+ this.series.name +'</b><br/>'+
+                        Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+
+                        Highcharts.numberFormat(this.y, 2);
+                }
+            },
+            legend: {
+                enabled: true, 
+                title: 'Legend',
+                align: 'left',
+                verticalAlign: 'top',
+                floating: false,
+                layout: 'vertical',
+                useHTML: true,
+                borderWidth: 0,
+                labelFormatter: function() {
+                  var labelRe = /^(\d+) (.*)$/;
+                  var matches = labelRe.exec(this.name);
+                  return '<div style="padding-bottom: 10px"><span id="choice' + matches[1] + '" style="width: 45px; text-align: center; display: inline-block; font-size: 32pt; vertical-align: top; margin-right: 10px; color: white; background-color: ' + this.color + '">' + matches[1] + '</span><div style="display: inline-block; width: 200px; overflow: hidden; height: auto; white-space: normal; text-overflow: ellipsis; font-size: 11pt">' + matches[2] + '</div></div>';
+                  //return '<span style="width: 100px; overflow: hidden; text-overflow: ellipsis;">' + this.name + '</span>';
+                }
 
-		    xAxis: {
-		        categories: labels,
-		        title: {
-		            text: null
-		        },
-		        labels: {
-		        	style: {
-		        		fontSize: '1.3em',
-		        		fontWeight: 'bold'
-		        	}
-		        }
-		    },
+            },
+            exporting: {
+                enabled: false
+            },
+            series: series
+        });
 
-		    yAxis: {
-		        min: 0,
-		        title: {
-		            text: 'Votes',
-		            align: 'high'
-		        },
-		    },
-
-		    tooltip: {
-		        formatter: function() {
-		            return ''+
-		                'Text "'+(this.point.x+1)+'" to vote for '+this.x;
-		        }
-		    },
-
-		    plotOptions: {
-		        bar: {
-		            dataLabels: {
-		                enabled: true,
-		                style: {
-		                	fontSize: '1.3em',
-		                	fontWeight: 'bold'
-		                }
-		            }
-		        }
-		    },
-
-		    legend: {
-		        enabled: false
-		    },
-
-		    credits: {
-		        enabled: false
-		    },
-
-		    series: [{name: 'Votes',data: chartdata}]
-		});		
-
+        var chart = $('#chart').highcharts();
                 socket.on('timer', function(data) {
                    console.log('Timer update', data);
                    if (data == 0) {
                       $('.countdown').html("Voting is closed");
+
+
+                      var maxValue = 0;
+                      for(var i = 0, il = chart.series.length; i < il; i++) {
+                        var data = chart.series[i].data;
+                        var final = data[data.length - 1];
+                        if (final.y > maxValue) {
+                          maxValue = final.y;
+                        }
+                      }
+                      console.log(maxValue);
+
+
+                      for(var i = 0, il = chart.series.length; i < il; i++) {
+                        var data = chart.series[i].data;
+                        var final = data[data.length - 1];
+                        $('#choice' + (i + 1)).removeClass('tossing');
+                        if (final.y == maxValue) {
+                          $('#choice' + (i + 1)).addClass('tossing');
+                        }
+                      }
+
+
                       return;
                    }
                    $('.countdown').html("Voting ends in " + data + " seconds");
                 });
+                socket.on('stateUpdate', function(data) {
+                  if(data.state == 'off') {
+                    $('.countdown').html("Voting is closed");
+                  }
+                });
+
 	        socket.on('vote', function(data) {
 			console.log('Incoming vote!', data);
 			vote = parseInt(data);
 			index = vote - 1;
-			votes = chart.series[0].data[index].y;
-			chart.series[0].data[index].update(votes+1);
-		});
 
+                        var data = chart.series[index].data;
+                        chart.series[index].addPoint([(new Date()).getTime(), data[data.length - 1].y + (1)], true, true);
+		});
 		socket.on('connect', function() {
 			console.log("Connected, lets sign-up for updates about votes for this event");
 			socket.emit('event', 'event:{{ shortname }}');
 		});
-
 	});
 
 	</script>

@@ -1,6 +1,6 @@
 {
   "_id": "_design/event",
-  "_rev": "3-5cc83c5f8f80ca7cdc833a0de518c960",
+  "_rev": "4-ba9be2451f88a4562a8bf4fa7e763ea6",
   "views": {
     "byPhonenumber": {
       "map": "function (doc) { if (doc.type == 'event') { emit(doc.phonenumber, {_id: doc._id, state: doc.state}) } } "
@@ -17,6 +17,9 @@
     },
     "voters": {
       "map": "function (doc) { if (doc.type == 'vote') { emit([doc.event_id, doc._id], doc); }}"
+    },
+    "votingEvents": {
+      "map": "function (doc) { if (doc.type == 'votingEvent') { emit([doc.event_id, doc._id], doc); }}"
     }
   }
 }

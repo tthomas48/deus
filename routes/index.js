@@ -1,5 +1,7 @@
 var config = require('../config')
   , twilio = require('twilio')
+  , request = require('request')
+  , querystring = require('querystring')
   , sessions = require('../models/sessions')
   , events
   , voters
@@ -66,7 +68,7 @@ var smsify = function(str) {
           }
           else {
             res.render('event', {
-              name: event.name, shortname: event.shortname, state: event.state,
+              name: event.name, shortname: event.shortname, state: event.state, timer: event.timer,
               phonenumber: formatPhone(event.phonenumber), voteoptions: JSON.stringify(event.voteoptions)   
             });
           }
@@ -249,5 +251,36 @@ var smsify = function(str) {
     else {
         response.render('forbidden');
     }
+}
+, runSimulator = exports.runSimulator = function(request, response) {
+
+  var phonenumber = request.param('phonenumber');
+  var options = request.param('option');
+  var interations = request.param('users');
+
+  var attack = function(i) {
+    var vote = Math.floor(Math.random() * options) + 1;
+    var dataHash = {Body: vote, From: phonePrefix + vote + "-" + i, To: number},
+        body = querystring.stringify(dataHash),
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'};
+
+    request.post({uri: 'http://162.221.181.72:3000/vote/sms', headers: headers, body: body},
+      function (err, response, body) {
+        if (err) {
+           console.log("ERROR: ", err);
+        }
+        else {
+           console.log(body);
+        }
+      }
+    );
+  };
+
+  for (var i=1; i <= iterations; i++) {
+    var sleep = Math.floor((Math.random()*1000*60)+1);
+    console.log("Attacking in ", sleep, " milliseconds");
+    setTimeout(attack, sleep, i);
+  }  
+
 };
 

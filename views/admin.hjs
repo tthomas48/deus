@@ -1,7 +1,7 @@
 <!doctype html>
 <html ng-app='votr'>
   <head>
-    <title>Votr - Easy Voting with Your Phone!</title>
+    <title>Deus Ex Machina</title>
     <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
     <link rel='stylesheet' href='/stylesheets/bootstrap-responsive.min.css' />
     <link rel='stylesheet' href='/stylesheets/switch.css' />

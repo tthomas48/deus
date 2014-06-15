@@ -144,7 +144,7 @@ var config = require('../config')
               }
               else {
                 io.sockets.in(votesToSave[i].event_id).emit('vote', votesToSave[i].vote);
-                client.sendSms({To: votesToSave[i].phonenumber, From: votesToSave[i].event_phonenumber, Body: 'Thanks for your vote! // powered by http://twil.io'});
+                client.sendSms({To: votesToSave[i].phonenumber, From: votesToSave[i].event_phonenumber, Body: 'Thanks for your vote!'});
               }
             }
           }

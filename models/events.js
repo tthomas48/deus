@@ -75,7 +75,7 @@ var config = require('../config')
       if (!event._id) { event._id = 'event:' + event.shortname }
       if (!event.type) { event.type = 'event' } 
       getDb(cookie).insert(event, function(err, body) {
-        startTimer(event);
+        startTimer(cookie, event);
         callback(err, body);
       });
     }
@@ -95,6 +95,17 @@ var config = require('../config')
         else {
           var events = _und.map(body.rows, function(row) {return row.value});
           callback(null, events);
+        }
+      });
+    }
+  , get = exports.get = function(cookie, id, callback) {
+      getDb(cookie).get(id, function(err, body) {
+        if (err) {
+          console.log(err);
+          callback(err);
+        }
+        else {
+          callback(null, body);
         }
       });
     }
@@ -125,6 +136,7 @@ var config = require('../config')
         event_phonenumber: event.phonenumber,
         event_timer: event.timer,
         vote: vote,
+        seconds: new Date().getTime(),
         phonenumber: from
       };
 
@@ -154,30 +166,47 @@ var config = require('../config')
               }
               else {
                 io.sockets.in(votesToSave[i].event_id).emit('vote', votesToSave[i].vote);
-                client.sendSms({To: votesToSave[i].phonenumber, From: votesToSave[i].event_phonenumber, Body: 'Thanks for your vote! // powered by http://twil.io'});
+                client.sendSms({To: votesToSave[i].phonenumber, From: votesToSave[i].event_phonenumber, Body: 'Thanks for your vote!'});
               }
             }
           }
         });
       }
     }
-  , startTimer = exports.startTimer = function(event) {
+  , startTimer = exports.startTimer = function(cookie, event) {
     if(event.state == 'on' && event.timer > 0) {
+      var votingEvent = {
+        type: 'votingEvent',
+        event_id: event._id,
+        startSeconds: new Date().getTime(),
+      };
       console.log('starting timer');
-      updateTimer(event, event.timer);
+      io.sockets.in(event._id).emit('stateUpdate', {state: 'on', id: event._id, rev: event.rev});
+      updateTimer(cookie, event, event.timer, votingEvent);
     }
   }
-  , updateTimer = exports.updateTimer = function(event, expiration) {
-console.log("In here " + expiration);
+  , updateTimer = exports.updateTimer = function(cookie, event, expiration, votingEvent) {
       expiration -= 1;
-      io.sockets.in(event._id).emit('timer', expiration);
-      if(expiration > 0 && event.state == 'on') {
-        console.log(expiration);
-        setTimeout(updateTimer.bind(null, event, expiration), 1000);
-      } else {
-        event.state = 'off';
-        //HOW DO WE SAVE?
-      }
+      get(cookie, event._id, function(err, body) {
+        io.sockets.in(body._id).emit('timer', expiration);
+        if(expiration > 0 && body.state == 'on') {
+          setTimeout(updateTimer.bind(null, cookie, body, expiration, votingEvent), 1000);
+        } else {
+          votingEvent.endSeconds = new Date().getTime();
+          getDb(cookie).insert(votingEvent, function() {
+            body.state = 'off';
+            save(cookie, body, function(err, savedBody) {
+              if(savedBody && savedBody.ok) {
+                io.sockets.in(event._id).emit('stateUpdate', {state: 'off', id: savedBody.id, rev: savedBody.rev});
+              } else {
+                console.log(err);
+              }
+            });
+          });
+        }
+    });
+ 
+ 
   }
   , invalidateEvents = function() {
       eventsCache = {};
