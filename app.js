@@ -75,5 +75,6 @@ app.delete('/api/events/:id', routes.destroyEvent);
 app.get   ('/api/voters',     routes.getVoterList);
 //app.get   ('/api/voters/:id', routes.getVoterById);
 app.post  ('/api/events',     routes.saveEvent);
+//app.post  ('/api/events/timer/:id', routes.startTimer);
 app.post   ('/api/simulator',  routes.runSimulator);
-//app.post  ('/api/events/:id/timer/:timer', routes.updateTimer);
+app.post  ('/api/events/:id/timer/:state', routes.startTimer);

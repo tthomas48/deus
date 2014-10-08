@@ -68,7 +68,7 @@ var smsify = function(str) {
           }
           else {
             res.render('event', {
-              name: event.name, shortname: event.shortname, state: event.state, timer: event.timer,
+              id: event._id, name: event.name, shortname: event.shortname, state: event.state, timer: event.timer,
               phonenumber: formatPhone(event.phonenumber), voteoptions: JSON.stringify(event.voteoptions)   
             });
           }
@@ -103,6 +103,27 @@ var smsify = function(str) {
         res.send(req.body);
       }
     });
+  }
+, startTimer = exports.startTimer = function(req, res) {
+   events.get(req.cookies['AuthSession'], req.params.id, function(err, body) {
+     if (err) {
+        console.log(err);
+        res.send(500, JSON.stringify({error: true}));
+        return;
+     }
+     body.state = req.params.state;
+     events.save(req.cookies['AuthSession'], body, function(saveErr, saveBody) {
+       if (saveErr) {
+        console.log(err);
+        res.send(500, JSON.stringify({error: true}));
+        return;
+       }
+       else {  
+        // update the doc revision
+        res.send(req.saveBody);
+       }
+     });
+   });
   }
 
 , destroyEvent = exports.destroyEvent = function(req, res) {

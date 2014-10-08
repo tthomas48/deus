@@ -26,6 +26,14 @@
         display: none;
       }
     </style>
+    <script>
+      function startTimer() {
+        $.post("/api/events/{{ id }}/timer/on", function() {
+          console.log('here');
+        });
+        return false;
+      }
+    </script>
 </head>
 <body>
 	<div class="container">
@@ -63,7 +71,7 @@
 	var voting = JSON.parse(voting_string);
 	// our live chart
 	var chart;
-        $('.countdown').html("Voting is " + ('{{state}}' == 'on' ? 'open' : 'closed'));
+        $('.countdown').html("Voting is " + ('{{state}}' == 'on' ? 'open' : 'closed <button class="btn btn-warning" href="#" onclick="return startTimer()"><i class="icon-play icon-white"></i></button>'));
 
 	// Attach a handler to the window load event.
 	$(document).ready(function() {
@@ -178,11 +186,12 @@
             series: series
         });
 
+        var closedMessage = 'Voting is closed <button class="btn btn-warning" href="#" onclick="return startTimer()"><i class="icon-play icon-white"></i></button>';
         var chart = $('#chart').highcharts();
                 socket.on('timer', function(data) {
                    console.log('Timer update', data);
                    if (data == 0) {
-                      $('.countdown').html("Voting is closed");
+                      $('.countdown').html(closedMessage);
 
 
                       var maxValue = 0;
@@ -212,7 +221,7 @@
                 });
                 socket.on('stateUpdate', function(data) {
                   if(data.state == 'off') {
-                    $('.countdown').html("Voting is closed");
+                    $('.countdown').html(closedMessage);
                   }
                 });
 
