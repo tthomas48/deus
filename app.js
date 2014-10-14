@@ -7,6 +7,7 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , socketio = require('socket.io')
+  , fs = require('fs')
   , config = require('./config');
 
 var app = express()
@@ -16,7 +17,10 @@ var app = express()
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
-  app.set('view engine', 'hjs');
+  app.engine('html', require('hogan-express'));
+  //app.enable('view cache');
+  app.set('view engine', 'html');
+  app.set('views', __dirname + '/views');
   app.use(express.favicon());
   app.use(express.logger('dev'));
   app.use(express.urlencoded());
@@ -51,9 +55,69 @@ io.sockets.on('connection', function(socket) {
     });
 });
 
-var routes = require('./routes')(io);
+
+// load plugins
+
+// Keep track of plugins js and css to load them in the view
+
+var plugins = {
+  scripts: [],
+  styles: []
+}
+
+var deps = {
+    server: server
+  , app: app
+  , io: io
+  , config: config
+};
+
+
+// Load the plugins
+var dir = path.join(__dirname, 'plugins');
+function getFilter(ext) {
+    return function(filename) {
+        return filename.match(new RegExp('\\.' + ext + '$', 'i'));
+    };
+}
+
+config.plugins.forEach(function (plugin) {
+    console.log("Loading " + plugin + " plugin.");
+
+    // Load the backend code
+    require(path.join(dir, plugin))(plugin, deps);
+
+    // Add the public assets to a static route
+    if (fs.existsSync(assets = path.join(dir, plugin, 'public'))) {
+      app.use("/plugin/" + plugin, express.static(assets));
+    }
+
+    //if (fs.existsSync(assets = path.join(dir, plugin, 'public', 'images'))) {
+    //  app.use("/plugin/" + plugin + "/images", express.static(assets));
+    //}
+
+    // Add the js to the view
+    if (fs.existsSync(js = path.join(assets, 'js'))) {
+        fs.readdirSync(js).filter(getFilter('js')).forEach(function(script) {
+            plugins.scripts.push("/plugin/" + plugin + "/js/" + script);
+        });
+    }
+
+    // Add the css to the view
+    if (fs.existsSync(css = path.join(assets, 'css'))) {
+        fs.readdirSync(css).filter(getFilter('css')).forEach(function(style) {
+            plugins.styles.push("/plugin/" + plugin + "/css/" + style);
+        });
+    }
+});
+
+
+var routes = require('./routes')(io, plugins);
+
+app.get ('/show',    routes.getShow);
 
 app.get ('/events/:shortname',    routes.getEvent);
+app.get ('/e/:shortname',    routes.getEventSnippet);
 app.post('/vote/sms',             routes.voteSMS);
 app.post('/vote/voice',           routes.voteVoice);
 app.post('/vote/voice/selection', routes.voiceSelection);

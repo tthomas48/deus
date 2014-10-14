@@ -1,0 +1,7 @@
+<div id="voting">
+</div>
+<script>
+$.get("/e/question2", function(response) {
+  $('#voting').html(response);
+});
+</script>

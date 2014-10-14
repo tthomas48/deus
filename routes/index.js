@@ -7,8 +7,9 @@ var config = require('../config')
   , voters
   , io;
 
-module.exports = function(socketio) {
+module.exports = function(socketio, pluginInfo) {
   io = socketio;
+  plugins = pluginInfo;
   events = require('../models/events')(io);
   voters = require('../models/voters')(io);
   return exports;
@@ -58,6 +59,37 @@ var smsify = function(str) {
     res.render('admin', {username: username});
   }
 
+, getShow = exports.getShow = function(req, res){
+   res.render('show', {
+     scripts: plugins.scripts,
+     styles: plugins.styles
+   });
+  }
+
+
+, renderEvent = function(req, res, view) {
+    events.findBy('all', {key: ['event:'+req.params.shortname], reduce:false}, function(err, event) {
+      if (event) {
+        events.voteCounts(event, function (err) {
+          if (err) {
+            console.log(err);
+            res.send(500, err);
+          }
+          else {
+            res.render('event', {
+              id: event._id, name: event.name, shortname: event.shortname, state: event.state, timer: event.timer,
+              phonenumber: formatPhone(event.phonenumber), voteoptions: JSON.stringify(event.voteoptions), scripts: plugins.scripts,
+              styles: plugins.styles,
+              partials: {e: 'e'}
+            });
+          }
+        });
+      }
+      else {
+        res.send(404, 'We could not locate your event');
+      }
+    });
+  }
 , getEvent = exports.getEvent = function(req, res){
     events.findBy('all', {key: ['event:'+req.params.shortname], reduce:false}, function(err, event) {
       if (event) {
@@ -69,7 +101,9 @@ var smsify = function(str) {
           else {
             res.render('event', {
               id: event._id, name: event.name, shortname: event.shortname, state: event.state, timer: event.timer,
-              phonenumber: formatPhone(event.phonenumber), voteoptions: JSON.stringify(event.voteoptions)   
+              phonenumber: formatPhone(event.phonenumber), voteoptions: JSON.stringify(event.voteoptions), scripts: plugins.scripts,
+              styles: plugins.styles,
+              partials: {e: 'e'}
             });
           }
         });
@@ -78,7 +112,29 @@ var smsify = function(str) {
         res.send(404, 'We could not locate your event');
       }
     });
-  }
+}
+, getEventSnippet = exports.getEventSnippet = function(req, res) {
+    events.findBy('all', {key: ['event:'+req.params.shortname], reduce:false}, function(err, event) {
+      if (event) {
+        events.voteCounts(event, function (err) {
+          if (err) {
+            console.log(err);
+            res.send(500, err);
+          }
+          else {
+            res.render('e', {
+              id: event._id, name: event.name, shortname: event.shortname, state: event.state, timer: event.timer,
+              phonenumber: formatPhone(event.phonenumber), voteoptions: JSON.stringify(event.voteoptions), scripts: plugins.scripts,
+              styles: plugins.styles
+            });
+          }
+        });
+      }
+      else {
+        res.send(404, 'We could not locate your event');
+      }
+    });
+}
 
 , getEventById = exports.getEventById = function(req, res){
     events.findBy('all', {key: [req.params.id], reduce:false}, function(err, event) {

@@ -1,0 +1,71 @@
+
+<div class="container">
+	<div>
+		<span class="{{ state }}">SMS or Call</span> <span
+			class="phone {{ state }}"> {{ phonenumber }} </span> <span
+			class="{{ state }}"> to Vote!</span>
+	</div>
+	<h2 class="{{ state }} countdown"></h2>
+	<div style="min-width: 400px; margin: 0; max-width: 95%;">
+		<div id="chart"
+			style="min-width: 400px; height: 500px; margin: 0 auto;"></div>
+	</div>
+</div>
+<script type="text/javascript">
+  var timer = {{timer}};
+  String.prototype.unescapeHtml = function () {
+    var temp = document.createElement("div");
+      temp.innerHTML = this;
+      var result = temp.childNodes[0].nodeValue;
+      temp.removeChild(temp.firstChild);
+      return result;
+  }
+
+  // our websocket
+  var socket = io.connect();
+  
+  // current state of the voting at load time, updated via websockets
+  var data = "{{ voteoptions }}";
+  
+  var voting_string = data.unescapeHtml();
+
+  var voting = JSON.parse(voting_string);
+  $('.countdown').html("Voting is " + ('{{state}}' == 'on' ? 'open' : 'closed'));
+    
+  function startTimer() {
+    $.post("/api/events/{{ id }}/timer/on", function() {
+      console.log('here');
+    });
+    return false;
+  }
+    
+
+  var closedMessage = 'Voting is closed';
+  socket.on('timer', function(data) {
+    console.log('Timer update', data);
+    if (data == 0) {
+      $('.countdown').html(closedMessage);
+      return;
+    }
+    $('.countdown').html("Voting ends in " + data + " seconds");
+  });
+  socket.on('/events/stateUpdate', function(data) {
+    if(data.state == 'off') {
+      $('.countdown').html(closedMessage);
+    }
+  });
+  socket.on('vote', function(data) {
+    console.log('Incoming vote!', data);
+    vote = parseInt(data);
+    index = vote - 1;
+  });
+  if (socket.socket.connected === true) {
+    socket.emit('event', '{{ id }}');
+  } else {
+	  socket.on('connect', function() {
+	    console.log("Connected, lets sign-up for updates about votes for this event");
+	    socket.emit('event', '{{ id }}');
+	  });
+  }
+  
+</script>

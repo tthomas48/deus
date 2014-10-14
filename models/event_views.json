@@ -1,6 +1,5 @@
 {
   "_id": "_design/event",
-  "_rev": "4-ba9be2451f88a4562a8bf4fa7e763ea6",
   "views": {
     "byPhonenumber": {
       "map": "function (doc) { if (doc.type == 'event') { emit(doc.phonenumber, {_id: doc._id, state: doc.state}) } } "

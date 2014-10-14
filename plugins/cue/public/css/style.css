@@ -1,0 +1,29 @@
+#cue, #cue-view-icon {
+/*   height: 17px;*/
+   padding: 0px 10px;
+   vertical-align: sub;
+   font-family: Arial;
+   font-size: 12px;
+}
+.cue {
+   font-family: Arial;
+   font-size: 16px;
+   border: thin solid #e22924;
+   background: #e22924;
+   font-weight: bold;
+   padding: 5px 4px 2px 4px;
+}
+#pause1, #pause2 {
+  position: absolute;
+  width: 100px;
+  height: 400px;
+  background-color: #bbb;
+}
+#pause1 {
+  top: 350px;
+  left: 600px;
+}
+#pause2 {
+  top: 350px;
+  left: 850px;
+}

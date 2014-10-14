@@ -7,6 +7,7 @@ var config = require('../config')
   , secondsToInvalidateEvents = config.couchdb.secondsToInvalidateEvents
 
   , votesCache = {}
+  , timers = {}
   , secondsToFlushVotes = config.couchdb.secondsToFlushVotes
 
   , getDb = function(cookie) {
@@ -174,6 +175,10 @@ var config = require('../config')
       }
     }
   , startTimer = exports.startTimer = function(cookie, event) {
+    if (timers[event._id]) {
+      console.log("Timer already started");
+      return;
+    }
     if(event.state == 'on' && event.timer > 0) {
       var votingEvent = {
         type: 'votingEvent',
@@ -190,8 +195,9 @@ var config = require('../config')
       get(cookie, event._id, function(err, body) {
         io.sockets.in(body._id).emit('timer', expiration);
         if(expiration > 0 && body.state == 'on') {
-          setTimeout(updateTimer.bind(null, cookie, body, expiration, votingEvent), 1000);
+          timers[body._id] = setTimeout(updateTimer.bind(null, cookie, body, expiration, votingEvent), 1000);
         } else {
+          delete timers[body._id];
           votingEvent.endSeconds = new Date().getTime();
           getDb(cookie).insert(votingEvent, function() {
             body.state = 'off';
