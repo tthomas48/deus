@@ -37,8 +37,7 @@ function cue(name, deps) {
         });
         socket.on('/cue/winner', function (cmd) {
           console.log("Winner");
-          console.log(cmd);
-          emitStatus(deps);
+          deps.io.sockets.emit('/cue/winner', cmd);          
         });
         
         socket.on('/cue/sim', function (cmd) {

@@ -35,7 +35,9 @@ deus.one = (function($, createjs, undefined) {
         }
       });
       socket.on('/cue/winner', function(data) {
-        window.console.log("ball gag" + data);
+        if (data.x > 0) {
+          window.console.log("ball gag wins!" + voting_string[1].name);
+        }
       });
     },
     draw : function(stage) {
@@ -77,6 +79,13 @@ deus.one = (function($, createjs, undefined) {
           
         }
       });      
+      socket.on('/cue/winner', function(data) {
+        window.console.log(data);
+        if (data.x <= 0) {
+          window.console.log("feather duster wins!" + voting_string[0].name);
+        }
+      });
+      
     },
     draw : function(stage) {
       // noop
