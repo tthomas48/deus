@@ -35,6 +35,12 @@ function cue(name, deps) {
              }
              emitStatus(deps);
         });
+        socket.on('/cue/winner', function (cmd) {
+          console.log("Winner");
+          console.log(cmd);
+          emitStatus(deps);
+        });
+        
         socket.on('/cue/sim', function (cmd) {
           execSync(__dirname + '/../../scripts/load.sh 512-555-5555 4 250');
           console.log("Done with load");

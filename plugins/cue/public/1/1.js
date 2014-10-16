@@ -34,6 +34,9 @@ deus.one = (function($, createjs, undefined) {
           instance.volume = 0.09;
         }
       });
+      socket.on('/cue/winner', function(data) {
+        window.console.log("ball gag" + data);
+      });
     },
     draw : function(stage) {
       // noop

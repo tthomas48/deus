@@ -15,6 +15,7 @@ deus.ouroboros = (function($, createjs, undefined) {
     this.yVotes = 0;
     this.stageWidth = 0;
     this.stageHeight = 0;
+    this.cuedWinner = undefined;
   }
 
   Ouroboros.prototype = {
@@ -55,6 +56,7 @@ deus.ouroboros = (function($, createjs, undefined) {
       this.timer++;
       
       if (this.time > 0) {
+        this.cuedWinner = false;
         this.bitmap.rotation = this.bitmap.rotation - 3;
         if (this.timer % 40 == 0) {
           var instance = createjs.Sound.play("tock");
@@ -64,6 +66,12 @@ deus.ouroboros = (function($, createjs, undefined) {
           var instance = createjs.Sound.play("tick");
           instance.volume = 1 / this.time;
         }
+      }
+      if (this.cuedWinner === false && this.time == 0) {
+        this.cuedWinner = true;
+        window.console.log("Cue the winner");
+        var socket = io.connect();
+        socket.emit('/cue/winner', { x: this.xVotes, y: this.yVotes});
       }
       if (this.bitmap.x > this.initialX + this.xTarget) {
         this.bitmap.x -= 2;
