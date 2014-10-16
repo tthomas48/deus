@@ -1,3 +1,4 @@
+var execSync = require('exec-sync');
 var toggle = false;
 var cueNumber = 1;
 function cue(name, deps) {
@@ -33,6 +34,10 @@ function cue(name, deps) {
                cueNumber = 1;
              }
              emitStatus(deps);
+        });
+        socket.on('/cue/sim', function (cmd) {
+          execSync(__dirname + '/../../scripts/load.sh 512-555-5555 4 250');
+          console.log("Done with load");
         });
     });
 }

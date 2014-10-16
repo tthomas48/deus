@@ -35,7 +35,7 @@
       circle : 67, // c
       square : 90, // z
       triangle : 83, // s
-      select : 77, // n
+      select : 78, // n
       start : 13, // enter key
       l1 : 37, // left
       l2 : -1,
@@ -71,12 +71,14 @@
         return;
       }
 
+      window.console.log(keycode);
       gp.handleCue({
         clearScreen : (keycode == gp.keyMap.circle ? 1 : 0),
         go : (keycode == gp.keyMap.x ? 1 : 0),
         backward : (keycode == gp.keyMap.l1 ? 1 : 0),
         forward : (keycode == gp.keyMap.r1 ? 1 : 0),
         start : (keycode == gp.keyMap.start ? 1 : 0),
+        sim : (keycode == gp.keyMap.select ? 1 : 0)
       });
     });
 
@@ -168,6 +170,9 @@
     if (cmd.forward === 1) {
       this.cockpit.socket.emit('/cue/forward', {});
     }
+    if (cmd.sim === 1) {
+      this.cockpit.socket.emit('/cue/sim', {});
+    }    
     if (cmd.clearScreen === 1) {
       this.clearScreen();
     }
@@ -192,7 +197,8 @@
       go : gamepad.buttons[this.buttonMap.x],
       backward : gamepad.buttons[this.buttonMap.l1],
       forward : gamepad.buttons[this.buttonMap.r1],
-      start : gamepad.buttons[this.buttonMap.start]
+      start : gamepad.buttons[this.buttonMap.start],
+      sim : gamepad.buttons[this.buttonMap.select]
     });
     return;
   };
