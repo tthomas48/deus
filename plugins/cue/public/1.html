@@ -1,6 +1,10 @@
 <div id="voting"></div>
 <script type="text/javascript" src="/plugin/cue/js/stages.js">
 </script>
+<script type="text/javascript" src="/plugin/cue/js/ouroboros.js">
+</script>
+<script type="text/javascript" src="/plugin/cue/1/1.js">
+</script>
 <script>
   function render() {
     var canvas = document.getElementById("cue-canvas");
@@ -8,8 +12,12 @@
     canvas.height = window.innerHeight;
     var stage = new createjs.Stage("cue-canvas");
     stage.autoClear = true;
+    var ouroborus = new deus.ouroboros.Ouroboros(); 
     var elements = [
-      new deus.stage.DualStage()
+      new deus.stage.DualStage(),
+      ouroborus,
+      new deus.one.BallGag(ouroborus),
+      new deus.one.Duster(ouroborus)
     ];
     var i;
     for(i = 0; i < elements.length; i++) {

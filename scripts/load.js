@@ -13,7 +13,7 @@ var attack = function(i) {
       body = querystring.stringify(dataHash),
       headers = {'Content-Type': 'application/x-www-form-urlencoded'};
 
-  request.post({uri: 'http://162.221.181.72:3000/vote/sms', headers: headers, body: body},
+  request.post({uri: 'http://127.0.0.1:3000/vote/sms', headers: headers, body: body},
     function (err, response, body) {
       if (err) {
          console.log("ERROR: ", err);
