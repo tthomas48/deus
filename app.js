@@ -115,6 +115,8 @@ config.plugins.forEach(function (plugin) {
 var routes = require('./routes')(io, plugins);
 
 app.get ('/show',    routes.getShow);
+app.get ('/show-gaudy',    routes.getShowGaudy);
+
 
 app.get ('/events/:shortname',    routes.getEvent);
 app.get ('/e/:shortname',    routes.getEventSnippet);

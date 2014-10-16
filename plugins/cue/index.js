@@ -41,7 +41,7 @@ function cue(name, deps) {
         });
         
         socket.on('/cue/sim', function (cmd) {
-          execSync(__dirname + '/../../scripts/load.sh 512-555-5555 4 250');
+          execSync(__dirname + '/../../scripts/load.sh +15128724637 4 250');
           console.log("Done with load");
         });
     });

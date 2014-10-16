@@ -66,6 +66,14 @@ var smsify = function(str) {
    });
   }
 
+, getShowGaudy = exports.getShowGaudy = function(req, res){
+   res.render('show-gaudy', {
+     scripts: plugins.scripts,
+     styles: plugins.styles
+   });
+  }
+
+
 
 , renderEvent = function(req, res, view) {
     events.findBy('all', {key: ['event:'+req.params.shortname], reduce:false}, function(err, event) {
