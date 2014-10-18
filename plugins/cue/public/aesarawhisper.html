@@ -4,7 +4,7 @@
 <script type="text/javascript" src="/plugin/cue/js/ouroboros.js">
 </script>
 <script>
-  var cues = ['aesarawhisper','aesarawhisper'];
+  var cues = ['hesiodwhisper','hesiodwhisper'];
   var ouroborus;
   function render() {
     $('.help').hide();
@@ -65,7 +65,7 @@
     ouroborus.setNext('clytemnestra');
   });
 
-  $.get("/e/zeus", function(response) {
+  $.get("/e/aesaratemplate", function(response) {
     $('#voting').html(response);
     render();
   });

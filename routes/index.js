@@ -224,6 +224,42 @@ var smsify = function(str) {
     });
   }
 
+, getVoterById = exports.getVoterById = function(req, res){
+    voters.findBy('all', {key: [req.params.id], reduce:false}, function(err, voter) {
+      if (err) {
+        res.send(404, 'We could not locate that voter');
+      }
+      else {
+        res.send(JSON.stringify(voter));
+      }
+    });
+  }
+, saveVoter = exports.saveVoter = function(req, res) {
+    voters.save(req.cookies['AuthSession'], req.body, function(err, body) {
+      if (err) {
+        console.log(err);
+        res.send(500, JSON.stringify({error: true}));
+      }
+      else {  
+        // update the doc revision
+        req.body._rev = body.rev;
+        res.send(req.body);
+      }
+    });
+  }
+
+, destroyVoter = exports.destroyVoter = function(req, res) {
+    voters.destroy(req.cookies['AuthSession'], req.params.id, req.query.rev, function(err, body) {
+      if (err) {
+        console.log(err);
+        res.send(500, JSON.stringify({error: true}));
+      }
+      else {
+        res.send(200, "OK");
+      }
+    });
+  }
+
 
 , login = exports.login = function(req, res) {
     sessions.login(req.body.username, req.body.password, function(err, cookie) {
@@ -250,6 +286,10 @@ var smsify = function(str) {
 
     if (twilio.validateExpressRequest(request, config.twilio.key, {url: config.twilio.smsWebhook}) || config.twilio.disableSigCheck) {
         response.header('Content-Type', 'text/xml');
+        if (!request.param('Body')) {
+          console.log("Failed to find a body");
+          response.send('<Response></Response>');
+        }
         var body = request.param('Body').trim();
         
         // the number the vote it being sent to (this should match an Event)

@@ -136,11 +136,14 @@ app.get('/admin/', function(req, res) {
 app.post  ('/api/sessions',   routes.login);
 app.delete('/api/sessions',   routes.logout);
 app.get   ('/api/events',     routes.getEventList);
+app.post  ('/api/events',     routes.saveEvent);
 app.get   ('/api/events/:id', routes.getEventById);
 app.delete('/api/events/:id', routes.destroyEvent);
 app.get   ('/api/voters',     routes.getVoterList);
-//app.get   ('/api/voters/:id', routes.getVoterById);
-app.post  ('/api/events',     routes.saveEvent);
-//app.post  ('/api/events/timer/:id', routes.startTimer);
+app.post  ('/api/voters',     routes.saveVoter);
+app.get   ('/api/voters/:id', routes.getVoterById);
+app.delete('/api/voters/:id', routes.destroyVoter);
+
+// triggers
 app.post   ('/api/simulator',  routes.runSimulator);
 app.post  ('/api/events/:id/timer/:state', routes.startTimer);

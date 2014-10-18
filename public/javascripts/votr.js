@@ -181,9 +181,74 @@ app.controller('EventListCtrl', function($scope, $location, SimulatorService, Ev
 });
 
 app.controller('VoterListCtrl', function($scope, $location, VoterService) {
-  
+
+  var socket = io.connect();
+
+  function init() {
+    socket.on('connect', function() {
+      console.log("Connected, lets sign-up for updates about this voter");
+      $scope.voters.forEach(function(v) {
+        socket.emit('voter', v._id);
+      });
+    });
+
+    socket.on('stateUpdate', function(data) {
+      console.log("Voter updated.", data);
+      $scope.voters.forEach(function(v, index) {
+        if (v._id == data.id) {
+          v._rev = data.rev;
+          v.state = data.state;
+          $scope.$apply();
+        }
+      });
+    });
+  };
+   
   VoterService.query(function(voters){
     $scope.voters = voters;
+    init();
   });
+
+
+  $scope.editVoter = function(voter) {
+    $scope.opts = ['on', 'off'];
+
+    if (voter === 'new') {
+      $scope.newVoter = true;
+      $scope.voter = {name: '', phonenumber: '', votes: 1, type: 'voter'};
+    }
+    else {
+      $scope.newVoter = false;
+      $scope.voter = voter;
+    }
+  };
+
+  $scope.save = function() {
+    if (!$scope.voter._id) {
+      var newVoter = new VoterService($scope.voter);
+      newVoter.$save(function(){
+        $scope.voters.push(newVoter);
+      });
+    }
+    else {
+      $scope.voters.forEach(function(v) {
+        if (v._id === $scope.voter._id) {
+          v.$save();
+        }
+      });          
+    }
+  };
+
+  $scope.delete = function() {
+    $scope.voters.forEach(function(v, index) {
+      if (v._id == $scope.voter._id) {
+        $scope.voter.$delete({id: $scope.voter._id, rev: $scope.voter._rev}, function() {
+          $scope.voters.splice(index, 1);
+        });
+      }
+    });
+  };
+
+
 });
 

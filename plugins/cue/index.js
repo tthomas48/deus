@@ -1,6 +1,7 @@
 var execSync = require('exec-sync');
 var toggle = false;
 var cueNumber = 1;
+var previousCue = 1;
 function cue(name, deps) {
     deps.io.sockets.on('connection', function (socket) {
         socket.on('/cue/reset', function (cmd) {
@@ -21,18 +22,23 @@ function cue(name, deps) {
         socket.on('/cue/go', function (cmd) {
             var _name;
             console.log("cue go", cmd);
-            cueNumber++;
             emitStatus(deps, 'go');
         });
+        socket.on('/cue/set', function (cmd) {
+            console.log("cue set", cmd);
+            previousCue = cueNumber;
+            cueNumber = cmd.cue;
+        });
+
+
+        /*
         socket.on('/cue/forward', function (cmd) {
              cueNumber++;
              emitStatus(deps);
         });
+        */
         socket.on('/cue/backward', function (cmd) {
-             cueNumber--;
-             if (cueNumber < 0) {
-               cueNumber = 1;
-             }
+             cueNumber = previousCue;
              emitStatus(deps);
         });
         socket.on('/cue/winner', function (cmd) {

@@ -1,30 +1,26 @@
+<script src="/socket.io/socket.io.js"></script>
+<script src="/javascripts/jquery.js"></script>
+
 <div ng-show="loggedIn">
 <h3>List of Voters</h3>
+<button class="btn btn-success" ng-click="editVoter('new')" data-toggle="modal" href="#editModal">
+<i class="icon-calendar icon-white"></i>&nbsp;Create New Voter</button>
 <table class='table table-striped'>
   <thead>
   	<tr>
   	  <th>Voter</th>
           <th>Phone</th>
-          <!--th>State</th>
-  	  <th>&nbsp;</th-->
   	</tr>
   </thead>
   <tbody>
     <tr ng-repeat='voter in voters'>
-      <td><a href="/events/{{event.shortname}}" target="_results">{{event.name}}</a></td>
-      <td><a href="#" onclick="alert('allow editing voters not yet implemented'); return false">{{voter.phonenumber}}</a></td>
-      <!--td>
-        <div class="onoffswitch">
-          <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onoff-{{event._id}}" ng-change="toggleEventState(event)" ng-model="event.state" ng-true-value="on" ng-false-value="off"/>
-          <label class="onoffswitch-label" for="onoff-{{event._id}}">
-            <span class="onoffswitch-inner"></span>
-            <span class="onoffswitch-switch"></span>
-          </label>
-       </div>
+      <td>{{voter.name}}</td>
+      <td>{{voter.phonenumber}}</td>
+      <td>
+        <button role='button' class='btn' ng-click="editVoter(voter)" data-toggle="modal" href="#editModal">Edit</button>
       </td>
-      <td><button role='button' class='btn' ng-click="editEvent(event)" data-toggle="modal" href="#editModal">Edit</button></td-->
     </tr>
   </tbody>
 </table>
-<div class="modal hide fade" ng-include="'event-detail.html'" id="editModal" role='dialog'></div>
+<div class="modal hide fade" ng-include="'voter-detail.html'" id="editModal" role='dialog'></div>
 </div>

@@ -1,0 +1,23 @@
+<div class='modal-header'>
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+  <h3 ng-hide='newVoter'>Edit Voter: {{voter.name}}</h3>
+  <h3 ng-show='newVoter'>New Voter</h3>
+</div>
+<form>
+  <fieldset>
+    <div class='modal-body'>
+      <label>Name</label>
+      <input type='text' ng-model="voter.name"/>
+      <label>Phone Number</label>
+      <input type='text' ng-model="voter.phonenumber"/>
+      <label>Votes</label>
+      <input type='number' ng-model="voter.votes" min="1" step="1" />
+
+    </div>
+    <div class='modal-footer'>
+      <button type='submit' class="btn btn-danger" data-dismiss="modal" ng-click="delete()">Delete</button>
+      <button type='submit' class="btn btn-primary" data-dismiss="modal" ng-click="save()">Save</button>
+    </div>
+  </fieldset>
+</form>
+

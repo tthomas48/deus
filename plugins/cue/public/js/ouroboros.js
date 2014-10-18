@@ -19,14 +19,16 @@ deus.ouroboros = (function($, createjs, undefined) {
     this.cuedWinner = undefined;
     this.spinning = false;
     this.loaded = false;
+    this.transitionInstance = undefined;
     this.cues = cues;
+    this.enbiggened = false;
   }
 
   Ouroboros.prototype = {
     constructor : Ouroboros,
     add : function(stage) {
 //      createjs.Sound.registerSound("/plugin/cue/tick.mp3", "tick");
-//      createjs.Sound.registerSound("/plugin/cue/tock.mp3", "tock");
+      createjs.Sound.registerSound("/plugin/cue/transition.mp3", "transition");
       
       this.bitmap = new createjs.Bitmap("/plugin/cue/snake-ring.svg");
       this.bitmap.scaleX = 0.25;
@@ -59,17 +61,30 @@ deus.ouroboros = (function($, createjs, undefined) {
       });
 
       socket.on('vote', function(vote) {
-        this.moveRelative(vote);
+        that.moveRelative(vote);
       });
 
     },
     enbiggen: function() {
+      this.enbiggened = true;
       this.bitmap.scaleX = 1.05;
       this.bitmap.scaleY = 1.05;
     },
     spinBig: function() {
       this.spinning = true;
       this.enbiggen();
+    },
+    fadeOut: function() {
+      if (this.transitionInstance && this.transitionInstance.volume > 0) { 
+        this.transitionInstance.volume -= 0.05;
+        var that = this;
+        setTimeout(function() {
+          that.fadeOut();
+        }, 100);
+        return;
+      }
+      this.transitionInstance.stop();
+      this.transitionInstance = undefined;
     },
     draw : function(stage) {
       this.timer++;
@@ -78,6 +93,10 @@ deus.ouroboros = (function($, createjs, undefined) {
       }
       
       if (this.time > 0 || this.spinning) {
+        if (!this.transitionInstance) {
+          this.transitionInstance = createjs.Sound.play("transition");
+          this.transitionInstance.volume = 1;
+        }
         this.cuedWinner = false;
         this.bitmap.rotation = this.bitmap.rotation - 3;
         if (this.timer % 40 == 0) {
@@ -90,16 +109,23 @@ deus.ouroboros = (function($, createjs, undefined) {
         }
       }
       if (this.spinning === false && this.cuedWinner === false && this.time == 0) {
+        if (this.transitionInstance) {
+          this.fadeOut();
+        }
         this.cuedWinner = true;
         window.console.log("Cue the winner");
         //var socket = io.connect();
         //socket.emit('/cue/winner', { x: this.xVotes, y: this.yVotes});
 
-        if (this.xVotes < this.yVotes) {
+window.console.log(this.oneVotes+ ":" + this.twoVotes + ":" + this.threeVotes);
+window.console.log(Math.max(this.oneVotes, this.twoVotes, this.threeVotes));
+window.console.log(this.oneVotes == Math.max(this.oneVotes, this.twoVotes, this.threeVotes));
+
+        if (this.oneVotes == Math.max(this.oneVotes, this.twoVotes, this.threeVotes)) {
           this.setNext(this.cues[0]);
           $('.choice-num1').css('color', 'red');
         }
-        else if(false) {
+        else if (this.threeVotes == Math.max(this.oneVotes, this.twoVotes, this.threeVotes)) {
           this.setNext(this.cues[2]);
           $('.choice-num3').css('color', 'red');
         } 
@@ -107,6 +133,10 @@ deus.ouroboros = (function($, createjs, undefined) {
           this.setNext(this.cues[1]);
           $('.choice-num2').css('color', 'red');
         }
+      }
+      if (this.enbiggened) {
+        // we don't move the enbiggened
+        return;
       }
       if (this.bitmap.x > this.initialX + this.xTarget) {
         this.bitmap.x -= 2;
@@ -128,8 +158,8 @@ deus.ouroboros = (function($, createjs, undefined) {
     moveRelative: function(vote) {
       this.saveVotes(vote);
       
-      this.xTarget = (this.stageWidth * (this.twoVotes - this.oneVotes) / this.totalVotes;
-      this.yTarget = (this.stageHeight * this.threeVotes) / this.totalVotes;
+      this.xTarget = (this.stageWidth * (this.twoVotes - this.oneVotes)) / this.totalVotes;
+      this.yTarget = - ((this.stageHeight * this.threeVotes) / this.totalVotes);
     },
     saveVotes: function(vote) {
       this.totalVotes++;

@@ -31,6 +31,9 @@
       r2 : 7
     };
     this.keyMap = {
+      one : 49,
+      two : 50,
+      three : 51,
       x : 88, // x
       circle : 67, // c
       square : 90, // z
@@ -70,15 +73,16 @@
         gp.cockpit.socket.emit('/cue/toggle', {});
         return;
       }
-
-      window.console.log(keycode);
       gp.handleCue({
         clearScreen : (keycode == gp.keyMap.circle ? 1 : 0),
         go : (keycode == gp.keyMap.x ? 1 : 0),
         backward : (keycode == gp.keyMap.l1 ? 1 : 0),
         forward : (keycode == gp.keyMap.r1 ? 1 : 0),
         start : (keycode == gp.keyMap.start ? 1 : 0),
-        sim : (keycode == gp.keyMap.select ? 1 : 0)
+        sim : (keycode == gp.keyMap.select ? 1 : 0),
+        one : (keycode == gp.keyMap.one ? 1 : 0),
+        two : (keycode == gp.keyMap.two ? 1 : 0),
+        three : (keycode == gp.keyMap.three ? 1 : 0)
       });
     });
 
@@ -172,7 +176,16 @@
     }
     if (cmd.sim === 1) {
       this.cockpit.socket.emit('/cue/sim', {});
-    }    
+    }   
+    if (cmd.one === 1 && cues) {
+      this.cockpit.socket.emit('/cue/set', {'cue': cues[0]});
+    } 
+    if (cmd.two === 1 && cues) {
+      this.cockpit.socket.emit('/cue/set', {'cue': cues[1]});
+    } 
+    if (cmd.three === 1 && cues) {
+      this.cockpit.socket.emit('/cue/set', {'cue': cues[2]});
+    } 
     if (cmd.clearScreen === 1) {
       this.clearScreen();
     }

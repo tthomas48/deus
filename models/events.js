@@ -1,5 +1,6 @@
 var config = require('../config')
   , _und = require('underscore')
+  , voters = require('./voters')(io)
   , client = require('twilio')(config.twilio.sid, config.twilio.key)
 
   // Local caches for event and voting information (will be periodically flushed)    
@@ -8,7 +9,7 @@ var config = require('../config')
 
   , votesCache = {}
   , timers = {}
-  , secondsToFlushVotes = config.couchdb.secondsToFlushVotes
+  , msToFlushVotes = config.couchdb.msToFlushVotes
 
   , getDb = function(cookie) {
       var params = {};
@@ -130,19 +131,32 @@ var config = require('../config')
   ,	saveVote = exports.saveVote = function(event, vote, from) {
       // The _id of our vote document will be a composite of our event_id and the
       // person's phone number. This will guarantee one vote per event 
-      var voteDoc = {  
-        _id: 'vote:' + event._id + ':' + from,
-        type: 'vote',
-        event_id: event._id,
-        event_phonenumber: event.phonenumber,
-        event_timer: event.timer,
-        vote: vote,
-        seconds: new Date().getTime(),
-        phonenumber: from
-      };
 
-      votesCache[voteDoc._id] = voteDoc;
-  	}
+      voters.findByPhonenumber(from, function(err, voter) {
+            if (err) {
+              console.log("Creating new voter");
+              voter = {phonenumber: from, votes: 1};
+            }
+            voters.save(getDb(), voter, function() {
+              console.log("Inserting " + voter.votes + " votes.");
+              var i;
+              for(i = 0; i < voter.votes; i++) {
+                var voteDoc = {  
+	                _id: 'vote:' + event._id + ':' + from,
+	  	        type: 'vote',
+	  	        event_id: event._id,
+		        event_phonenumber: event.phonenumber,
+		        event_timer: event.timer,
+		        vote: vote,
+		        seconds: new Date().getTime(),
+		        phonenumber: from
+		      };
+
+		      votesCache[voteDoc._id] = voteDoc;
+                }
+		});
+	});
+	}
 
   , flushVotes = function() {
       
@@ -219,7 +233,7 @@ var config = require('../config')
     }
 
   , invalidateEventsJob = setInterval(invalidateEvents, 1000*secondsToInvalidateEvents)
-  , flushVotesJob = setInterval(flushVotes, 1000*secondsToFlushVotes)
+  , flushVotesJob = setInterval(flushVotes, msToFlushVotes)
   , io;
 
 module.exports = function(socketio) {

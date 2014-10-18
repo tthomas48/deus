@@ -1,24 +1,28 @@
 {
-  "_id": "_design/event",
-  "views": {
-    "byPhonenumber": {
-      "map": "function (doc) { if (doc.type == 'event') { emit(doc.phonenumber, {_id: doc._id, state: doc.state}) } } "
-    },
-    "all": {
-      "map": "function (doc) { if (doc.type == 'event'){ emit([doc._id], doc); } else if (doc.type == 'vote') { emit([doc.event_id, doc.vote, doc._id], doc); } }",
-      "reduce": "_count"
-    },
-    "votes": {
-      "map": "function (doc) { if (doc.type == 'vote') { emit([doc.event_id, doc._id], doc.event_id); }}"
-    },
-    "list": {
-      "map": "function (doc) { if (doc.type == 'event'){ emit([doc._id], doc); } }"
-    },
-    "voters": {
-      "map": "function (doc) { if (doc.type == 'vote') { emit([doc.event_id, doc._id], doc); }}"
-    },
-    "votingEvents": {
-      "map": "function (doc) { if (doc.type == 'votingEvent') { emit([doc.event_id, doc._id], doc); }}"
+    "_id": "_design/event", 
+    "_rev": "7-5a32583ee1927352ccc1d174158769fd", 
+    "views": {
+        "all": {
+            "map": "function (doc) { if (doc.type == 'event'){ emit([doc._id], doc); } else if (doc.type == 'voter') { emit([doc._id], doc); } else if (doc.type == 'vote') { emit([doc.event_id, doc.vote, doc._id], doc); } }", 
+            "reduce": "_count"
+        }, 
+        "byPhonenumber": {
+            "map": "function (doc) { if (doc.type == 'event') { emit(doc.phonenumber, {_id: doc._id, state: doc.state}) } } "
+        }, 
+        "voterByPhonenumber": {
+            "map": "function (doc) { if (doc.type == 'voter') { emit(doc.phonenumber, {_id: doc._id, state: doc.state}) } } "
+        }, 
+        "list": {
+            "map": "function (doc) { if (doc.type == 'event'){ emit([doc._id], doc); } }"
+        }, 
+        "voters": {
+            "map": "function (doc) { if (doc.type == 'voter') { emit([doc._id], doc); }}"
+        }, 
+        "votes": {
+            "map": "function (doc) { if (doc.type == 'vote') { emit([doc.event_id, doc._id], doc.event_id); }}"
+        }, 
+        "votingEvents": {
+            "map": "function (doc) { if (doc.type == 'votingEvent') { emit([doc.event_id, doc._id], doc); }}"
+        }
     }
-  }
 }
