@@ -24,21 +24,6 @@ deus.one = (function($, createjs, undefined) {
         // 150 is the amount from the top, that the stage starts
         that.bitmap.y = (stage.canvas.height - bounds.height + 150) / 2;
       };
-      
-      var socket = io.connect();
-      socket.on('vote', function(data) {
-        if (data === 2) {
-          that.ouroborus.moveRelative(1, 0);
-          var instance = createjs.Sound.play("ooh");
-          instance.setPan(1);
-          instance.volume = 0.09;
-        }
-      });
-      socket.on('/cue/winner', function(data) {
-        if (data.x > 0) {
-          window.console.log("ball gag wins!" + voting_string[1].name);
-        }
-      });
     },
     draw : function(stage) {
       // noop
@@ -68,23 +53,6 @@ deus.one = (function($, createjs, undefined) {
         // 150 is the amount from the top, that the stage starts
         that.bitmap.y = (stage.canvas.height - bounds.height + 150) / 2;
       };
-      
-      var socket = io.connect();
-      socket.on('vote', function(data) {
-        if (data === 1) {
-          var instance = createjs.Sound.play("aah");
-          instance.setPan(-1);
-          instance.volume = 0.15;          
-          that.ouroborus.moveRelative(-1, 0);
-          
-        }
-      });      
-      socket.on('/cue/winner', function(data) {
-        window.console.log(data);
-        if (data.x <= 0) {
-          window.console.log("feather duster wins!" + voting_string[0].name);
-        }
-      });
       
     },
     draw : function(stage) {

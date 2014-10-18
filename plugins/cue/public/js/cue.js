@@ -70,7 +70,6 @@ function addInterval(callback, timer) {
              // Disable caching of AJAX responses
              cache: false
            });
-           $('#cue').attr('src', "/plugin/cue/images/drone-" + (this.enabled ? 'off' : 'on') + '.jpg');
            $('span.cue').html(this.cue);
            if ($('#cue-view').length == 0) {
              $('#glasspane').append($('<div id="cue-view"></div>'));

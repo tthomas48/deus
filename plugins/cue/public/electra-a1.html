@@ -3,13 +3,12 @@
 </script>
 <script type="text/javascript" src="/plugin/cue/js/ouroboros.js">
 </script>
-<script type="text/javascript" src="/plugin/cue/1/1.js">
+<script type="text/javascript" src="/plugin/cue/electra/electra-post.js">
 </script>
 <script>
-  var cues = ['noni','noni'];
+  var cues = ['orestes-a1','orestes-a2'];
 
   function render() {
-
     var canvas = document.getElementById("cue-canvas");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -19,8 +18,8 @@
     var elements = [
       new deus.stage.DualStage(),
       ouroborus,
-      new deus.one.BallGag(ouroborus),
-      new deus.one.Duster(ouroborus)
+      new deus.one.Dagger(ouroborus),
+      new deus.one.Rope(ouroborus)
     ];
     var i;
     for(i = 0; i < elements.length; i++) {
@@ -36,7 +35,7 @@
       stage.update();
     }    
   }
-  $.get("/e/zeustemplate", function(response) {
+  $.get("/e/electra-a1", function(response) {
     $('#voting').html(response);
     render();
   });
