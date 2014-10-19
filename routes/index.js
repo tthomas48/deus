@@ -305,7 +305,7 @@ var smsify = function(str) {
                 response.send('<Response></Response>'); 
             }
             else if (event.state == "off") {
-                response.send('<Response><Sms>Voting is now closed.</Sms></Response>');                 
+                response.send('<Response><Sms>Mt Olympus listens. There are no prophecies to determine or prayers to whisper at this time. Keep this tool ready to serve the gods as they instruct.</Sms></Response>');                 
             }
             else if (!testint(body)) {
                 console.log('Bad vote: ' + event.name + ', ' + from + ', ' + body);

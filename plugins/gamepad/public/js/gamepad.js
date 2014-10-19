@@ -106,7 +106,9 @@
   };
 
   Gamepad.prototype.clearScreen = function() {
+    $('header').toggle();
     $('#cue-view').toggle();
+    $('canvas').toggle();
   };
 
   Gamepad.prototype.startPolling = function() {
@@ -176,7 +178,7 @@
     }
     if (cmd.sim === 1) {
       this.cockpit.socket.emit('/cue/sim', {});
-    }   
+    }  
     if (cmd.one === 1 && cues) {
       this.cockpit.socket.emit('/cue/set', {'cue': cues[0]});
     } 

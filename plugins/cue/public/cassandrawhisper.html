@@ -4,7 +4,7 @@
 <script type="text/javascript" src="/plugin/cue/js/ouroboros.js">
 </script>
 <script>
-  var cues = ['eltra-b','electra-b'];
+  var cues = ['electra-b','electra-b'];
   var ouroborus;
   function render() {
     $('.help').hide();
@@ -33,37 +33,6 @@
     }
   }
 
-
-  $('#voting').html('');
-  $('#cue-canvas').html('');
-
-  createjs.Sound.registerSound("/plugin/cue/2/yes.mp3", "yes");
-  createjs.Sound.registerSound("/plugin/cue/2/no.mp3", "no");
-
-
-
-  var votes = {
-    x: 0,
-    y: 0
-  };
-  var socket = io.connect();
-  socket.on('vote', function(data) {
-    ouroborus.saveVotes(data);
-  });
-
-  socket.on('/cue/winner', function(data) {
-    if (data.x > data.y) {
-      ouroborus.filter([
-	new createjs.ColorFilter(5,0,0,1, 0,0,255,0)
-      ]);
-      return;
-    } else {
-      ouroborus.filter([
-	new createjs.ColorFilter(1,5,1,1, 0,0,255,0)
-      ]);
-    }
-    ouroborus.setNext('clytemnestra');
-  });
 
   $.get("/e/whispercassandra", function(response) {
     $('#voting').html(response);

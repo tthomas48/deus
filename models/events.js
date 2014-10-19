@@ -9,6 +9,7 @@ var config = require('../config')
 
   , votesCache = {}
   , timers = {}
+  , votingEvents = {}
   , msToFlushVotes = config.couchdb.msToFlushVotes
 
   , getDb = function(cookie) {
@@ -139,10 +140,15 @@ var config = require('../config')
             }
             voters.save(getDb(), voter, function() {
               console.log("Inserting " + voter.votes + " votes.");
+              var votingEvent = votingEvents[event._id];
+              if (!votingEvent) {
+                return;
+              }
               var i;
               for(i = 0; i < voter.votes; i++) {
                 var voteDoc = {  
-	                _id: 'vote:' + event._id + ':' + from,
+	                _id: 'vote:' + event._id + ':' + from + ":" + votingEvent.startSeconds + ":" + i,
+                        voteGroup: event._id + ':' + from + ":" + votingEvent.startSeconds,
 	  	        type: 'vote',
 	  	        event_id: event._id,
 		        event_phonenumber: event.phonenumber,
@@ -152,8 +158,16 @@ var config = require('../config')
 		        phonenumber: from
 		      };
 
-		      votesCache[voteDoc._id] = voteDoc;
+		      votesCache[voteDoc.voteGroup] = voteDoc;
+                      io.sockets.in(event._id).emit('vote', vote);
                 }
+              // zero out the votes
+              if (voter.votes > 1) {
+                voters.findByPhonenumber(from, function(err, voter) {
+                  voter.votes = 1;
+                  voters.save(getDb(), voter, function(err) {});
+                });
+              }
 		});
 	});
 	}
@@ -168,7 +182,7 @@ var config = require('../config')
           if (err) {
             console.log("Failed to save votes, popping them back on the cache");
             votesToSave.forEach(function(v) {
-              votesCache[v._id] = v;
+              votesCache[v.voteGroup] = v;
             });
           }
           else {
@@ -177,11 +191,10 @@ var config = require('../config')
               if (body[i].error) {
                 // send the person an SMS to alert them that you can only vote once
                 console.log('Notifying of duplicate vote: ', votesToSave[i])
-                client.sendSms({To: votesToSave[i].phonenumber, From: votesToSave[i].event_phonenumber, Body: 'Sorry, you are only allowed to vote once.'});
+                client.sendSms({To: votesToSave[i].phonenumber, From: votesToSave[i].event_phonenumber, Body: 'Sorry, the gods will only hear you once per prayer.'});
               }
               else {
-                io.sockets.in(votesToSave[i].event_id).emit('vote', votesToSave[i].vote);
-                client.sendSms({To: votesToSave[i].phonenumber, From: votesToSave[i].event_phonenumber, Body: 'Thanks for your vote!'});
+                client.sendSms({To: votesToSave[i].phonenumber, From: votesToSave[i].event_phonenumber, Body: 'The gods have heard your voice.'});
               }
             }
           }
@@ -199,6 +212,7 @@ var config = require('../config')
         event_id: event._id,
         startSeconds: new Date().getTime(),
       };
+      votingEvents[event._id] = votingEvent;
       console.log('starting timer');
       io.sockets.in(event._id).emit('stateUpdate', {state: 'on', id: event._id, rev: event.rev});
       updateTimer(cookie, event, event.timer, votingEvent);
@@ -212,6 +226,7 @@ var config = require('../config')
           timers[body._id] = setTimeout(updateTimer.bind(null, cookie, body, expiration, votingEvent), 1000);
         } else {
           delete timers[body._id];
+          delete votingEvents[body._id];
           votingEvent.endSeconds = new Date().getTime();
           getDb(cookie).insert(votingEvent, function() {
             body.state = 'off';

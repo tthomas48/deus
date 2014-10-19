@@ -61,14 +61,17 @@
       svg > text {
         display: none;
       }
+      .help span {
+        font-size: 22pt;
+      }
       .choice-num {
         position: absolute;
         color: black;
-        font-size: 72pt;
+        font-size: 170pt;
       }
       .container .choice-num1 {
 	position: absolute;
-	top: 315px;
+	top: 420px;
 	left: 100px;
 	text-align: Center;
 	width: 400px;
@@ -76,7 +79,7 @@
       }
       .container .choice-num2 {
 	position: absolute;
-	top: 315px;
+	top: 420px;
 	right: 100px;
 	text-align: Center;
 	width: 400px;
@@ -84,12 +87,12 @@
       }
       .container .choice-num3 {
 position: absolute;
-top: 190px;
+top: 245px;
 margin: auto;
 text-align: Center;
-width: 400px;
+width: 600px;
 color: #bbb;
-left: 440px;
+left: 500px;
       }
 
 
@@ -98,10 +101,10 @@ left: 440px;
 	color: #333;
 	left: 0;
 	/* position: relative; */
-	font-size: 15pt;
+	font-size: 17pt;
 	/* top: 50px; */
 	/* width: 100px; */
-	overflow: hidden;
+	/*overflow: hidden;*/
 	/* height: 100px; */
 	display: block;
 	clear: both;
@@ -134,6 +137,10 @@ left: 440px;
       </script>
     {{/scripts}}
     <script>
+      createjs.Sound.registerSound("/plugin/cue/transition.mp3", "transition");
+      createjs.Sound.registerSound("/plugin/cue/2/yes.mp3", "yes");
+      createjs.Sound.registerSound("/plugin/cue/2/no.mp3", "no");
+
       var olympus = new Olympus();
     </script>
 </body>

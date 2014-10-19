@@ -1,9 +1,17 @@
 var execSync = require('exec-sync');
-var toggle = false;
-var cueNumber = 1;
-var previousCue = 1;
 function cue(name, deps) {
     deps.io.sockets.on('connection', function (socket) {
+        var toggle = false;
+        var cueNumber = 1;
+        var previousCue = 1;
+        var emitStatus = function(deps, go) {
+	  deps.io.sockets.emit('cue.status', {
+	    'enabled': toggle,
+	    'cue': cueNumber,
+	    'go': go
+	  });
+	};
+
         socket.on('/cue/reset', function (cmd) {
             var _name;
             console.log("cue toggle", cmd);
@@ -53,13 +61,5 @@ function cue(name, deps) {
     });
 }
 
-
-function emitStatus(deps, go) {
-  deps.io.sockets.emit('cue.status', {
-    'enabled': toggle,
-    'cue': cueNumber,
-    'go': go
-  });
-}
 
 module.exports = cue;
