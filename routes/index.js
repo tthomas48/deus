@@ -59,6 +59,14 @@ var smsify = function(str) {
     res.render('admin', {username: username});
   }
 
+, getSoundTest = exports.getSoundTest = function(req, res){
+   res.render('sound-test', {
+     scripts: plugins.scripts,
+     styles: plugins.styles
+   });
+  }
+
+
 , getShow = exports.getShow = function(req, res){
    res.render('show', {
      scripts: plugins.scripts,
@@ -305,7 +313,7 @@ var smsify = function(str) {
                 response.send('<Response></Response>'); 
             }
             else if (event.state == "off") {
-                response.send('<Response><Sms>Olympus listens. There aren't prophecies or prayers to answer at this time (too fast? too slow?). Keep this tool ready to serve the gods as they instruct.</Sms></Response>');                 
+                response.send('<Response><Sms>Olympus listens. There aren\'t prophecies or prayers to answer at this time (too fast? too slow?). Keep this tool ready to serve the gods as they instruct.</Sms></Response>');                 
             }
             else if (!testint(body)) {
                 console.log('Bad vote: ' + event.name + ', ' + from + ', ' + body);

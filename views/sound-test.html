@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ name }}</title>
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
+    <link href="/stylesheets/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="/stylesheets/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/animations.css">
+</head>
+<body>
+    <div class="msg">
+    </div>
+
+    <script src="/javascripts/jquery.js">
+    </script>
+    <script src="/javascripts/createjs-2013.12.12.min.js">
+    </script>    
+    <script>
+      try {
+        window.AudioContext = window.AudioContext||window.webkitAudioContext;
+        context = new AudioContext();
+        var d = context.destination;
+        var msg = [];
+        msg.push("Channel Count: " + d.channelCount);
+        msg.push("Channel Count Mode: " + d.channelCountMode);
+        msg.push("Channel Interpretation: " + d.channelInterpretation);
+        msg.push("Max Channel Count: " + d.maxChannelCount);
+        msg.push("Inputs: " + d.numberOfInputs);
+        msg.push("Outputs: " + d.numberOfOutputs);
+        msg.push("Sample Rate: " + d.context.sampleRate);
+        $('.msg').html(msg.join("<br >"));
+      } catch(e) {
+        $('.msg').html("Audio not supported in this browser." + e);
+      }
+    </script>
+</body>
+</html>

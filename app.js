@@ -114,6 +114,7 @@ config.plugins.forEach(function (plugin) {
 
 var routes = require('./routes')(io, plugins);
 
+app.get ('/sound-test',    routes.getSoundTest);
 app.get ('/show',    routes.getShow);
 app.get ('/show-gaudy',    routes.getShowGaudy);
 
