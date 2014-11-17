@@ -7,6 +7,7 @@ app.config(function($routeProvider) {
     .when('/', {templateUrl: 'event-list.html', controller: 'EventListCtrl'})
     .when('/voters', {templateUrl: 'voter-list.html', controller: 'VoterListCtrl'})
     .when('/login', {templateUrl: 'login.html', controller: 'LoginCtrl'})
+    .when('/cue-map', {templateUrl: 'cue-map.html', controller: 'CueMapCtrl'})
     // AngularJS does not allow template-less controllers, so we are specifying a
     // template that we know we won't use. Here is more info on this
     // https://github.com/angular/angular.js/issues/1838
@@ -74,6 +75,11 @@ app.controller('LogoutCtrl', function($rootScope, $location, SessionService) {
   });
 });
 
+app.controller('CueMapCtrl', function($rootScope, $location, SessionService) {
+    window.console.log('here');
+});
+
+
 
 app.controller('EventListCtrl', function($scope, $location, SimulatorService, EventService) {
   var socket = io.connect();
@@ -81,14 +87,14 @@ app.controller('EventListCtrl', function($scope, $location, SimulatorService, Ev
   function init() {
 
     socket.on('connect', function() {
-      console.log("Connected, lets sign-up for updates about this event");
+      console.log("Connected, lets sign-up for updates about this cue");
       $scope.events.forEach(function(e) {
         socket.emit('event', e._id);
       });
     });
 
     socket.on('stateUpdate', function(data) {
-      console.log("Event updated.", data);
+      console.log("Cue updated.", data);
       $scope.events.forEach(function(e, index) {
         if (e._id == data.id) {
           e._rev = data.rev;

@@ -3,16 +3,19 @@
 
 
 <div ng-show="loggedIn">
-<h3>List of Events</h3>
+<h3>List of Cues</h3>
 <button class="btn btn-success" ng-click="editEvent('new')" data-toggle="modal" href="#editModal">
-<i class="icon-calendar icon-white"></i>&nbsp;Create New Event</button>
+<i class="icon-calendar icon-white"></i>&nbsp;Create New Cue</button>
 <button class="btn btn-warning" data-toggle="modal" href="#generateModal">
 <i class="icon-play icon-white"></i>&nbsp;Simulate Votes</button>
+<a class="btn btn-default" href="/admin/#/cue-map">
+<i class="icon-map-marker icon-gray"></i>&nbsp;Cue Map</a>
+
 
 <table class='table table-striped'>
   <thead>
   	<tr>
-  	  <th>Event</th>
+  	  <th>Cue</th>
           <th>Phone</th>
           <th>State</th>
   	  <th>&nbsp;</th>

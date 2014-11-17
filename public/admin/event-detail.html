@@ -1,7 +1,7 @@
 <div class='modal-header'>
   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-  <h3 ng-hide='newEvent'>Edit Event: {{event.name}}</h3>
-  <h3 ng-show='newEvent'>New Event</h3>
+  <h3 ng-hide='newEvent'>Edit Cue: {{event.name}}</h3>
+  <h3 ng-show='newEvent'>New Cue</h3>
 </div>
 <form>
   <fieldset>
@@ -10,6 +10,25 @@
       <input type='text' ng-model="event.name"/>
       <label>Short Name</label>
       <input type='text' ng-model="event.shortname"/>
+      <label>Voting Cue</label>
+      <input type='checkbox' ng-model="event.voting" />
+      <label>View</label>
+      <input type='text' ng-model="event.view"/>
+      
+      <label>Screen</label>
+      <select ng-model="event.screen">
+        <option value="hud">HUD</option>
+        <option value="oracle">oracle</option>
+      </select>
+      
+
+      <label>Stage</label>
+      <select ng-model="event.stage">
+        <option value="whisper">whisper</option>
+        <option value="dual">dual</option>
+        <option value="tri">tri</option>
+      </select>
+
       <label>Phone Number</label>
       <input type='text' ng-model="event.phonenumber"/>
       <label>State</label>
@@ -18,9 +37,14 @@
       <input type='text' ng-model="event.timer"/>
       <label>Options</label>
       <div ng-repeat="vo in event.voteoptions">
-      	<input type='text' ng-model="vo.name"/>
-      	<i class="icon-trash" ng-click='removeVoteOption(vo)'></i>
-        
+        <fieldset>
+          <legend>Option</legend>
+        	<label>Label</label><input type='text' ng-model="vo.name"/>
+          <label>Next</label><input type='text' ng-model="vo.next" />
+          <label>Image</label><input type='text' ng-model="vo.img" />
+          <label>Sound</label><input type='text' ng-model="vo.snd" />
+        	<i class="icon-trash" ng-click='removeVoteOption(vo)'></i>
+        </fieldset>
       </div>
     </div>
     <div class='modal-footer'>
