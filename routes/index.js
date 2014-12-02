@@ -5,6 +5,7 @@ var config = require('../config')
   , sessions = require('../models/sessions')
   , events
   , voters
+  , tree
   , io;
 
 module.exports = function(socketio, pluginInfo) {
@@ -12,6 +13,7 @@ module.exports = function(socketio, pluginInfo) {
   plugins = pluginInfo;
   events = require('../models/events')(io);
   voters = require('../models/voters')(io);
+  tree = require('../models/tree')(io);
   return exports;
 };
 
@@ -385,19 +387,20 @@ var smsify = function(str) {
         response.render('forbidden');
     }
 }
-, runSimulator = exports.runSimulator = function(request, response) {
+, runSimulator = exports.runSimulator = function(req, res) {
 
-  var phonenumber = request.param('phonenumber');
-  var options = request.param('option');
-  var interations = request.param('users');
-
+  var phonenumber = req.param('phonenumber');
+  var options = req.param('options');
+  var iterations = req.param('users');
+  var phonePrefix = Date.now();
+  
   var attack = function(i) {
-    var vote = Math.floor(Math.random() * options) + 1;
-    var dataHash = {Body: vote, From: phonePrefix + vote + "-" + i, To: number},
+    var vote = Math.floor(Math.random() * Number(options)) + 1;
+    var dataHash = {Body: vote, From: phonePrefix + vote + "-" + i, To: phonenumber},
         body = querystring.stringify(dataHash),
         headers = {'Content-Type': 'application/x-www-form-urlencoded'};
 
-    request.post({uri: 'http://162.221.181.72:3000/vote/sms', headers: headers, body: body},
+    request.post({uri: 'http://127.0.0.1:3000/vote/sms', headers: headers, body: body},
       function (err, response, body) {
         if (err) {
            console.log("ERROR: ", err);
@@ -410,10 +413,53 @@ var smsify = function(str) {
   };
 
   for (var i=1; i <= iterations; i++) {
-    var sleep = Math.floor((Math.random()*1000*60)+1);
+    var sleep = Math.floor((Math.random()*1000*20)+1);
     console.log("Attacking in ", sleep, " milliseconds");
     setTimeout(attack, sleep, i);
   }  
+}
+, getTreeList = exports.getTreeList = function(req, res) {
+    tree.list(req.cookies['AuthSession'], function(err, list) {
+      if (err) {
+        res.send(401, JSON.stringify({error: true}));
+      }
+      else {
+        res.send(list);
+      }
+    });
 
+}
+, saveTree = exports.saveTree = function(req, res) {
+    tree.save(req.cookies['AuthSession'], req.body, function(err, body) {
+      if (err) {
+        console.log(err);
+        res.send(500, JSON.stringify({error: true}));
+      }
+      else {  
+        // update the doc revision
+        req.body._rev = body.rev;
+        res.send(req.body);
+      }
+    });
+}
+, getTreeById = exports.getTreeById = function(req, res) {
+    tree.findBy('all', {key: [req.params.id], reduce:false}, function(err, t) {
+      if (err) {
+        res.send(404, 'We could not locate that tree');
+      }
+      else {
+        res.send(JSON.stringify(t));
+      }
+    });
+}
+, destroyTree = exports.destroyTree = function(request, response) {
+  tree.destroy(req.cookies['AuthSession'], req.params.id, req.query.rev, function(err, body) {
+      if (err) {
+        console.log(err);
+        res.send(500, JSON.stringify({error: true}));
+      }
+      else {
+        res.send(200, "OK");
+      }
+    });
 };
-

@@ -1,6 +1,6 @@
 {
     "_id": "_design/event", 
-    "_rev": "4-1e3f88363809d4c9e5972fee09c447c9", 
+    "_rev":"2-ff1730f980cf258ffda0a3d969f20dcf",
     "views": {
         "all": {
             "map": "function (doc) { if (doc.type == 'event'){ emit([doc._id], doc); } else if (doc.type == 'voter') { emit([doc._id], doc); } else if (doc.type == 'vote') { emit([doc.event_id, doc.vote, doc._id], doc); } }", 
@@ -14,6 +14,9 @@
         }, 
         "list": {
             "map": "function (doc) { if (doc.type == 'event'){ emit([doc._id], doc); } }"
+        }, 
+        "tree": {
+            "map": "function (doc) { if (doc.type == 'tree'){ emit([doc._id], doc); } }"
         }, 
         "voters": {
             "map": "function (doc) { if (doc.type == 'voter') { emit([doc._id], doc); }}"

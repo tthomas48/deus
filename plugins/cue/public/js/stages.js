@@ -28,8 +28,10 @@ deus.stage = (function($, createjs) {
         stage.canvas.height).lineTo(stage.canvas.width - 50, 150).lineTo(50,
         stage.canvas.height).lineTo(50, 150);    
     stage.addChild(tie);
+    /*
     $('.container').append("<div class='choice-num choice-num1'>1<span class='label'>" + voting[0].name + "</span></div>");
     $('.container').append("<div class='choice-num choice-num2'>2<span class='label'>" + voting[1].name + "</span></div>");
+    */
   };
   DualStage.prototype.draw = function(stage) {
     this.parent.draw(stage);
@@ -51,9 +53,11 @@ deus.stage = (function($, createjs) {
     tie.graphics.moveTo(50, 150).lineTo(stage.canvas.width - 50, 150).lineTo(
         50, stage.canvas.height).lineTo(stage.canvas.width - 50,
         stage.canvas.height).lineTo(50, 150).endFill();
+    /*
     $('.container').append("<div class='choice-num choice-num1'>1<span class='label'>" + voting[0].name + "</span></div>");
     $('.container').append("<div class='choice-num choice-num2'>2<span class='label'>" + voting[1].name + "</span></div>");
     $('.container').append("<div class='choice-num choice-num3'>3<span class='label'>" + voting[2].name + "</span></div>");
+    */
 
     
     stage.addChild(tie);
