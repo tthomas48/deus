@@ -103,6 +103,14 @@
       display: block;
       clear: both;
     }
+    #hud {
+      width: 100%;
+      margin: auto;
+      border-top: thin solid #333;
+      bottom: 0;
+      height: 320px;
+      position: absolute;
+    }
   </style>
 </head>
 
@@ -113,6 +121,15 @@
   </div>
   <canvas id="cue-canvas">
   </canvas>
+  <div class="hud-view all-view">
+    
+  </div>
+  <div id="hud">
+      <img width="20%" height="320px" src="/plugin/cue/images/GodIcon_Apollo.png"/>
+      <img width="20%" height="320px" src="/plugin/cue/images/GodIcon_Hera.png"/>
+      <img width="20%" height="320px" src="/plugin/cue/images/GodIcon_Athena.png"/>
+      <img width="20%" height="320px" src="/plugin/cue/images/GodIcon_Zeus.png"/>
+  </div>
   <!--video loop id="backvid" autoplay>
      <source src="/img/Portae_1080p25_copyrightdownloopscom.mp4" type="video/mp4"/>
   </video>

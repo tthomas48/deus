@@ -8,14 +8,14 @@
 <table class='table table-striped'>
   <thead>
   	<tr>
-  	  <th>Voter</th>
-          <th>Phone</th>
+      <th>Phone</th>
+      <th>Votes</th>
   	</tr>
   </thead>
   <tbody>
     <tr ng-repeat='voter in voters'>
-      <td>{{voter.name}}</td>
       <td>{{voter.phonenumber}}</td>
+      <td>{{voter.votes}}</td>
       <td>
         <button role='button' class='btn' ng-click="editVoter(voter)" data-toggle="modal" href="#editModal">Edit</button>
       </td>

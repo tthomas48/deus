@@ -31,7 +31,7 @@ function addInterval(callback, timer) {
       cue.enabled = data.enabled;
       cue.cue = data.cue;
       cue.go = data.go;
-      cue.updateUI(data.event);
+      cue.updateUI(data.view);
     });
     $(document).keyup(function(ev) {
       if(ev.keyCode == 32) {
@@ -47,7 +47,7 @@ function addInterval(callback, timer) {
       }
     });
   };
-  Cue.prototype.updateUI = function updateUI(event) {
+  Cue.prototype.updateUI = function updateUI(view) {
     if(this.cue.enabled === false) {
       $('#cue-view').remove();
       return;
@@ -60,6 +60,7 @@ function addInterval(callback, timer) {
       cache: false
     });
     $('span.cue').html(this.cue);
+    /*
     if($('#cue-view').length == 0) {
       $('#glasspane').append($('<div id="cue-view"></div>'));
       $('#cue-view').on('toggle', function(ev, data) {
@@ -70,16 +71,16 @@ function addInterval(callback, timer) {
         }
       });
     }
+    */
     var i = 0;
     for(i = 0; i < intervals.length; i++) {
       clearInterval(intervals[i]);
     }
     
-    $.get("/plugin/cue/" + event.view, {}, function(responseText, textStatus) {
-      var output = Mustache.render(responseText, event);
-      window.console.log(output);
-      
-      $('#cue-view').html($(output));
+    window.console.log(view);
+    $.get("/plugin/cue/" + view.view, {}, function(responseText, textStatus) {
+      var output = Mustache.render(responseText, view);      
+      $('.' + view.screen + '-view').html($(output));
     });
   };
   window.Olympus.plugins.push(Cue);

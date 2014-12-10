@@ -80,6 +80,10 @@ var config = require('../config')
           callback(err);
         }
         else {
+          body.rows.sort(function(a, b) {
+            return b.value.votes - a.value.votes;
+          });
+          
           var voters = _und.map(body.rows, function(row) {return row.value});
           callback(null, voters);
         }

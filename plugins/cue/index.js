@@ -24,42 +24,38 @@ function cue(name, deps) {
     return undefined;
   };
   
-  var findEvent = function(leaf) {
+  var findEvent = function(toggle, cueNumber, go, leaf) {
+      events.findBy('all', {key: [leaf.cue], reduce:false}, function(err, event) {
+        deps.io.sockets.emit('cue.status', {
+          'enabled': toggle,
+          'cue': cueNumber,
+          'go': go,          
+          'view': event,
+          'screen': leaf.screen
+        });
+      });
     
   };
   
   
   deps.io.sockets.on('connection', function(socket) {
     var toggle = false;
-    var cueNumber = "0";
+    var cueNumber = 0;
+    var nextCue = 0;
     var previousCue = 1;
     var emitStatus = function(deps, go) {
       // TODO: Allow changing the template
       tree.list(null, function(err, branches) {
-        console.log(branches);
-        var leaf = findLeaf(cueNumber, branches);
-        var event = findEvent(leaf);
-        /*
-        var event = findEvent(leaf);
+        if (go == 'go') {
+          cueNumber = nextCue;
+        }
         
-        deps.io.sockets.emit('cue.status', {
-          'enabled': toggle,
-          'cue': cueNumber,
-          'go': go,
-          'view': event
-        });
-        */
+        var leaf = findLeaf(cueNumber, branches);
+        var event = findEvent(toggle, cueNumber, go, leaf);
+        if (leaf.nodes && leaf.nodes.length == 1) {
+          nextCue = leaf.nodes[0].id;
+        }        
       });
-      /*
-      events.findBy('all', {key: ['event:zeustemplate'], reduce:false}, function(err, event) {
-        deps.io.sockets.emit('cue.status', {
-          'enabled': toggle,
-          'cue': cueNumber,
-          'go': go,
-          'event': event
-        });
-      });
-      */
     };
     socket.on('/cue/reset', function(cmd) {
       var _name;

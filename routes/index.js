@@ -3,6 +3,7 @@ var config = require('../config')
   , request = require('request')
   , querystring = require('querystring')
   , sessions = require('../models/sessions')
+  , crypto = require('crypto')
   , events
   , voters
   , tree
@@ -69,8 +70,8 @@ var smsify = function(str) {
   }
 
 
-, getShow = exports.getShow = function(req, res){
-   res.render('show', {
+, getHud = exports.getHud = function(req, res){
+   res.render('hud', {
      scripts: plugins.scripts,
      styles: plugins.styles
    });
@@ -462,4 +463,44 @@ var smsify = function(str) {
         res.send(200, "OK");
       }
     });
+}
+, saveTransaction = exports.saveTransaction = function(request, response) {
+  console.log(request.body.amount);
+  console.log(request.body.phone);
+  console.log(request.body.hash);
+  
+  var shasum = crypto.createHash('sha1');
+  shasum.update(config.salt);
+  shasum.update(request.body.amount);
+  shasum.update(request.body.phone);
+  var digest = shasum.digest('hex');
+  if (request.body.hash !== digest) {
+    console.log("No matches " + digest);
+    response.send(422, "Mismatched hash");
+    return;
+  }
+  var phonenumber = request.body.phone;
+  phonenumber = phonenumber.replace(/[()-.]/, '');
+  if (phonenumber.charAt(0) !== '+') {
+    phonenumber = '+' + phonenumber;
+  }
+  if (phonenumber.charAt(1) !== '1') {
+    phonenumber = '+1' + phonenumber.substr(1);
+  }
+  
+  voters.findByPhonenumber(phonenumber, function(err, voter) {
+    if (err) {
+      var voter = {
+        phonenumber: phonenumber,
+        votes: Number(request.body.amount) + 1
+      };
+    }
+    else {
+      voter.votes += Number(request.body.amount);
+    }
+    voters.save(undefined, voter, function() {
+      console.log("saved voter");
+      response.send(200, "OK");
+    }); 
+  });
 };

@@ -15,5 +15,5 @@ config.twilio.voiceWebhook = 'https://nodeserver/vote/voice';
 config.twilio.disableSigCheck = false;
 
 config.cookiesecret = 'make-this-a-secret';
-
+config.salt = 'make-this-match-your-square-webhook';
 module.exports = config;

@@ -115,7 +115,7 @@ config.plugins.forEach(function (plugin) {
 var routes = require('./routes')(io, plugins);
 
 app.get ('/sound-test',    routes.getSoundTest);
-app.get ('/show',    routes.getShow);
+app.get ('/hud',    routes.getHud);
 app.get ('/show-gaudy',    routes.getShowGaudy);
 
 
@@ -148,6 +148,7 @@ app.get   ('/api/voters',     routes.getVoterList);
 app.post  ('/api/voters',     routes.saveVoter);
 app.get   ('/api/voters/:id', routes.getVoterById);
 app.delete('/api/voters/:id', routes.destroyVoter);
+app.post  ('/api/transaction', routes.saveTransaction);
 
 // triggers
 app.post   ('/api/simulator',  routes.runSimulator);
