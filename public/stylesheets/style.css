@@ -27,3 +27,7 @@ h2.off { }
 .footer {
   margin-bottom: 50px;
 }
+
+.tree li {
+  list-style: none;
+}

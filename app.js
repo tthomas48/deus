@@ -116,8 +116,6 @@ var routes = require('./routes')(io, plugins);
 
 app.get ('/sound-test',    routes.getSoundTest);
 app.get ('/hud',    routes.getHud);
-app.get ('/show-gaudy',    routes.getShowGaudy);
-
 
 app.get ('/events/:shortname',    routes.getEvent);
 app.get ('/e/:shortname',    routes.getEventSnippet);

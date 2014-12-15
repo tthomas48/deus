@@ -7,6 +7,9 @@ app.config(function($routeProvider) {
   }).when('/voters', {
     templateUrl: 'voter-list.html',
     controller: 'VoterListCtrl'
+  }).when('/manage', {
+    templateUrl: 'manage.html',
+    controller: 'CueMapCtrl'    
   }).when('/login', {
     templateUrl: 'login.html',
     controller: 'LoginCtrl'
@@ -104,6 +107,7 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
         currentCue = cue;
       }
     }
+    data.cueName = currentCue.name;
     data.nodes = [];
     for(i = 0; i < currentCue.voteoptions.length; i++) {
       var option = currentCue.voteoptions[i];
@@ -120,6 +124,7 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
   }
   $scope.toggle = function(data) {
     window.console.log("Toggle");
+    window.console.log($scope);
   };
   $scope.save = function() {
     window.console.log($scope.tree[0]);
