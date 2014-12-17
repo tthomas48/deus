@@ -11,6 +11,7 @@ module.exports = function(socketio, pluginInfo) {
   events = require('../models/events')(io);
   voters = require('../models/voters')(io);
   tree = require('../models/tree')(io);
+  shows = require('../models/shows')(io);
   return exports;
 };
 /**********************************************
@@ -428,6 +429,68 @@ var smsify = function(str) {
     });
   }, destroyTree = exports.destroyTree = function(request, response) {
     tree.destroy(req.cookies['AuthSession'], req.params.id, req.query.rev, function(err, body) {
+      if(err) {
+        console.log(err);
+        res.send(500, JSON.stringify({
+          error: true
+        }));
+      } else {
+        res.send(200, "OK");
+      }
+    });
+  }, getShowList = exports.getShowList = function(req, res) {
+    shows.list(req.cookies['AuthSession'], function(err, list) {
+      if(err) {
+        res.send(401, JSON.stringify({
+          error: true
+        }));
+      } else {
+        res.send(list);
+      }
+    });
+  }, getCurrentShow = exports.getCurrentShow = function(req, res) {
+    shows.findCurrent(function(err, show) {
+      console.log(err);
+      if(err) {
+        if(err.indexOf('No match for: currentShow') === 0) {
+          res.send(404, JSON.stringify({
+            error: true
+          }));
+          return;
+        }
+        res.send(401, JSON.stringify({
+          error: true
+        }));
+      } else {
+        res.send(show);
+      }
+    });
+  }, saveShow = exports.saveShow = function(req, res) {
+    shows.save(req.cookies['AuthSession'], req.body, function(err, body) {
+      if(err) {
+        console.log(err);
+        res.send(500, JSON.stringify({
+          error: true
+        }));
+      } else {
+        // update the doc revision
+        req.body._rev = body.rev;
+        res.send(req.body);
+      }
+    });
+  }, getShowById = exports.getShowById = function(req, res) {
+    shows.findBy('all', {
+      key: [req.params.id],
+      reduce: false
+    }, function(err, t) {
+      if(err) {
+        res.send(404, 'We could not locate that show');
+      } else {
+        res.send(JSON.stringify(t));
+      }
+    });
+  }, destroyShow = exports.destroyShow = function(request, response) {
+    shows.destroy(req.cookies['AuthSession'], req.params.id, req.query.rev, function(err, body) {
       if(err) {
         console.log(err);
         res.send(500, JSON.stringify({

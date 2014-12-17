@@ -3,7 +3,7 @@ var execSync = require('exec-sync');
 function cue(name, deps) {
   var events = require('../../models/events')(deps.io);
   var tree = require('../../models/tree')(deps.io);
-  var show = require('../../models/show')(deps.io);
+  var shows = require('../../models/shows')(deps.io);
   
   var findLeaf = function(cueNumber, branches) {
     var i;

@@ -2,13 +2,20 @@
 
 <div ng-show="loggedIn">
 <h3>Manage</h3>
+<h5 ng-show="currentShow">Started: {{currentShow.start}}</h5>  
+  <button class="btn btn-warning" ng-click="startShow()" ng-hide="currentShow">
+<i class="icon-play icon-white" ></i>&nbsp;Start Show</button>
+    <button class="btn btn-warning" ng-click="stopShow()" ng-show="currentShow">
+<i class="icon-stop icon-white" ></i>&nbsp;Stop Show</button>
+  
 <div class="tree well">
   <script type="text/ng-template" id="tree_item_renderer.html">        
-          <div ng-model="data">
-            <a class="btn btn-success btn-xs btn-expand" data-nodrag="">
+          <div ng-model="data" ng-show="data.nodes.length > 0">
+            <a class="btn btn-xs btn-expand" data-nodrag="">
             <span class="icon-chevron-down"></span>
             </a>
             {{data.cueName}}
+            <a class="btn btn-success btn-xs">Go</a>
           </div>
           <ul ng-model="data.nodes">
             <li ng-repeat="data in data.nodes" ng-include="'tree_item_renderer.html'"></li>

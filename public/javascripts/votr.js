@@ -58,6 +58,12 @@ app.factory('VoterService', function($resource) {
 app.factory('TreeService', function($resource) {
   return $resource('/api/tree/:id');
 });
+app.factory('ShowService', function($resource) {
+  return $resource('/api/show/:id');
+});
+app.factory('CurrentShowService', function($resource) {
+  return $resource('/api/show/current');
+});
 app.factory('SessionService', function($resource) {
   return $resource('/api/sessions');
 });
@@ -84,7 +90,7 @@ app.controller('LogoutCtrl', function($rootScope, $location, SessionService) {
     $location.path('/login');
   });
 });
-app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, EventService) {
+app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, EventService, ShowService, CurrentShowService) {
   TreeService.query(function(branches) {
     if(!branches[0]) {
       branches = [{
@@ -122,10 +128,30 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
   $scope.delete = function(data) {
     data.nodes = [];
   }
-  $scope.toggle = function(data) {
-    window.console.log("Toggle");
-    window.console.log($scope);
+  $scope.startShow = function(data) {
+    window.console.log("Starting show");
+    var startDate = new Date();
+    $scope.currentShow = {
+      id: startDate.getTime(),
+      start: startDate.toUTCString(),
+      current: true
+    };
+    var newShow = new ShowService($scope.currentShow);
+      newShow.$save(function(data) {
+        window.console.log("Created new show");
+        $scope.currentShow = data;
+      });
   };
+  $scope.stopShow = function(data) {
+    window.console.log("Stopping show");
+    $scope.currentShow.current = false;
+    
+    var oldShow = new ShowService($scope.currentShow);
+      oldShow.$save(function(data) {
+        window.console.log("Stopped show");
+        $scope.currentShow = undefined;
+      });    
+  };  
   $scope.save = function() {
     window.console.log($scope.tree[0]);
     var newTree = new TreeService($scope.tree[0]);
@@ -141,9 +167,26 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
       nodes: []
     });
   };
+  //window.console.log($scope);
   EventService.query(function(output) {
     $scope.events = output;
   });
+  
+  $scope.currentShow = undefined;
+  CurrentShowService.get(function(data) {
+      $scope.currentShow = data;
+  });
+  
+  //ShowService.query(function(output) {
+    /*
+    window.console.log(ShowService.get({current: true}, function() {
+      window.console.log('here');
+    }, function() {
+      window.console.log('here2');
+    }));
+    */
+    //$scope.currentShow = output;               
+  //});
 });
 app.controller('EventListCtrl', function($scope, $location, SimulatorService, EventService) {
   var socket = io.connect();

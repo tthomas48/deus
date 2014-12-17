@@ -13,12 +13,13 @@ var config = require('../config'),
   findCurrent = exports.findCurrent = function(callback) {
     findBy('currentShow', {
       key: true
-    }, function(err, event) {
+    }, function(err, show) {
       if(err) {
         callback(err, null);
       } else {
-        findBy('all', {
-          key: [event._id],
+        console.log(show);
+        findBy('shows', {
+          key: [show._id],
           reduce: false
         }, callback);
       }
@@ -64,7 +65,7 @@ var config = require('../config'),
       callback(err, body);
     });
   }, list = exports.list = function(cookie, callback) {
-    getDb(cookie).view('event', 'show', function(err, body) {
+    getDb(cookie).view('event', 'shows', function(err, body) {
       if(err) {
         console.log(err);
         callback(err);
