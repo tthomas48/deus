@@ -29,6 +29,9 @@ function cue(name, deps) {
   };
   
   var findEvent = function(toggle, cueNumber, go, leaf) {
+      if (!leaf) {
+        return;
+      }
       events.findBy('all', {key: [leaf.cue], reduce:false}, function(err, event) {
         
         if (event) {

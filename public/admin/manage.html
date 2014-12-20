@@ -31,11 +31,10 @@
     </ul>
     </div>
     <div class="span4">
-      <h3>TODO: Put Clear Buttons Here</h3>
-      <div class="text-success">
-        Cue has been triggered.
-      </div>
-      <pre ng-show="currentShow" class="code">{{ currentShow | json }}</pre>
+      <a class="btn btn-warning btn-xs" ng-click="clear('all')">Clear All</a>
+      <a class="btn btn-warning btn-xs" ng-click="clear('hud')">Clear HUD</a>
+      <a class="btn btn-warning btn-xs" ng-click="clear('oracle')">Clear Oracle</a>
+      <!--pre ng-show="currentShow" class="code">{{ currentShow | json }}</pre-->
     </div>
   </div>
       <div class='footer'>

@@ -187,6 +187,11 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
     socket.emit('/cue/set', { cue: id});
     return false;
   };
+  $scope.clear = function(view) {
+    window.console.log("Emitting a clear" + view);
+    socket.emit("/clear", view);
+    return false;
+  };
   EventService.query(function(output) {
     $scope.events = output;
   });
