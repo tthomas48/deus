@@ -1,6 +1,6 @@
 #!/bin/bash
 phone=$1
-phoneprefix=`uuid`
+phoneprefix=`cat /proc/sys/kernel/random/uuid`
 num_options=$2
 attackers=$3
 #i=0

@@ -11,13 +11,13 @@
   function render() {
     
     var cues = [];
-    {{#voteoptions}}
-    cues.push('{{next}}');
-    {{/voteoptions}}
+    {{#nextcues}}
+    cues.push('{{id}}');
+    {{/nextcues}}
     
 
     elements = [];
-    var ouroborus = new deus.ouroboros.Ouroboros(); 
+    var ouroborus = new deus.ouroboros.Ouroboros(cues); 
     elements.push(new deus.stage.DualStage());
     elements.push(ouroborus);
     {{#voteoptions}}

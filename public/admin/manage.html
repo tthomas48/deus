@@ -1,3 +1,4 @@
+<script src="/socket.io/socket.io.js"></script>
 
 
 <div ng-show="loggedIn">
@@ -14,8 +15,8 @@
             <a class="btn btn-xs btn-expand" data-nodrag="">
             <span class="icon-chevron-down"></span>
             </a>
-            {{data.cueName}}
-            <a class="btn btn-success btn-xs">Go</a>
+            <cue show="currentShow" id="data.id" name="data.cueName"></cue>
+            <a class="btn btn-success btn-xs" ng-click="go(data.id)">Go</a>
           </div>
           <ul ng-model="data.nodes">
             <li ng-repeat="data in data.nodes" ng-include="'tree_item_renderer.html'"></li>
@@ -31,6 +32,10 @@
     </div>
     <div class="span4">
       <h3>TODO: Put Clear Buttons Here</h3>
+      <div class="text-success">
+        Cue has been triggered.
+      </div>
+      <pre ng-show="currentShow" class="code">{{ currentShow | json }}</pre>
     </div>
   </div>
       <div class='footer'>
@@ -41,7 +46,9 @@
 </div>
 
 <script type="text/javascript">
-  $(document).on('click.expand', $('.btn-expand, .btn-expand span'), function(e) {
+  //window.console.log({{currentShow | json}});
+  $(document).on('click.expand', '.btn-expand, .btn-expand span', function(e) {
+    e.stopPropagation();
     var link = $(e.target);
     toggleTree(link);
   })

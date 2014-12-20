@@ -64,7 +64,7 @@
 
     var gp = this;
     // reset the cueing system
-    this.cockpit.socket.emit('/cue/reset', {});
+    //this.cockpit.socket.emit('/cue/reset', {});
 
     // setup keyboard handlers
     $(document).keyup(function(ev) {

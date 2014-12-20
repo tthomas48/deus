@@ -4,6 +4,9 @@ function cue(name, deps) {
   var events = require('../../models/events')(deps.io);
   var tree = require('../../models/tree')(deps.io);
   var shows = require('../../models/shows')(deps.io);
+  var initialized = false;
+  var nextCue = 0;
+  var cueNumber = "0";
   
   var findLeaf = function(cueNumber, branches) {
     var i;
@@ -27,6 +30,10 @@ function cue(name, deps) {
   
   var findEvent = function(toggle, cueNumber, go, leaf) {
       events.findBy('all', {key: [leaf.cue], reduce:false}, function(err, event) {
+        
+        if (event) {
+          event.nextcues = leaf.nodes;
+        }
         deps.io.sockets.emit('cue.status', {
           'enabled': toggle,
           'cue': cueNumber,
@@ -38,29 +45,103 @@ function cue(name, deps) {
     
   };
   
+  var markComplete = function(cueNumber) {
+    
+    shows.findCurrent(function(err, show) {
+      if (err || !show) {
+        console.log("No current show found:" + err);
+        return;
+      }
+      if(show.cues.indexOf(cueNumber) === -1) {
+        show.cues.push(String(cueNumber));
+        shows.save(undefined, show, function(err, show) {
+        });
+      }
+    });
+  }
+  
+  var markWinner = function(cueNumber, cmd) {
+    
+    shows.findCurrent(function(err, show) {
+      if (err || !show) {
+        console.log("No current show found:" + err);
+        return;
+      }
+      show.winners[cueNumber] = cmd;
+      shows.save(undefined, show, function(err, show) {
+      });
+    });
+  };
+  
+  var setCue = function(cueNumber) {
+    
+    shows.findCurrent(function(err, show) {
+      if (err || !show) {
+        console.log("No current show found:" + err);
+        return;
+      }
+      
+      if(show.cues.indexOf(cueNumber) === -1) {
+        // add this cue to the end
+        show.cues.push(String(cueNumber));
+      } else {
+        var cueIndex = show.cues.indexOf(cueNumber);
+        var newCues = show.cues.slice(0, cueIndex + 1);
+        show.cues = newCues;
+      }
+      shows.save(undefined, show, function(err, show) {
+      });
+    });
+  };
+  
+  
   
   deps.io.sockets.on('connection', function(socket) {
     var toggle = false;
-    var cueNumber = 0;
-    var nextCue = 0;
-    var previousCue = 1;
     var emitStatus = function(deps, go) {
       // TODO: Allow changing the template
       tree.list(null, function(err, branches) {
         if (go == 'go') {
           cueNumber = nextCue;
+          nextCue = undefined;
+          console.log("\n\nCueNumber: " + cueNumber + "; nextCue: " + nextCue);
         }
+        markComplete(cueNumber);
         
         var leaf = findLeaf(cueNumber, branches);
         var event = findEvent(toggle, cueNumber, go, leaf);
         if (leaf.nodes && leaf.nodes.length == 1) {
           nextCue = leaf.nodes[0].id;
-        }        
+        }
+        
       });
     };
+    
+    var init = function() {
+      if (initialized) {
+        emitStatus(deps);
+        return;
+      }
+      initialized = true;
+      console.log("\n\n\n init \n\n\n");
+      shows.findCurrent(function(err, show) {
+        if (!show) {
+          return;
+        }
+        var cues = show.cues;
+        console.log(cues);
+        if (cues.length > 0) {
+          cueNumber = cues[cues.length - 1];
+        }
+        console.log(cueNumber);
+        emitStatus(deps);
+      });
+    };
+    init();
+    
     socket.on('/cue/reset', function(cmd) {
       var _name;
-      console.log("cue toggle", cmd);
+      console.log("cue reset", cmd);
       toggle = false;
       cueNumber = "0";
       emitStatus(deps);
@@ -73,18 +154,24 @@ function cue(name, deps) {
       emitStatus(deps);
     });
     socket.on('/cue/go', function(cmd) {
-      var _name;
+      var _name;      
       console.log("cue go", cmd);
       emitStatus(deps, 'go');
     });
     socket.on('/cue/set', function(cmd) {
       console.log("cue set", cmd);
-      previousCue = cueNumber;
-      cueNumber = cmd.cue;
+      nextCue = cmd.cue;
+      setCue(String(cmd.cue));
+      emitStatus(deps, 'go');
     });
     socket.on('/cue/winner', function(cmd) {
-      console.log("Winner");
-      deps.io.sockets.emit('/cue/winner', cmd);
+      console.log("Winner" + cueNumber);
+      console.log(cmd);
+      nextCue = cmd.cue;
+      console.log(nextCue);
+      markWinner(cueNumber, cmd);
+      // save this to the results and set the next cue, but don't go
+      //deps.io.sockets.emit('/cue/winner', cmd);
     });
     socket.on('/cue/sim', function(cmd) {
       execSync(__dirname + '/../../scripts/load.sh +15128724637 4 250');

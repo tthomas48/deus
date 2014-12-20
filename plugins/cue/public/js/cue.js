@@ -10,16 +10,20 @@ function addInterval(callback, timer) {
   var Cue = function Cue(cockpit) {
     console.log("Loading Cue plugin.");
     this.cockpit = cockpit;
-    this.cue = 0;
+    //this.cue = 0;
     this.enabled = false;
     this.go = undefined;
     // Add the buttons to the control area
-    $('#controls').append('<span class="cue">1</span>');
+    $('#controls').append('<span class="cue">0</span>');
     // Register the various event handlers
     this.listen();
   };
   Cue.prototype.clearScreen = function() {
-    $('#nofeed').remove();
+    $('.all-view').html('');
+    if (stage) {
+      stage.removeAllChildren();
+      stage.update();      
+    }
   };
   /*
    * Register event listener
@@ -29,6 +33,7 @@ function addInterval(callback, timer) {
     this.cockpit.socket.on('cue.status', function(data) {
       window.console.log(data);
       cue.enabled = data.enabled;
+      cue.previous = cue.cue;
       cue.cue = data.cue;
       cue.go = data.go;
       cue.updateUI(data.view);
@@ -52,32 +57,26 @@ function addInterval(callback, timer) {
       $('#cue-view').remove();
       return;
     }
+    if (this.previous == this.cue) {
+      window.console.log("Skipping reload of current cue");
+      return;
+    }
+    
     if(this.go === 'go') {
       this.clearScreen();
     }
+    window.console.log("Loading...");
     $.ajaxSetup({
       // Disable caching of AJAX responses
       cache: false
     });
     $('span.cue').html(this.cue);
-    /*
-    if($('#cue-view').length == 0) {
-      $('#glasspane').append($('<div id="cue-view"></div>'));
-      $('#cue-view').on('toggle', function(ev, data) {
-        if(data === 'show') {
-          $(this).show();
-        } else {
-          $(this).hide();
-        }
-      });
-    }
-    */
+    
     var i = 0;
     for(i = 0; i < intervals.length; i++) {
       clearInterval(intervals[i]);
     }
     
-    window.console.log(view);
     $.get("/plugin/cue/" + view.view, {}, function(responseText, textStatus) {
       var output = Mustache.render(responseText, view);      
       $('.' + view.screen + '-view').html($(output));

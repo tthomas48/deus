@@ -58,6 +58,9 @@ var config = require('../config'),
       show.type = 'show'
     }
     getDb(cookie).insert(show, function(err, body) {
+      io.sockets.emit("currentShow.update", {
+        currentShow: body
+      })
       callback(err, body);
     });
   }, destroy = exports.destroy = function(cookie, id, rev, callback) {

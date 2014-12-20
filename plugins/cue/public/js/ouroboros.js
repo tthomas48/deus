@@ -90,16 +90,18 @@ deus.ouroboros = (function($, createjs, undefined) {
       this.enbiggen();
     },
     fadeOut: function() {
-      if (this.transitionInstance && this.transitionInstance.volume > 0) { 
-        this.transitionInstance.volume -= 0.05;
-        var that = this;
-        setTimeout(function() {
-          that.fadeOut();
-        }, 100);
-        return;
+      if (this.transitionInstance) {
+        if (this.transitionInstance.volume > 0) { 
+          this.transitionInstance.volume -= 0.05;
+          var that = this;
+          setTimeout(function() {
+            that.fadeOut();
+          }, 100);
+          return;
+        }
+        this.transitionInstance.stop();
+        this.transitionInstance = undefined;
       }
-      this.transitionInstance.stop();
-      this.transitionInstance = undefined;
     },
     draw : function(stage) {
       this.timer++;
@@ -207,7 +209,12 @@ window.console.log(this.oneVotes == Math.max(this.oneVotes, this.twoVotes, this.
     setNext: function(next) {
       window.console.log("Setting next: " + next);
       var socket = io.connect();
-      socket.emit('/cue/set', { cue: next});
+      socket.emit('/cue/winner', { 
+        cue: next,
+        one: this.oneVotes,
+        two: this.twoVotes,
+        three: this.threeVotes
+      });
     },
     filter: function(filters) {
       this.bitmap.filters = filters;

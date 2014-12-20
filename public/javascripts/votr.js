@@ -1,5 +1,17 @@
 'use strict';
 var app = angular.module('votr', ['ngResource', 'ngRoute']);
+
+app.directive('cue', function () {
+    return {
+        scope: {show: '=', id: '=', name: '='},
+        transclude: true,
+        restrict: 'E',
+        template: '<span class="{{show.cues.indexOf(\'\' +id) >= 0 ? \'triggered-cue text-success\' : \'\'}}">' + 
+          '{{ name }}' + 
+          '<span ng-show="show.winners[id]">- ({{show.winners[id]["one"]}}/{{show.winners[id]["two"]}}/{{show.winners[id]["three"]}})</span>' +
+          '</span>'
+    };
+});
 app.config(function($routeProvider) {
   $routeProvider.when('/', {
     templateUrl: 'event-list.html',
@@ -91,10 +103,12 @@ app.controller('LogoutCtrl', function($rootScope, $location, SessionService) {
   });
 });
 app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, EventService, ShowService, CurrentShowService) {
+  var socket = io.connect();
+  
   TreeService.query(function(branches) {
     if(!branches[0]) {
       branches = [{
-        "id": 0,
+        "id": "0",
         "title": "Root",
         nodes: []
       }];
@@ -117,7 +131,6 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
     data.nodes = [];
     for(i = 0; i < currentCue.voteoptions.length; i++) {
       var option = currentCue.voteoptions[i];
-      window.console.log(option);
       data.nodes.push({
         id: data.id + "." + option.id,
         title: option.name,
@@ -134,7 +147,9 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
     $scope.currentShow = {
       id: startDate.getTime(),
       start: startDate.toUTCString(),
-      current: true
+      current: true,
+      cues: [],
+      winners: {}
     };
     var newShow = new ShowService($scope.currentShow);
       newShow.$save(function(data) {
@@ -167,7 +182,11 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
       nodes: []
     });
   };
-  //window.console.log($scope);
+  $scope.go = function(id) {    
+    window.console.log("Setting cue to " + id);
+    socket.emit('/cue/set', { cue: id});
+    return false;
+  };
   EventService.query(function(output) {
     $scope.events = output;
   });
@@ -176,17 +195,16 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
   CurrentShowService.get(function(data) {
       $scope.currentShow = data;
   });
+  socket.on('connect', function() {
+    console.log("Connected, lets sign-up for updates about this show");
+  });
+  socket.on('currentShow.update', function(response) {
+    window.console.log("Current show updated.");
+    CurrentShowService.get(function(data) {
+      $scope.currentShow = data;
+    });    
+  });
   
-  //ShowService.query(function(output) {
-    /*
-    window.console.log(ShowService.get({current: true}, function() {
-      window.console.log('here');
-    }, function() {
-      window.console.log('here2');
-    }));
-    */
-    //$scope.currentShow = output;               
-  //});
 });
 app.controller('EventListCtrl', function($scope, $location, SimulatorService, EventService) {
   var socket = io.connect();
