@@ -28,7 +28,7 @@ function cue(name, deps) {
     return undefined;
   };
   
-  var findEvent = function(toggle, cueNumber, go, leaf) {
+  var findEvent = function(toggle, cueNumber, go, leaf, callback) {
       if (!leaf) {
         return;
       }
@@ -44,6 +44,9 @@ function cue(name, deps) {
           'view': event,
           'screen': leaf.screen
         });
+        if (callback) {
+          callback.call(undefined, go, event);
+        }
       });
     
   };
@@ -97,7 +100,14 @@ function cue(name, deps) {
     });
   };
   
-  
+  var startVoting = function(go, event) {
+          if (event && go === 'vote') {
+            event.state = 'on';
+            events.save(undefined, event, function() {
+              console.log("Turned voting on for " + event._id);
+            });
+          }
+  };
   
   deps.io.sockets.on('connection', function(socket) {
     var toggle = false;
@@ -112,11 +122,10 @@ function cue(name, deps) {
         markComplete(cueNumber);
         
         var leaf = findLeaf(cueNumber, branches);
-        var event = findEvent(toggle, cueNumber, go, leaf);
-        if (leaf.nodes && leaf.nodes.length == 1) {
+        var event = findEvent(toggle, cueNumber, go, leaf, startVoting);
+        if (leaf && leaf.nodes && leaf.nodes.length == 1) {
           nextCue = leaf.nodes[0].id;
         }
-        
       });
     };
     
@@ -126,17 +135,14 @@ function cue(name, deps) {
         return;
       }
       initialized = true;
-      console.log("\n\n\n init \n\n\n");
       shows.findCurrent(function(err, show) {
         if (!show) {
           return;
         }
         var cues = show.cues;
-        console.log(cues);
         if (cues.length > 0) {
           cueNumber = cues[cues.length - 1];
         }
-        console.log(cueNumber);
         emitStatus(deps);
       });
     };
@@ -167,11 +173,14 @@ function cue(name, deps) {
       setCue(String(cmd.cue));
       emitStatus(deps, 'go');
     });
+    socket.on('/cue/vote', function(cmd) {
+      console.log("cue vote", cmd);
+      emitStatus(deps, 'vote');
+    });
+    
     socket.on('/cue/winner', function(cmd) {
       console.log("Winner" + cueNumber);
-      console.log(cmd);
       nextCue = cmd.cue;
-      console.log(nextCue);
       markWinner(cueNumber, cmd);
       // save this to the results and set the next cue, but don't go
       //deps.io.sockets.emit('/cue/winner', cmd);

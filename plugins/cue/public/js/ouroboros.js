@@ -147,20 +147,13 @@ deus.ouroboros = (function($, createjs, undefined) {
           }
         }
          
-window.console.log(this.oneVotes+ ":" + this.twoVotes + ":" + this.threeVotes);
-window.console.log(Math.max(this.oneVotes, this.twoVotes, this.threeVotes));
-window.console.log(this.oneVotes == Math.max(this.oneVotes, this.twoVotes, this.threeVotes));
-
         if (this.oneVotes == Math.max(this.oneVotes, this.twoVotes, this.threeVotes)) {
-          this.setNext(this.cues[0]);
           $('.choice-num1').css('color', 'red');
         }
         else if (this.threeVotes == Math.max(this.oneVotes, this.twoVotes, this.threeVotes)) {
-          this.setNext(this.cues[2]);
           $('.choice-num3').css('color', 'red');
         } 
         else {
-          this.setNext(this.cues[1]);
           $('.choice-num2').css('color', 'red');
         }
  
@@ -205,16 +198,6 @@ window.console.log(this.oneVotes == Math.max(this.oneVotes, this.twoVotes, this.
       else if(vote === 3) {
         this.threeVotes += 1;
       }
-    },
-    setNext: function(next) {
-      window.console.log("Setting next: " + next);
-      var socket = io.connect();
-      socket.emit('/cue/winner', { 
-        cue: next,
-        one: this.oneVotes,
-        two: this.twoVotes,
-        three: this.threeVotes
-      });
     },
     filter: function(filters) {
       this.bitmap.filters = filters;

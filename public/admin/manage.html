@@ -16,7 +16,7 @@
             <span class="icon-chevron-down"></span>
             </a>
             <cue show="currentShow" id="data.id" name="data.cueName"></cue>
-            <a class="btn btn-success btn-xs" ng-click="go(data.id)">Go</a>
+            <a class="btn btn-success btn-xs" ng-click="setCue(data.id)">Jump</a>
           </div>
           <ul ng-model="data.nodes">
             <li ng-repeat="data in data.nodes" ng-include="'tree_item_renderer.html'"></li>
@@ -31,14 +31,25 @@
     </ul>
     </div>
     <div class="span4">
+      <div class="row">
+        <a class="btn btn-success btn-xl" ng-click="go()">Go</a>  
+      </div>
+      <div class="row">
+        <a class="btn btn-default btn-xs" ng-click="vote()">Vote</a>  
+        <a class="btn btn-warning btn-xs" ng-click="simulate()">Simulate</a>  
+      </div>
+      <div class="row">
+        
+      
       <a class="btn btn-warning btn-xs" ng-click="clear('all')">Clear All</a>
       <a class="btn btn-warning btn-xs" ng-click="clear('hud')">Clear HUD</a>
       <a class="btn btn-warning btn-xs" ng-click="clear('oracle')">Clear Oracle</a>
+      </div>
+      
       <!--pre ng-show="currentShow" class="code">{{ currentShow | json }}</pre-->
     </div>
   </div>
       <div class='footer'>
-      <button type='submit' class="btn btn-primary" data-dismiss="modal" ng-click="save()">Save</button>
     </div>
 
 

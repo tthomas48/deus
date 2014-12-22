@@ -8,7 +8,7 @@ app.directive('cue', function () {
         restrict: 'E',
         template: '<span class="{{show.cues.indexOf(\'\' +id) >= 0 ? \'triggered-cue text-success\' : \'\'}}">' + 
           '{{ name }}' + 
-          '<span ng-show="show.winners[id]">- ({{show.winners[id]["one"]}}/{{show.winners[id]["two"]}}/{{show.winners[id]["three"]}})</span>' +
+          '<span ng-show="show.winners[id]">- ({{show.winners[id]["1"]}}/{{show.winners[id]["2"]}}/{{show.winners[id]["3"]}})</span>' +
           '</span>'
     };
 });
@@ -182,7 +182,7 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
       nodes: []
     });
   };
-  $scope.go = function(id) {    
+  $scope.setCue = function(id) {    
     window.console.log("Setting cue to " + id);
     socket.emit('/cue/set', { cue: id});
     return false;
@@ -191,6 +191,15 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
     window.console.log("Emitting a clear" + view);
     socket.emit("/clear", view);
     return false;
+  };
+  $scope.go = function() {
+    socket.emit('/cue/go', {});
+  };
+  $scope.vote = function() {
+    socket.emit('/cue/vote', {});
+  };
+  $scope.simulate = function() {
+    socket.emit('/cue/sim', {});
   };
   EventService.query(function(output) {
     $scope.events = output;
