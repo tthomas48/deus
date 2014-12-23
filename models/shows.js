@@ -17,7 +17,6 @@ var config = require('../config'),
       if(err) {
         callback(err, null);
       } else {
-        console.log(show);
         findBy('shows', {
           key: [show._id],
           reduce: false

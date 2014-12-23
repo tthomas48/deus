@@ -33,14 +33,6 @@
   var voting = JSON.parse(voting_string);
   $('.countdown').html("Voting is " + ('{{state}}' == 'on' ? 'open' : 'closed'));
     
-  function startTimer() {
-    $.post("/api/events/{{ id }}/timer/on", function() {
-      console.log('Started timer');
-    });
-    return false;
-  }
-    
-
   var closedMessage = 'Voting is closed';
   socket.on('timer', function(data) {
     console.log('Timer update', data);

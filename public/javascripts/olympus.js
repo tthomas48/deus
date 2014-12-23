@@ -38,7 +38,15 @@
                 html     : 'Error : ' + JSON.stringify(e)
               });
         });
-        
+      window.console.log("Adding olympus clear handler");
+        this.socket.on('clearOlympus', function(view) {
+          window.console.log("Clearing");
+          $('.' + view + '-view').html('');
+          if (stage) {
+            stage.removeAllChildren();
+            stage.update();      
+          }
+        });
     };
 
     Olympus.prototype.loadPlugins = function loadPlugins() {

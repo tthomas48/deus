@@ -50,6 +50,11 @@ io.configure('development', function(){
 });
 
 io.sockets.on('connection', function(socket) {
+    socket.on('/clear', function(data) {
+      console.log("Messaging to clear olympus");
+      io.sockets.emit('clearOlympus', data);
+    });
+  
     socket.on('event', function(event) {
         socket.join(event);
     });

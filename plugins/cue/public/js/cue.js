@@ -19,11 +19,8 @@ function addInterval(callback, timer) {
     this.listen();
   };
   Cue.prototype.clearScreen = function() {
-    $('.all-view').html('');
-    if (stage) {
-      stage.removeAllChildren();
-      stage.update();      
-    }
+    window.console.log("Emitting clear");
+    this.cockpit.socket.emit('/clear', 'all');
   };
   /*
    * Register event listener

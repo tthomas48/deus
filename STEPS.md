@@ -1,31 +1,10 @@
-Ok so each cue:
+* Allow vote kickoff from manage interface
+* Move all actual processing of truth and timer voting to server side. Client should only be a view.
 
-a cue
-  Mapped cue y/n
-  Voting cue
-  view
-  Stage {whisper, dual, quad}
-
-  options
-
-     Label (what we currently have)
-     next cue
-     image
-     sound (?)
 
 fix data visualization to snap better
 change of color oreoborus for whisper votes
-
-
-
-So we have voting and non-voting cues.
-The Cue Editor is just a nested tree view.
-When running the show you have access to watch the nested tree view.
-
 We also have a map, but that's a static graphic and will be based upon the results of each vote. We'll simply attach the cue winner to each one.
-
-Huge question - how do we start a show, and attach all data to a show.
-
 Deus Meeting
 3 surfaces with 2 different streams
   voting
