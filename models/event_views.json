@@ -1,6 +1,6 @@
 {
     "_id": "_design/event", 
-    "_rev":"17-89870f0e401ff679c220a00c0ccab992",
+    "_rev": "19-68ab2b05f4413c4d1ca9592c2465cf96",
     "views": {
         "all": {
             "map": "function (doc) { if (doc.type == 'event'){ emit([doc._id], doc); } else if (doc.type == 'voter') { emit([doc._id], doc); } else if (doc.type == 'vote') { emit([doc.event_id, doc.vote, doc._id], doc); } }", 

@@ -11,100 +11,20 @@
   <link rel="stylesheet" href="/stylesheets/animations.css">{{#styles}}
   <link rel="stylesheet" href="{{.}}">{{/styles}}
   <style>
-    /*
-    g.highcharts-legend-item {
-      display: none;
-    }
-    g.highcharts-xaxis-labels {
-      display: none;
-    }
-    #controls h1 {
-      float: left;
-    }
-    #controls .cue {
-      float: right;
-    }
-    #frame {
-      top: 0;
-      bottom: 0;
-      right: 0;
-      left: 0;
-      width: 100%;
-      position: absolute;
-      z-index: 100;
-      pointer-events: none;
+    body {
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
     }
     #backvid {
       top: 0;
       left: 0;
-      height: 1526px;
-      width: 120%;
+      height: 1080px;
+      width: 1920px;
       position: absolute;
-      z-index: 50;
+      z-index: 0;
       pointer-events: none;
-    }
-    */
-    #cue-canvas {
-      top: 0;
-      left: 0;
-      padding: 0;
-      margin: 0;
-      border: none;
-      position: absolute;
-      z-index: 75;
-      pointer-events: none;
-    }
-    .container {
-      padding: 40px;
-    }
-    svg > text {
-      display: none;
-    }
-    .help span {
-      font-size: 22pt;
-    }
-    .choice-num {
-      position: absolute;
-      color: black;
-      font-size: 170pt;
-    }
-    .container .choice-num1 {
-      position: absolute;
-      top: 220px;
-      left: 100px;
-      text-align: Center;
-      width: 400px;
-      color: #bbb;
-    }
-    .container .choice-num2 {
-      position: absolute;
-      top: 220px;
-      right: 100px;
-      text-align: Center;
-      width: 400px;
-      color: #bbb;
-    }
-    .container .choice-num3 {
-      position: absolute;
-      top: 145px;
-      margin: auto;
-      text-align: Center;
-      width: 600px;
-      color: #bbb;
-      left: 500px;
-    }
-    .container .label {
-      background: none;
-      color: #333;
-      left: 0;
-      /* position: relative; */
-      font-size: 17pt;
-      /* top: 50px; */
-      /* width: 100px; */
-      /*overflow: hidden;*/
-      /* height: 100px; */
-      display: block;
-      clear: both;
+      image-fit: fill;
     }
     #hud {
       border-top: thin solid rgba(30,30,30,.20);
@@ -116,6 +36,22 @@
       /*margin: auto;*/
       position: absolute;
       bottom: 20px;
+      z-index: 50;
+    }
+    header {
+      position: absolute;
+      z-index: 50;
+      right: 50px;
+    }
+    .hud-view, .all-view {
+      z-index: 50;
+      position: absolute;
+      top: 50px;
+    }
+    canvas {
+      position: absolute;
+      z-index: 50;
+      
     }
     #hud .row {
       width: 1200px;
@@ -129,6 +65,7 @@
 </head>
 
 <body>
+  
   <header id="controls">
   </header>
   <div id="glasspane">
@@ -154,10 +91,10 @@
         </div>
     </div>
   </div>
-  <!--video loop id="backvid" autoplay>
-     <source src="/img/Portae_1080p25_copyrightdownloopscom.mp4" type="video/mp4"/>
-  </video>
-  <img src="/img/frame2.png" id="frame" /-->
+  <video loop id="backvid" autoplay>
+     <source src="http://162.221.181.72:3000/plugin/cue/images/VE_Smoke_Bkgrnd.mov" type="video/mp4"/>
+  </video>  
+  <!--img src="/img/frame2.png" id="frame" /-->
 
 
   <script type="text/javascript" src="/socket.io/socket.io.js">

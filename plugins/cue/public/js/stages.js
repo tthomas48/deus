@@ -22,12 +22,14 @@ deus.stage = (function($, createjs) {
   DualStage.prototype.constructor = DualStage;
   DualStage.prototype.parent = Stage.prototype;
   DualStage.prototype.add = function(stage) {
+    /*
     var tie = new createjs.Shape();
     tie.graphics.beginFill(createjs.Graphics.getRGB(50, 100, 150, 0.5));
     tie.graphics.moveTo(50, 150).lineTo(stage.canvas.width - 50,
         stage.canvas.height).lineTo(stage.canvas.width - 50, 150).lineTo(50,
         stage.canvas.height).lineTo(50, 150);    
     stage.addChild(tie);
+    */
     /*
     $('.container').append("<div class='choice-num choice-num1'>1<span class='label'>" + voting[0].name + "</span></div>");
     $('.container').append("<div class='choice-num choice-num2'>2<span class='label'>" + voting[1].name + "</span></div>");

@@ -132,6 +132,13 @@ var config = require('../config'),
             votes: 1
           };
         }
+        if (!voter.shows) {
+          voter.shows = [];
+        }
+        
+        if (voter.shows.indexOf(show._id) < 0) {
+          voter.shows.push(show._id);
+        }
         voters.save(getDb(), voter, function() {
           console.log("Inserting " + voter.votes + " votes.");
           var votingEvent = votingEvents[event._id];

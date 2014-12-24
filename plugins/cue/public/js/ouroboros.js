@@ -38,8 +38,8 @@ deus.ouroboros = (function($, createjs, undefined) {
       $('canvas').show();
       
       this.bitmap = new createjs.Bitmap("/plugin/cue/snake-ring.svg");
-      this.bitmap.scaleX = 0.55;
-      this.bitmap.scaleY = 0.55;
+      this.bitmap.scaleX = 0.75;
+      this.bitmap.scaleY = 0.75;
       stage.addChild(this.bitmap);
       
       var that = this;
@@ -47,7 +47,7 @@ deus.ouroboros = (function($, createjs, undefined) {
         var bounds = that.bitmap.getTransformedBounds();
         that.bitmap.x = (stage.canvas.width) / 2;
         // 150 is the amount from the top, that the stage starts
-        that.bitmap.y = (stage.canvas.height + 150) / 2;
+        that.bitmap.y = (stage.canvas.height - 150) / 2;
         that.bitmap.regX = that.bitmap.image.width / 2;
         that.bitmap.regY = that.bitmap.image.height / 2;
         that.initialX = that.bitmap.x;

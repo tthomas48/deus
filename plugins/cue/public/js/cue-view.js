@@ -21,8 +21,8 @@ deus.sprite = (function($, createjs, undefined) {
       
       if (this.imagePath) {
         this.bitmap = new createjs.Bitmap("/plugin/cue/images/" + this.imagePath);
-        this.bitmap.scaleX = 0.75;
-        this.bitmap.scaleY = 0.75;
+        this.bitmap.scaleX = 1;
+        this.bitmap.scaleY = 1;
         stage.addChild(this.bitmap);
       }
 
@@ -36,7 +36,7 @@ deus.sprite = (function($, createjs, undefined) {
           that.bitmap.x = stage.canvas.width - bounds.width - 50;
         }
         // 150 is the amount from the top, that the stage starts
-        that.bitmap.y = (stage.canvas.height - bounds.height + 150) / 2;
+        //that.bitmap.y = (stage.canvas.height - bounds.height) / 2;
       };
     },
     draw : function(stage) {
