@@ -145,7 +145,7 @@ var config = require('../config'),
           var i;
           for(i = 0; i < voter.votes; i++) {
             var voteDoc = {
-              _id: 'vote:' + event._id + ':' + from + ":" + seconds + ":" + i,
+              _id: 'vote:' + event._id + ':' + from + ":" + show._id + ":" + i,
               type: 'vote',
               show_id: show._id,
               event_id: event._id,
