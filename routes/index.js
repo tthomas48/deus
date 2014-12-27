@@ -332,8 +332,24 @@ var smsify = function(str) {
     }
   }, voteVoice = exports.voteVoice = function(request, response) {
     if(twilio.validateExpressRequest(request, config.twilio.key) || config.twilio.disableSigCheck) {
-      response.header('Content-Type', 'text/xml');
-      response.render('voice');
+        var msg = "";
+        events.findByPhonenumber(request.param('To'), function(err, event) {
+          if(err || !event || event.state == "off") {
+            console.log(err);
+            msg = "<Say>There aren\'t prophecies or prayers to answer at this time. Keep this tool ready to serve the gods as they instruct.</Say>"
+          } else {
+            msg = '<Say>After the tone use your phone\'s keypad to vote.</Say><Pause length="1"/>';
+            for (j = 0; j < event.voteoptions.length; j++) {
+              var option = event.voteoptions[j];
+              msg += "<Say>Press " + option.id + " for " + option.name + "</Say><Pause length=\"1\"/>";
+            }
+            msg += "<Say>Press pound when you are done.</Say>";
+          }
+          response.header('Content-Type', 'text/xml');
+          response.render('voice', {message: msg});
+          
+          
+        });
     } else {
       response.status(403).render('forbidden');
     }
