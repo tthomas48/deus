@@ -65,6 +65,11 @@ var smsify = function(str) {
       scripts: plugins.scripts,
       styles: plugins.styles
     });
+  }, getOracle = exports.getOracle = function(req, res) {
+    res.render('oracle', {
+      scripts: plugins.scripts,
+      styles: plugins.styles
+    });    
   }, renderEvent = function(req, res, view) {
     events.findBy('all', {
       key: ['event:' + req.params.shortname],

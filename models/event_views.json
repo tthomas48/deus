@@ -1,13 +1,13 @@
 {
     "_id": "_design/event", 
-    "_rev": "19-68ab2b05f4413c4d1ca9592c2465cf96",
+    "_rev": "20-280dbd61ea33ddc0c5ce5063663b9fbe",
     "views": {
         "all": {
             "map": "function (doc) { if (doc.type == 'event'){ emit([doc._id], doc); } else if (doc.type == 'voter') { emit([doc._id], doc); } else if (doc.type == 'vote') { emit([doc.event_id, doc.vote, doc._id], doc); } }", 
             "reduce": "_count"
         }, 
         "byPhonenumber": {
-            "map": "function (doc) { if (doc.type == 'event') { emit(doc.phonenumber, {_id: doc._id, state: doc.state}) } } "
+            "map": "function (doc) { if (doc.type == 'event') { emit([doc.phonenumber, doc.state], {_id: doc._id, state: doc.state}) } } "
         }, 
         "voterByPhonenumber": {
             "map": "function (doc) { if (doc.type == 'voter') { emit(doc.phonenumber, {_id: doc._id, state: doc.state}) } } "

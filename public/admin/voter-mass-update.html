@@ -5,12 +5,13 @@
 <form>
   <fieldset>
     <div class='modal-body'>
-      <label>Votes to Add</label>
+      <label>Votes</label>
       <input type='text' ng-model="votesToAdd"/>
 
     </div>
     <div class='modal-footer'>
       <button type='submit' class="btn btn-primary" data-dismiss="modal" ng-click="addVotes(votesToAdd)">Add Votes</button>
+      <button type='submit' class="btn btn-primary" data-dismiss="modal" ng-click="setVotes(votesToAdd)">Set Votes</button>
     </div>
   </fieldset>
 </form>

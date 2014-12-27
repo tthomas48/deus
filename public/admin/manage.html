@@ -17,6 +17,7 @@
             </a>
             <cue show="currentShow" id="data.id" name="data.cueName"></cue>
             <a class="btn btn-success btn-xs" ng-click="setCue(data.id)">Jump</a>
+            
           </div>
           <ul ng-model="data.nodes">
             <li ng-repeat="data in data.nodes" ng-include="'tree_item_renderer.html'"></li>

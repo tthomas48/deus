@@ -36,11 +36,14 @@
   var closedMessage = 'Voting is closed';
   socket.on('timer', function(data) {
     console.log('Timer update', data);
+    if (data == 5) {
+      // we stop animation at 5, but keep accepting votes.
+    }
     if (data == 0) {
-      $('.countdown').html(closedMessage);
+      //$('.countdown').html(closedMessage);
       return;
     }
-    $('.countdown').html("Voting ends in " + data + " seconds");
+    //$('.countdown').html("Voting ends in " + data + " seconds");
   });
   socket.on('/events/stateUpdate', function(data) {
     if(data.state == 'off') {

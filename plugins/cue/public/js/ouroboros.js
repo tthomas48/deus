@@ -109,8 +109,8 @@ deus.ouroboros = (function($, createjs, undefined) {
         return;
       }
       
-      if (this.time > 0 || this.spinning) {
-        if (!this.transitionInstance && this.time > 0) {
+      if (this.time > 5 || this.spinning) {
+        if (!this.transitionInstance && this.time > 5) {
             this.transitionInstance = createjs.Sound.play("transition", {interrupt: createjs.Sound.INTERRUPT_ANY, loop:1, volume: 1});
         }
         this.cuedWinner = false;

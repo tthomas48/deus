@@ -146,6 +146,7 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
       }
     }
     data.cueName = currentCue.name;
+    data.voting = currentCue.voting;
     data.nodes = [];
     for(i = 0; i < currentCue.voteoptions.length; i++) {
       var option = currentCue.voteoptions[i];
@@ -236,7 +237,6 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
       $scope.currentShow = data;
     });    
   });
-  
 });
 app.controller('EventListCtrl', function($scope, $location, SimulatorService, EventService) {
   var socket = io.connect();
@@ -402,6 +402,12 @@ app.controller('VoterListCtrl', function($scope, $location, $filter, VoterServic
       v.$save();
     });
   };
+  $scope.setVotes = function(votesToSet) {
+    $scope.filtered.forEach(function(v, index) {
+      v.votes = Number(votesToSet);
+      v.$save();
+    });
+  };  
   $scope.getData = function(voters, query) {
     var filtered = $filter('regex').bind($scope)(voters, 'phonenumber', 'searchText');
     
