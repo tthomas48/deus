@@ -131,6 +131,11 @@ var config = require('../config'),
             phonenumber: from,
             votes: 1
           };
+        } else {
+          if (!show.winners || show.winners.legnth == 0) {
+            // returning voter give 'em a bonus
+            voter.votes = Number(voter.votes) + Number(config.deus.returningVotes);
+          }
         }
         if (!voter.shows) {
           voter.shows = [];
