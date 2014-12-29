@@ -58,7 +58,7 @@ function cue(name, deps) {
         console.log("No current show found:" + err);
         return;
       }
-      if(show.cues.indexOf(cueNumber) === -1) {
+      if(show.cues && show.cues.indexOf(cueNumber) === -1) {
         show.cues.push(String(cueNumber));
         shows.save(undefined, show, function(err, show) {
         });
@@ -140,7 +140,7 @@ function cue(name, deps) {
           return;
         }
         var cues = show.cues;
-        if (cues.length > 0) {
+        if (cues && cues.length > 0) {
           cueNumber = cues[cues.length - 1];
         }
         emitStatus(deps);
