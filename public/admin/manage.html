@@ -18,6 +18,15 @@
             <cue show="currentShow" id="data.id" name="data.cueName"></cue>
             <a class="btn btn-success btn-xs" ng-click="setCue(data.id)">Jump</a>
             
+      <div class="onoffswitch" ng-show="data.voting">
+          <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onoff-{{data.cue}}" ng-change="toggleState(data)" ng-true-value="on" ng-false-value="off"/>
+          <label class="onoffswitch-label" for="onoff-{{data.cue}}">
+            <span class="onoffswitch-inner"></span>
+            <span class="onoffswitch-switch"></span>
+          </label>
+       </div>
+
+            
           </div>
           <ul ng-model="data.nodes">
             <li ng-repeat="data in data.nodes" ng-include="'tree_item_renderer.html'"></li>
