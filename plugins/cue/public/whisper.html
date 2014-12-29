@@ -3,10 +3,16 @@
 </script>
 <script type="text/javascript" src="/plugin/cue/js/ouroboros.js">
 </script>
+<script type="text/javascript" src="/plugin/cue/js/cue-view.js">
+</script>
 <script>
-  var cues = ['aesarawhisper','aesarawhisper'];
-  var ouroborus;
   function render() {
+    
+    var cues = [];
+    {{#nextcues}}
+    cues.push('{{id}}');
+    {{/nextcues}}
+    
     $('.help').hide();
 
     var canvas = document.getElementById("cue-canvas");
@@ -33,7 +39,7 @@
     }
   }
 
-  $.get("/e/zeus", function(response) {
+  $.get("/e/{{shortname}}", function(response) {
     $('#voting').html(response);
     render();
   });

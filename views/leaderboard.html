@@ -1,0 +1,46 @@
+<script src="/javascripts/jquery.js"></script>
+<div id="leaderboard">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Phone</th>
+        <th>Votes</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+  
+  
+</div>
+
+<script>
+  function updateView() {
+    $.get("/api/show/current", function(data) {
+      var currentShow = data._id;
+      $.get("/api/voters", function(allVoters) {
+
+        var voters = [];
+        var i;
+        for (i = 0; i < allVoters.length; i++) {
+          if (allVoters[i].shows && allVoters[i].shows.indexOf(currentShow) >= 0) {
+            voters.push(allVoters[i]);
+          }
+        }
+        voters.sort(function(a, b) {
+          return b.votes - a.votes;
+        });
+        
+        var output = "";
+        for (i = 0; i < 5; i++) {
+          output += "<tr><td>" + voters[i].phonenumber + "</td><td>" + voters[i].votes + "</td></tr>";
+        }
+        $('#leaderboard table tbody').html($(output));
+        setTimeout(updateView, 1000);
+
+      });
+
+    });
+  }
+  updateView();
+</script>

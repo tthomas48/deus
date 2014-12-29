@@ -173,6 +173,18 @@ function cue(name, deps) {
       setCue(String(cmd.cue));
       emitStatus(deps, 'go');
     });
+    socket.on('/cue/manual', function(cmd) {
+      events.findBy('all', {key: [cmd.event_id], reduce:false}, function(err, event) {
+        deps.io.sockets.emit('cue.status', {
+          'enabled': true,
+          'cue': -1,
+          'go': 'go',          
+          'view': event,
+          'screen': cmd.screen
+        });
+      });
+    });
+    
     socket.on('/cue/vote', function(cmd) {
       console.log("cue vote", cmd);
       emitStatus(deps, 'vote');

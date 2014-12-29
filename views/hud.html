@@ -91,9 +91,9 @@
         </div>
     </div>
   </div>
-  <video loop id="backvid" autoplay>
+  <!--video loop id="backvid" autoplay>
      <source src="http://162.221.181.72:3000/plugin/cue/images/VE_Smoke_Bkgrnd.mov" type="video/mp4"/>
-  </video>  
+  </video-->  
   <!--img src="/img/frame2.png" id="frame" /-->
 
 
@@ -129,7 +129,18 @@
       }
       stage.update();
     }
+    
     var olympus = new Olympus();
+    
+    {{#eventOverride}}
+      var socket = io.connect();
+      socket.emit('/cue/manual', {
+        event_id: '{{eventOverride}}',
+        screen: 'hud'
+      });
+    {{/eventOverride}}
+    
+    
   </script>
 </body>
 

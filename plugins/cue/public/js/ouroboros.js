@@ -38,8 +38,8 @@ deus.ouroboros = (function($, createjs, undefined) {
       $('canvas').show();
       
       this.bitmap = new createjs.Bitmap("/plugin/cue/snake-ring.svg");
-      this.bitmap.scaleX = 0.75;
-      this.bitmap.scaleY = 0.75;
+      this.bitmap.scaleX = this.cues.length == 3 ? 0.5 : 0.75;
+      this.bitmap.scaleY = this.cues.length == 3 ? 0.5 : 0.75;
       stage.addChild(this.bitmap);
       
       var that = this;
@@ -82,8 +82,9 @@ deus.ouroboros = (function($, createjs, undefined) {
     },
     enbiggen: function() {
       this.enbiggened = true;
-      this.bitmap.scaleX = 1.55;
-      this.bitmap.scaleY = 1.55;
+      this.bitmap.scaleX = 1.15;
+      this.bitmap.scaleY = 1.15;
+      this.bitmap.y = 150;
     },
     spinBig: function() {
       this.spinning = true;

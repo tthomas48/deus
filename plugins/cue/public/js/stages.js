@@ -39,13 +39,14 @@ deus.stage = (function($, createjs) {
     this.parent.draw(stage);
   };
 
-  function QuadStage() {
+  function TriStage() {
     Stage.call(this, 4);
   }
-  QuadStage.prototype = new QuadStage();
-  QuadStage.prototype.constructor = QuadStage;
-  QuadStage.prototype.parent = Stage.prototype;
-  QuadStage.prototype.add = function(stage) {
+  TriStage.prototype = new TriStage();
+  TriStage.prototype.constructor = TriStage;
+  TriStage.prototype.parent = Stage.prototype;
+  TriStage.prototype.add = function(stage) {
+    /*
     var tie = new createjs.Shape();
     tie.graphics.beginFill(createjs.Graphics.getRGB(50, 100, 150, 0.5));
     tie.graphics.moveTo(50, 150).lineTo(stage.canvas.width - 50,
@@ -55,6 +56,7 @@ deus.stage = (function($, createjs) {
     tie.graphics.moveTo(50, 150).lineTo(stage.canvas.width - 50, 150).lineTo(
         50, stage.canvas.height).lineTo(stage.canvas.width - 50,
         stage.canvas.height).lineTo(50, 150).endFill();
+        */
     /*
     $('.container').append("<div class='choice-num choice-num1'>1<span class='label'>" + voting[0].name + "</span></div>");
     $('.container').append("<div class='choice-num choice-num2'>2<span class='label'>" + voting[1].name + "</span></div>");
@@ -62,14 +64,14 @@ deus.stage = (function($, createjs) {
     */
 
     
-    stage.addChild(tie);
+    //stage.addChild(tie);
   };
-  QuadStage.prototype.draw = function(stage) {
+  TriStage.prototype.draw = function(stage) {
     this.parent.draw(stage);
   };
 
   return {
     DualStage : DualStage,
-    QuadStage : QuadStage
+    TriStage : TriStage
   };
 }(jQuery, createjs));

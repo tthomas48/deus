@@ -292,7 +292,12 @@ app.controller('EventListCtrl', function($scope, $location, SimulatorService, Ev
       phonenumber: event.phonenumber,
       state: 'off',
       timer: event.timer,
-      voteoptions: event.voteoptions
+      voteoptions: event.voteoptions,
+      screen: event.screen,      
+      voting: event.voting,
+      stage: event.stage,
+      view: event.view
+      
     };
   };
   $scope.toggleState = function(event) {

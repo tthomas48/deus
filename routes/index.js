@@ -65,6 +65,11 @@ var smsify = function(str) {
       scripts: plugins.scripts,
       styles: plugins.styles
     });
+  }, getLeaderboard = exports.getLeaderboard = function(req, res) {
+    res.render('leaderboard', {
+      scripts: plugins.scripts,
+      styles: plugins.styles
+    });    
   }, getOracle = exports.getOracle = function(req, res) {
     res.render('oracle', {
       scripts: plugins.scripts,
@@ -112,19 +117,10 @@ var smsify = function(str) {
             console.log(err);
             res.send(500, err);
           } else {
-            res.render('event', {
-              id: event._id,
-              name: event.name,
-              shortname: event.shortname,
-              state: event.state,
-              timer: event.timer,
-              phonenumber: formatPhone(event.phonenumber),
-              voteoptions: JSON.stringify(event.voteoptions),
+            res.render(event.screen, {
               scripts: plugins.scripts,
               styles: plugins.styles,
-              partials: {
-                e: 'e'
-              }
+              eventOverride: event._id
             });
           }
         });
