@@ -42,7 +42,7 @@
         this.socket.on('clearOlympus', function(view) {
           window.console.log("Clearing");
           $('.' + view + '-view').html('');
-          if (stage) {
+          if (typeof stage !== 'undefined') {
             stage.removeAllChildren();
             stage.update();      
           }
