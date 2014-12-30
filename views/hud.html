@@ -12,19 +12,19 @@
   <link rel="stylesheet" href="{{.}}">{{/styles}}
   <style>
     body {
-      width: 1920px;
-      height: 1080px;
+      width: 1600;
+      height: 1200px;
       overflow: hidden;
     }
     #backvid {
       top: 0;
       left: 0;
-      height: 1080px;
-      width: 1920px;
+      width: 1600px;
+      height: 1200px;
       position: absolute;
       z-index: 0;
       pointer-events: none;
-      image-fit: fill;
+      object-fit: fill;
     }
     #hud {
       border-top: thin solid rgba(30,30,30,.20);
@@ -58,16 +58,14 @@
       margin: auto;
     }
     #hud img {
-       max-width: 180px;
-       max-height: 181px;
+       max-width: 90px;
+       max-height: 91px;
     }
   </style>
 </head>
 
 <body>
   
-  <header id="controls">
-  </header>
   <div id="glasspane">
   </div>
   <canvas id="cue-canvas">
@@ -91,9 +89,9 @@
         </div>
     </div>
   </div>
-  <!--video loop id="backvid" autoplay>
+  <video loop id="backvid" autoplay>
      <source src="http://162.221.181.72:3000/plugin/cue/images/VE_Smoke_Bkgrnd.mov" type="video/mp4"/>
-  </video-->  
+  </video>  
   <!--img src="/img/frame2.png" id="frame" /-->
 
 
@@ -112,9 +110,8 @@
   </script>
   {{/scripts}}
   <script>
-    createjs.Sound.registerSound("/plugin/cue/transition.mp3", "transition");
-//     createjs.Sound.registerSound("/plugin/cue/2/yes.mp3", "yes");
-//     createjs.Sound.registerSound("/plugin/cue/2/no.mp3", "no");
+    createjs.Sound.registerSound("/plugin/cue/sounds/Oracle Voting Sequence (Modified Final).wav", "oracle-transition");
+    
     var canvas = document.getElementById("cue-canvas");
     canvas.width = $(window).width();
     canvas.height = $(window).height();

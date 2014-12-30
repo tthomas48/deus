@@ -12,14 +12,14 @@
 <div class="tree well">
   <script type="text/ng-template" id="tree_item_renderer.html">        
           <div ng-model="data" ng-show="data.nodes.length > 0">
-            <a class="btn btn-xs btn-expand" data-nodrag="">
+            <a class="btn btn-xs btn-expand" data-nodrag="" onclick="return false">
             <span class="icon-chevron-down"></span>
             </a>
             <cue show="currentShow" id="data.id" name="data.cueName"></cue>
             <a class="btn btn-success btn-xs" ng-click="setCue(data.id)">Jump</a>
             
       <div class="onoffswitch" ng-show="data.voting">
-          <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onoff-{{data.cue}}" ng-change="toggleState(data)" ng-true-value="on" ng-false-value="off"/>
+          <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onoff-{{data.cue}}" ng-true-value="on" ng-false-value="off" ng-change="changeEventState(data.id)" ng-model="cueState[data.id]" />
           <label class="onoffswitch-label" for="onoff-{{data.cue}}">
             <span class="onoffswitch-inner"></span>
             <span class="onoffswitch-switch"></span>
@@ -66,10 +66,33 @@
 </div>
 
 <script type="text/javascript">
-  //window.console.log({{currentShow | json}});
+  var socket = io.connect();
+  
   $(document).on('click.expand', '.btn-expand, .btn-expand span', function(e) {
     e.stopPropagation();
     var link = $(e.target);
     toggleTree(link);
   })
+  /*
+  $(document).on('change.voting', '.onoffswitch-checkbox', function(e) {
+    e.stopPropagation();
+    var checkbox = $(e.target);
+    var event = checkbox.attr('id').replace("onoff-", "");
+    console.log(event);
+    
+    if(checkbox.prop('checked')) {
+      socket.emit('/cue/vote', {});
+      socket.emit("")
+    }
+  });
+  */
+  
+  socket.on('stateUpdate', function(data) {
+    console.log("State update", data);
+    $('#onoff-' + data.id.replace(':', '\\:')).prop('checked', data.state == 'on' ? true : false);
+  });
+
+//   socket.on('cue.status', function(data) {
+    
+//   });
 </script>

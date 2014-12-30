@@ -19,34 +19,25 @@
     #backvid {
       top: 0;
       left: 0;
-      height: 1080px;
-      width: 1920px;
+      width: 1600px;
+      height: 1200px;
       position: absolute;
-      z-index: 0;
+      z-index: -1;
       pointer-events: none;
-      image-fit: fill;
+      object-fit: fill;
     }
     #frontvid {
       top: 0;
       left: 0;
-      height: 1080px;
-      width: 1920px;
+      height: 1200px;
+      width: 1600px;
       position: absolute;
       z-index: 50;
       pointer-events: none;
-      image-fit: fill;      
+      object-fit: fill;      
     }
     #hud {
-      border-top: thin solid rgba(30,30,30,.20);
-      padding-top: 20px;
-      width: 100%;
-      max-height: 200px;
-      overflow: hidden;
-      text-align: center;
-      /*margin: auto;*/
-      position: absolute;
-      bottom: 20px;
-      z-index: 50;
+      display: none;
     }
     header {
       position: absolute;
@@ -56,30 +47,21 @@
     .oracle-view, .all-view {
       z-index: 50;
       position: absolute;
-      top: 50px;
-      left: 0;
-      top: 0;
-      padding: 0 0 0 0;
-      margin: 0 0 0 0;
-    }
-    #hud .row {
-      width: 1200px;
-      margin: auto;
-    }
-    #hud img {
-       max-width: 180px;
-       max-height: 181px;
+      top: 0px;
     }
   </style>
 </head>
 
 <body>
   
+  <canvas id="cue-canvas">
+  </canvas>
   <div class="oracle-view all-view">
     
   </div>
+  
   <video loop id="backvid" autoplay>
-     <source src="http://162.221.181.72:3000/plugin/cue/images/VE_Smoke_Bkgrnd.mov" type="video/mp4"/>
+     <source src="http://162.221.181.72:3000/plugin/cue/images/WhisperSmoke.mov" type="video/mp4"/>
   </video>  
   <!--img src="/img/frame2.png" id="frame" /-->
 
@@ -99,15 +81,35 @@
   </script>
   {{/scripts}}
   <script>
-      var olympus = new Olympus();
+    createjs.Sound.registerSound("/plugin/cue/sounds/Whisper (No Click) scratch mix.wav", "whisper-transition");
+    createjs.Sound.registerSound("/plugin/cue/sounds/Yes.wav", "yes");
+    createjs.Sound.registerSound("/plugin/cue/sounds/No.wav", "no");
+
+    var canvas = document.getElementById("cue-canvas");
+    canvas.width = $(window).width();
+    canvas.height = $(window).height();
+    var stage = new createjs.Stage("cue-canvas");
+    stage.autoClear = true;
+    var elements = [];
+    createjs.Ticker.addEventListener("tick", handleTick);
+
+    function handleTick(event) {
+      for(i = 0; i < elements.length; i++) {
+        elements[i].draw(stage);
+      }
+      stage.update();
+    }
+    
+    var olympus = new Olympus();
     
     {{#eventOverride}}
       var socket = io.connect();
       socket.emit('/cue/manual', {
         event_id: '{{eventOverride}}',
-        screen: 'oracle'
+        screen: 'hud'
       });
-    {{/eventOverride}}    
+    {{/eventOverride}}
+    
   </script>
 
 </body>
