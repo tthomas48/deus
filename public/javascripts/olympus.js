@@ -47,6 +47,29 @@
             stage.update();      
           }
         });
+        if($('.hud-view').length) {
+          //window.console.log("adding environmental controls handlers");
+          this.socket.on('/environmentControlsThreshold', function(deity_name) {
+            // trigger the event for the specified deity
+            window.console.log('* received threshhold trigger for '+JSON.stringify(deity_name));
+            if($('#'+deity_name+'-icon').length) {
+              //window.console.log('changing display...');
+              $('#'+deity_name+'-icon .overlay').fadeIn(1500, function() {
+                $(this).fadeOut(1500);
+              });
+            }
+          });
+          this.socket.on('/environmentControlsUpdate', function(prayerCounts) {
+            // update the counter displays
+            window.console.log("* received update trigger with data: "+JSON.stringify(prayerCounts));
+            for(var deity_name in prayerCounts) {
+              //window.console.log('updating count for '+deity_name+' with data: '+prayerCounts[deity_name]);
+              if($('#'+deity_name+'-count').length) {
+                $('#'+deity_name+'-count').html(prayerCounts[deity_name]);
+              }
+            }
+          });
+        }
     };
 
     Olympus.prototype.loadPlugins = function loadPlugins() {

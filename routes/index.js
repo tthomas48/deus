@@ -358,7 +358,7 @@ var smsify = function(str) {
                   prayer_count.total_count++;
                   prayer_count.current_count++;
                   trigger_update = true;
-                  if(prayer_count.current_count >= prayers.trigger_threshhold()) {
+                  if(prayer_count.current_count >= prayers.trigger_threshhold(deity_name)) {
                       prayer_count.current_count = 0;
                       prayer_count.trigger_count++;
                       trigger_event = true;

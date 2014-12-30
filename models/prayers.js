@@ -10,9 +10,15 @@ var config = require('../config'),
     }
     return require('nano')(params);
   },
-  trigger_threshhold = exports.trigger_threshhold = function() {
-      //#TODO: [enhancement] move the threshhold value to admin configuration
-      return 3;
+  trigger_threshhold = exports.trigger_threshhold = function(deity_name) {
+      //#TODO: [enhancement] move the threshhold values to admin configuration
+      var prayerThreshholds = {
+        'athena': 10, 
+        'apollo': 10, 
+        'hera': 10, 
+        'zeus': 10
+      };
+      return prayerThreshholds[deity_name] || 10;
   },
   newPrayerData = exports.newPrayerData = function() {
     //#TODO: move the deity names into a global configuration (and then into an admin config setting)
