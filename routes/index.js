@@ -351,51 +351,75 @@ var smsify = function(str) {
                 //        if not, send error response
 
                 //console.log("found current show: "+JSON.stringify(show));
-                // retrieve current count for this deity by show ID
-                prayers.getCountForDeity(deity_name, show.id, function(err, prayer_count) {
-                  console.log("prayer count for "+deity_name+" is: "+JSON.stringify(prayer_count));
-                  var trigger_update = false;
-                  var trigger_event = false;
-                  // increment counter, save updated result
-                  prayer_count.total_count++;
-                  prayer_count.current_count++;
-                  trigger_update = true;
-                  if(prayer_count.current_count >= prayers.trigger_threshhold(deity_name)) {
-                      prayer_count.current_count = 0;
-                      prayer_count.trigger_count++;
-                      trigger_event = true;
-                  }
-                  // save updated counters
-                  console.log("saving now prayer count for "+deity_name+": "+JSON.stringify(prayer_count));
-                  prayers.saveCount(null, prayer_count, function(err, prayer) {
-                    if(err) {
-                      console.log("Problem saving new prayer count: "+err);
-                    }
-                  });
-                  
-                  if(trigger_update) {
-                    // trigger new emission to update deity counters
-                    console.log("* triggering prayer count update...");
-                    // get current values for all the other deities as well, pass as data into signal/event
-                    prayers.getPrayerCounts(function(err, prayerCounts) {
+                
+                prayers.getPrayer(from, show.id, deity_name, function(err, prayer) {
+                  if(err) {
+                    console.log("Problem querying prayer data: "+err);
+                    // silently fail for the user
+                    response.send('<Response></Response>');
+                  } else if(prayer) {
+                    console.log("user has already prayed to this deity during this show");
+                    // silently fail for the user
+                    response.send('<Response></Response>');
+                  } else {
+                    // record the user's prayer
+                    var prayer = {show_id: show.id, deity_name: deity_name, phonenumber: from};
+                    prayers.savePrayer(null, prayer, function(err, prayer) {
                       if(err) {
-                        console.log("Error getting prayer counts: "+err);
+                        console.log("Problem saving new prayer record: "+err);
                       } else {
-                        console.log("prayer count data is: " + JSON.stringify(prayerCounts));
-                        io.sockets.emit("/environmentControlsUpdate", prayerCounts);
+                        console.log("Saved new prayer record for "+deity_name);
                       }
                     });
-                  }
-                  if(trigger_event) {
-                    // trigger an environmental event for this deity
-                    console.log("* triggering prayer event for "+deity_name+"...");
-                    io.sockets.emit("/environmentControlsThreshold", deity_name);
-                  }
-                  var deity_name_capitalized = deity_name.charAt(0).toUpperCase() + deity_name.slice(1).toLowerCase();
-                  var deity_response = deity_name_capitalized + ' hears your prayer';
-                  response.send('<Response><Sms>'+deity_response+'</Sms></Response>');
-                  
-                });//EO(get prayer count for deity)
+                
+                
+                    // retrieve current count for this deity by show ID
+                    prayers.getCountForDeity(deity_name, show.id, function(err, prayer_count) {
+                      console.log("prayer count for "+deity_name+" is: "+JSON.stringify(prayer_count));
+                      var trigger_update = false;
+                      var trigger_event = false;
+                      // increment counter, save updated result
+                      prayer_count.total_count++;
+                      prayer_count.current_count++;
+                      trigger_update = true;
+                      if(prayer_count.current_count >= prayers.trigger_threshhold(deity_name)) {
+                          prayer_count.current_count = 0;
+                          prayer_count.trigger_count++;
+                          trigger_event = true;
+                      }
+                      // save updated counters
+                      console.log("saving now prayer count for "+deity_name+": "+JSON.stringify(prayer_count));
+                      prayers.saveCount(null, prayer_count, function(err, prayer) {
+                        if(err) {
+                          console.log("Problem saving new prayer count: "+err);
+                        }
+                      });
+
+                      if(trigger_update) {
+                        // trigger new emission to update deity counters
+                        console.log("* triggering prayer count update...");
+                        // get current values for all the other deities as well, pass as data into signal/event
+                        prayers.getPrayerCounts(function(err, prayerCounts) {
+                          if(err) {
+                            console.log("Error getting prayer counts: "+err);
+                          } else {
+                            console.log("prayer count data is: " + JSON.stringify(prayerCounts));
+                            io.sockets.emit("/environmentControlsUpdate", prayerCounts);
+                          }
+                        });
+                      }
+                      if(trigger_event) {
+                        // trigger an environmental event for this deity
+                        console.log("* triggering prayer event for "+deity_name+"...");
+                        io.sockets.emit("/environmentControlsThreshold", deity_name);
+                      }
+                      var deity_name_capitalized = deity_name.charAt(0).toUpperCase() + deity_name.slice(1).toLowerCase();
+                      var deity_response = deity_name_capitalized + ' hears your prayer';
+                      response.send('<Response><Sms>'+deity_response+'</Sms></Response>');
+
+                    });//EO(get prayer count for deity)
+                  }//EO(no existing prayer found)
+                });//EO(get existing prayers for this user/deity/show)
               }//EO(found current show)
             });//EO(look for current show)
           //EO(if deity_name was recognized)

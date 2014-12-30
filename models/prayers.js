@@ -28,6 +28,9 @@ var config = require('../config'),
   getPrayerCountId = function(show_id, deity_name) {
     return 'prayerCount:' + show_id + '-' + deity_name;
   },
+  getPrayerId = function(show_id, deity_name, phonenumber) {
+    return 'prayer:' + show_id + '-' + deity_name + '-' + phonenumber;
+  },
   getCountForDeity = exports.getCountForDeity = function(deity, show_id, callback) {
     prayerId = getPrayerCountId(show_id, deity);
     getDb().view('event', 'prayerCounts', {
@@ -88,6 +91,31 @@ var config = require('../config'),
       }
     }
   )},
+  getPrayer = exports.getPrayer = function(from_phonenumber, show_id, deity_name, callback) {
+    //console.log("found current show: "+JSON.stringify(show));
+    // retrieve current count for this deity by show ID
+    var prayerId = getPrayerId(show_id, deity_name, from_phonenumber);
+    getDb().view('event', 'prayers', {
+        startkey: prayerId,
+        endkey: prayerId,
+      }, function(err, body) {
+        if(err || body.rows.length == 0) {
+          if(err) {
+            callback("Error querying prayer with ID "+prayerId+": "+err, null);
+          } else {
+            // no current prayer found
+            callback(null, null);
+          }
+        } else {
+          // found a matching prayer record, provide it
+          if(body.rows.length > 1) {
+            console.log("WARNING: Multiple prayer records found for ID "+prayerId);
+          }
+          callback(null, body.rows[0].value);
+        }
+      }
+    );
+  },
   saveCount = exports.saveCount = function(cookie, prayerCount, callback) {
     if(!prayerCount._id) {
       if(!prayerCount.show_id) {
@@ -104,6 +132,31 @@ var config = require('../config'),
       prayerCount.type = 'prayerCount'
     }
     getDb(cookie).insert(prayerCount, function(err, body) {
+      callback(err, body);
+    });
+  },
+  savePrayer = exports.savePrayer = function(cookie, prayer, callback) {
+    if(!prayer._id) {
+      if(!prayer.show_id) {
+          callback("Can't save Prayer without ShowID", null);
+          return;
+      } else if(!prayer.deity_name) {
+          callback("Can't save Prayer without DeityName", null);
+          return;
+      } else if(!prayer.phonenumber) {
+          callback("Can't save Prayer without Sender phonenumber", null);
+          return;
+      }
+      prayer._id = getPrayerId(prayer.show_id, prayer.deity_name, prayer.phonenumber);
+      console.log("Setting prayer._id to: "+prayer._id);
+    }
+    if(!prayer.type) {
+      prayer.type = 'prayer'
+    }
+    if(!prayer.created) {
+      prayer.created = new Date().getTime();
+    }
+    getDb(cookie).insert(prayer, function(err, body) {
       callback(err, body);
     });
   },
