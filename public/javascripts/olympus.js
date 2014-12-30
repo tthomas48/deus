@@ -45,6 +45,7 @@
           if (typeof stage !== 'undefined') {
             stage.removeAllChildren();
             stage.update();      
+            
           }
         });
         if($('.hud-view').length) {

@@ -1,18 +1,23 @@
-
+<script src="/socket.io/socket.io.js"></script>
 
 <div ng-show="loggedIn">
 <h3>Cue Map</h3>
 <div class="tree well">
   <script type="text/ng-template" id="tree_item_renderer.html">        
-          <div ng-model="data">
-            <a class="btn btn-success btn-xs btn-expand" data-nodrag="">
-              <span class="icon-chevron-down">
-              </span>
-            </a>
-            <select ng-change="change(data)" ng-model="data.cue" ng-options="event._id as event.name for event in events">
-              <option value="" disabled>Choose cue</option>
-            </select>
-            {{data.title}}
+          <div ng-model="data" class="clearfix">
+            <div class="pull-left">
+              <a class="btn btn-xs btn-expand" data-nodrag="" onclick="return false">
+                <span class="icon-chevron-down">
+                </span>
+              </a>
+            </div>
+            <div class="pull-left">
+              {{data.title}}
+              <select ng-change="change(data)" ng-model="data.cue" ng-options="event._id as event.name for event in events">
+                <option value="" disabled>Choose cue</option>
+              </select>
+            </div>
+              
           </div>
           <ul ng-model="data.nodes">
             <li ng-repeat="data in data.nodes" ng-include="'tree_item_renderer.html'"></li>
@@ -21,18 +26,22 @@
 
   
   <div class="row">
-    <div class="span5">
+    <div class="span9">
     <ul ng-mode="tree">
       <li ng-repeat="data in tree" ng-include="'tree_item_renderer.html'"></li>
     </ul>
     </div>
-    <div class="span4">
-      <!--pre class="code">{{ tree | json }}</pre-->
-    </div>
+    <!--div class="span4">
+      <pre class="code">{{ tree | json }}</pre>
+    </div-->
   </div>
   <div class='footer'>
    <button type='submit' class="btn btn-primary" data-dismiss="modal" ng-click="save()">Save</button>
   </div>
+  <div>
+      <pre class="code">{{ tree | json }}</pre>
+  </div>
+  
 </div>
 <script type="text/javascript">
   $(document).on('click.expand', $('.btn-expand, .btn-expand span'), function(e) {

@@ -2,8 +2,10 @@ var deus = deus || {};
 deus.ouroboros = (function($, createjs, undefined) {
   "use strict";
 
-  function Ouroboros(cues, sound) {
+  function Ouroboros(cues, sound, enbiggened) {
+    console.log("Updating ouroborus", enbiggened);
     this.sound = sound;
+    this.enbiggened = enbiggened;
     this.timer = 0;
     this.bitmap = undefined;
     this.time = 0;
@@ -22,7 +24,6 @@ deus.ouroboros = (function($, createjs, undefined) {
     this.loaded = false;
     this.transitionInstance = undefined;
     this.cues = cues;
-    this.enbiggened = false;
   }
 
   Ouroboros.prototype = {
@@ -33,7 +34,7 @@ deus.ouroboros = (function($, createjs, undefined) {
       $('#cue-view').show();
       $('canvas').show();
       
-      this.bitmap = new createjs.Bitmap("/plugin/cue/images/OuroborosGold.png");
+      this.bitmap = new createjs.Bitmap("/plugin/cue/images/Ouroboros.png");
       this.bitmap.scaleX = this.cues.length == 3 ? 0.5 : 0.75;
       this.bitmap.scaleY = this.cues.length == 3 ? 0.5 : 0.75;
       stage.addChild(this.bitmap);
@@ -52,6 +53,14 @@ deus.ouroboros = (function($, createjs, undefined) {
         that.stageHeight = (stage.canvas.height - that.bitmap.regY - 150) / 2;
         //that.bitmap.regY = stage.canvas.height / 2;
         that.bitmap.cache(0, 0, that.bitmap.image.width, that.bitmap.image.height);
+        
+        console.log(that.enbiggened);
+        if (that.enbiggened) {
+          that.bitmap.scaleX = 1.15;
+          that.bitmap.scaleY = 1.15;
+          that.bitmap.cache(0, 0, that.bitmap.image.width, that.bitmap.image.height);
+        }
+        
         that.loaded = true;
       };
 
@@ -75,12 +84,6 @@ deus.ouroboros = (function($, createjs, undefined) {
         }
       });
 
-    },
-    enbiggen: function() {
-      this.enbiggened = true;
-      this.bitmap.scaleX = 1.15;
-      this.bitmap.scaleY = 1.15;
-      this.bitmap.y = 150;
     },
     spinBig: function() {
       this.spinning = true;

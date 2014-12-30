@@ -1,5 +1,7 @@
 'use strict';
-var app = angular.module('votr', ['ngResource', 'ngRoute']);
+var app = angular.module('votr', ['ngResource', 'ngRoute'],  function($rootScopeProvider) { 
+  $rootScopeProvider.digestTtl(150); 
+});
 
 app.directive('cue', function () {
     return {

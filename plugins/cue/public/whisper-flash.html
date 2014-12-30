@@ -15,8 +15,21 @@
     
     $('.help').hide();
 
+    var alpha = 1;
+    var skipSteps = 20;
     ouroborus = new deus.ouroboros.Ouroboros(cues, "whisper-transition", true); 
     elements.push(ouroborus);
+    ouroborus.draw = function() {
+      if (skipSteps < 0) {
+        return;
+      }
+      skipSteps -= 1;
+      if (skipSteps > 0) {
+        return;
+      }
+      alpha -= 0.05;
+      ouroborus.bitmap.set({alpha: alpha});
+    };
       
     var i;
     for(i = 0; i < elements.length; i++) {
@@ -24,8 +37,5 @@
     }
   }
 
-   $.get("/e/{{shortname}}", function(response) {
-     $('#voting').html(response);
-     render();
-   });
+  render();
 </script>
