@@ -19,10 +19,10 @@
     #backvid {
       top: 0;
       left: 0;
-      height: 1200px;
       width: 1600px;
+      height: 1200px;
       position: absolute;
-      z-index: 0;
+      z-index: -1;
       pointer-events: none;
       object-fit: fill;
     }
@@ -48,19 +48,18 @@
       z-index: 50;
       position: absolute;
       top: 0px;
-      left: 0;
-      top: 0;
-      padding: 0 0 0 0;
-      margin: 0 0 0 0;
     }
   </style>
 </head>
 
 <body>
   
+  <canvas id="cue-canvas">
+  </canvas>
   <div class="oracle-view all-view">
     
   </div>
+  
   <video loop id="backvid" autoplay>
      <source src="http://162.221.181.72:3000/plugin/cue/images/WhisperSmoke.mov" type="video/mp4"/>
   </video>  
@@ -82,15 +81,35 @@
   </script>
   {{/scripts}}
   <script>
-      var olympus = new Olympus();
+    createjs.Sound.registerSound("/plugin/cue/sounds/Whisper (No Click) scratch mix.wav", "whisper-transition");
+    createjs.Sound.registerSound("/plugin/cue/sounds/Yes.wav", "yes");
+    createjs.Sound.registerSound("/plugin/cue/sounds/No.wav", "no");
+
+    var canvas = document.getElementById("cue-canvas");
+    canvas.width = $(window).width();
+    canvas.height = $(window).height();
+    var stage = new createjs.Stage("cue-canvas");
+    stage.autoClear = true;
+    var elements = [];
+    createjs.Ticker.addEventListener("tick", handleTick);
+
+    function handleTick(event) {
+      for(i = 0; i < elements.length; i++) {
+        elements[i].draw(stage);
+      }
+      stage.update();
+    }
+    
+    var olympus = new Olympus();
     
     {{#eventOverride}}
       var socket = io.connect();
       socket.emit('/cue/manual', {
         event_id: '{{eventOverride}}',
-        screen: 'oracle'
+        screen: 'hud'
       });
-    {{/eventOverride}}    
+    {{/eventOverride}}
+    
   </script>
 
 </body>

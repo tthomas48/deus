@@ -38,14 +38,14 @@ deus.cue = (function(window, document, $, undefined) {
     cue.previous = cue.cue;
     cue.cue = data.cue;
     cue.go = data.go;
-    cue.updateUI(data.view);
+    cue.updateUI(data.view, cue.go === 'go');
   };
-  Cue.prototype.updateUI = function updateUI(view) {
+  Cue.prototype.updateUI = function updateUI(view, forceLoad) {
     if(this.cue.enabled === false) {
       $('#cue-view').remove();
       return;
     }
-    if(this.previous == this.cue) {
+    if(this.previous == this.cue && !forceLoad) {
       window.console.log("Skipping reload of current cue");
       return;
     }

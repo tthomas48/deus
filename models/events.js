@@ -248,7 +248,7 @@ var config = require('../config'),
           }
         });
         console.log('starting timer');
-        io.sockets. in (event._id).emit('stateUpdate', {
+        io.sockets.emit('stateUpdate', {
           state: 'on',
           id: event._id,
           rev: event.rev
@@ -271,6 +271,7 @@ var config = require('../config'),
           timers[body._id] = setTimeout(updateTimer.bind(null, cookie, body, expiration), 1000);
         } else {
           console.log("Deleting timer");
+          io.sockets. in (body._id).emit('timer', 0);
           delete timers[body._id];
 
           // here we should set the show's winners
@@ -281,7 +282,7 @@ var config = require('../config'),
             body.state = 'off';
             save(cookie, body, function(err, savedBody) {
               if(savedBody && savedBody.ok) {
-                io.sockets. in (event._id).emit('stateUpdate', {
+                io.sockets.emit('stateUpdate', {
                   state: 'off',
                   id: savedBody.id,
                   rev: savedBody.rev

@@ -28,15 +28,7 @@ function cue(name, deps) {
     return undefined;
   };
   
-  var findEvent = function(toggle, cueNumber, go, leaf, callback) {
-      if (!leaf) {
-        return;
-      }
-      events.findBy('all', {key: [leaf.cue], reduce:false}, function(err, event) {
-        
-        if (event) {
-          event.nextcues = leaf.nodes;
-        }
+  var emitStatusMessage = function(toggle, cueNumber, go, event, leaf) {
         deps.io.sockets.emit('cue.status', {
           'enabled': toggle,
           'cue': cueNumber,
@@ -44,9 +36,37 @@ function cue(name, deps) {
           'view': event,
           'screen': leaf.screen
         });
-        if (callback) {
-          callback.call(undefined, go, event);
+  };
+  
+  var findEvent = function(toggle, cueNumber, go, leaf) {
+      if (!leaf) {
+        return;
+      }
+    
+    
+      events.findBy('all', {key: [leaf.cue], reduce:false}, function(err, event) {
+        
+        if (event) {
+          event.nextcues = leaf.nodes;
+          
+          if (go === 'vote') {
+            event.state = 'on';
+            events.save(undefined, event, function() {
+              console.log("Turned voting on for " + event._id);
+              emitStatusMessage(toggle, cueNumber, go, event, leaf);
+            });
+            return;
+          }
+          if (go === 'novote') {
+            event.state = 'off';
+            events.save(undefined, event, function() {
+              console.log("Turned voting off for " + event._id);
+              emitStatusMessage(toggle, cueNumber, go, event, leaf);
+            });
+            return;            
+          }
         }
+        emitStatusMessage(toggle, cueNumber, go, event, leaf);
       });
     
   };
@@ -100,15 +120,6 @@ function cue(name, deps) {
     });
   };
   
-  var startVoting = function(go, event) {
-          if (event && go === 'vote') {
-            event.state = 'on';
-            events.save(undefined, event, function() {
-              console.log("Turned voting on for " + event._id);
-            });
-          }
-  };
-  
   deps.io.sockets.on('connection', function(socket) {
     var toggle = false;
     var emitStatus = function(deps, go) {
@@ -122,7 +133,7 @@ function cue(name, deps) {
         markComplete(cueNumber);
         
         var leaf = findLeaf(cueNumber, branches);
-        var event = findEvent(toggle, cueNumber, go, leaf, startVoting);
+        var event = findEvent(toggle, cueNumber, go, leaf);
         if (leaf && leaf.nodes && leaf.nodes.length == 1) {
           nextCue = leaf.nodes[0].id;
         }
@@ -171,7 +182,15 @@ function cue(name, deps) {
       console.log("cue set", cmd);
       nextCue = cmd.cue;
       setCue(String(cmd.cue));
-      emitStatus(deps, 'go');
+      if (!cmd.go) {
+        cmd.go = 'go';
+      }
+      else if (cmd.go == 'vote') {
+        // jump to the cue
+        cueNumber = String(cmd.cue);
+      }
+      
+      emitStatus(deps, cmd.go);
     });
     socket.on('/cue/manual', function(cmd) {
       events.findBy('all', {key: [cmd.event_id], reduce:false}, function(err, event) {
@@ -188,6 +207,11 @@ function cue(name, deps) {
     socket.on('/cue/vote', function(cmd) {
       console.log("cue vote", cmd);
       emitStatus(deps, 'vote');
+    });
+    
+    socket.on('/cue/novote', function(cmd) {
+      console.log("cue vote", cmd);
+      emitStatus(deps, 'novote');
     });
     
     socket.on('/cue/winner', function(cmd) {
