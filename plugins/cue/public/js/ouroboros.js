@@ -38,8 +38,8 @@ deus.ouroboros = (function($, createjs, undefined) {
       $('canvas').show();
       
       this.bitmap = new createjs.Bitmap("/plugin/cue/snake-ring.svg");
-      this.bitmap.scaleX = 0.55;
-      this.bitmap.scaleY = 0.55;
+      this.bitmap.scaleX = this.cues.length == 3 ? 0.5 : 0.75;
+      this.bitmap.scaleY = this.cues.length == 3 ? 0.5 : 0.75;
       stage.addChild(this.bitmap);
       
       var that = this;
@@ -47,7 +47,7 @@ deus.ouroboros = (function($, createjs, undefined) {
         var bounds = that.bitmap.getTransformedBounds();
         that.bitmap.x = (stage.canvas.width) / 2;
         // 150 is the amount from the top, that the stage starts
-        that.bitmap.y = (stage.canvas.height + 150) / 2;
+        that.bitmap.y = (stage.canvas.height - 150) / 2;
         that.bitmap.regX = that.bitmap.image.width / 2;
         that.bitmap.regY = that.bitmap.image.height / 2;
         that.initialX = that.bitmap.x;
@@ -59,18 +59,14 @@ deus.ouroboros = (function($, createjs, undefined) {
         that.loaded = true;
       };
 
-      var setTime = function(data) {
-        that.time = data;
-      };
-      
       var socket = io.connect();
-      socket.on('timer', setTime);
+      socket.on('timer', that.setTime.bind(that));
       socket.on('vote', that.moveRelative.bind(that));
 
       socket.on('cue.status', function(data) {
         if (data.go) {
+          socket.removeListener('timer', that.setTime.bind(that));
           socket.removeListener('vote', that.moveRelative.bind(that));
-          socket.removeListener('timer', setTime);
           if (that.transitionInstance) {
 
             that.transitionInstance.stop();
@@ -82,8 +78,9 @@ deus.ouroboros = (function($, createjs, undefined) {
     },
     enbiggen: function() {
       this.enbiggened = true;
-      this.bitmap.scaleX = 1.55;
-      this.bitmap.scaleY = 1.55;
+      this.bitmap.scaleX = 1.15;
+      this.bitmap.scaleY = 1.15;
+      this.bitmap.y = 150;
     },
     spinBig: function() {
       this.spinning = true;
@@ -108,9 +105,8 @@ deus.ouroboros = (function($, createjs, undefined) {
       if (!this.loaded) {
         return;
       }
-      
-      if (this.time > 0 || this.spinning) {
-        if (!this.transitionInstance && this.time > 0) {
+      if (this.time > 5 || this.spinning) {
+        if (!this.transitionInstance && this.time > 5) {
             this.transitionInstance = createjs.Sound.play("transition", {interrupt: createjs.Sound.INTERRUPT_ANY, loop:1, volume: 1});
         }
         this.cuedWinner = false;
@@ -179,6 +175,9 @@ deus.ouroboros = (function($, createjs, undefined) {
 
       //this.bitmap.updateCache();
 
+    },
+    setTime: function(data) {
+      this.time = data;
     },
     moveRelative: function(vote) {
       this.saveVotes(vote);

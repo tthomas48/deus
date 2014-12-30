@@ -1,0 +1,5 @@
+<script>
+  $.get("/leaderboard", {}, function(responseText, textStatus) {
+      $('.all-view').html($(responseText));
+      });
+</script>

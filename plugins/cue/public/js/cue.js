@@ -1,3 +1,4 @@
+var deus = deus || {};
 var intervals = [];
 
 function addInterval(callback, timer) {
@@ -5,7 +6,7 @@ function addInterval(callback, timer) {
   intervals.push(interval);
   return interval;
 }
-(function(window, document, $, undefined) {
+deus.cue = (function(window, document, $, undefined) {
   'use strict';
   var Cue = function Cue(cockpit) {
     console.log("Loading Cue plugin.");
@@ -28,37 +29,26 @@ function addInterval(callback, timer) {
   Cue.prototype.listen = function listen() {
     var cue = this;
     this.cockpit.socket.on('cue.status', function(data) {
-      window.console.log(data);
-      cue.enabled = data.enabled;
-      cue.previous = cue.cue;
-      cue.cue = data.cue;
-      cue.go = data.go;
-      cue.updateUI(data.view);
+      cue.updateCue(data);
     });
-    $(document).keyup(function(ev) {
-      if(ev.keyCode == 32) {
-        var pausables = $(".pausable");
-        if(pausables.length == 1) {
-          var pausable = pausables[0];
-          if(pausable.paused) {
-            pausable.play();
-          } else {
-            pausable.pause();
-          }
-        }
-      }
-    });
+  };
+  Cue.prototype.updateCue = function(data) {
+    var cue = this;
+    cue.enabled = data.enabled;
+    cue.previous = cue.cue;
+    cue.cue = data.cue;
+    cue.go = data.go;
+    cue.updateUI(data.view);
   };
   Cue.prototype.updateUI = function updateUI(view) {
     if(this.cue.enabled === false) {
       $('#cue-view').remove();
       return;
     }
-    if (this.previous == this.cue) {
+    if(this.previous == this.cue) {
       window.console.log("Skipping reload of current cue");
       return;
     }
-    
     if(this.go === 'go') {
       this.clearScreen();
     }
@@ -68,16 +58,15 @@ function addInterval(callback, timer) {
       cache: false
     });
     $('span.cue').html(this.cue);
-    
     var i = 0;
     for(i = 0; i < intervals.length; i++) {
       clearInterval(intervals[i]);
     }
-    
     $.get("/plugin/cue/" + view.view, {}, function(responseText, textStatus) {
-      var output = Mustache.render(responseText, view);      
+      var output = Mustache.render(responseText, view);
       $('.' + view.screen + '-view').html($(output));
     });
   };
   window.Olympus.plugins.push(Cue);
+  return Cue;
 }(window, document, jQuery));

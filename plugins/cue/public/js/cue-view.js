@@ -2,10 +2,11 @@ var deus = deus || {};
 deus.sprite = (function($, createjs, undefined) {
   "use strict";
 
-  function Sprite(ouroboros, position, imagePath, soundPath) {
+  function Sprite(ouroboros, position, totalOptions, imagePath, soundPath) {
     this.bitmap = undefined;
     
     this.position = position;
+    this.totalOptions = totalOptions;
     this.imagePath = imagePath;
     this.soundPath = soundPath;
     this.ouroborus = ouroboros;
@@ -21,8 +22,8 @@ deus.sprite = (function($, createjs, undefined) {
       
       if (this.imagePath) {
         this.bitmap = new createjs.Bitmap("/plugin/cue/images/" + this.imagePath);
-        this.bitmap.scaleX = 0.75;
-        this.bitmap.scaleY = 0.75;
+        this.bitmap.scaleX = this.totalOptions == 3 ? 0.75 : 1;
+        this.bitmap.scaleY = this.totalOptions == 3 ? 0.75 : 1;
         stage.addChild(this.bitmap);
       }
 
@@ -35,8 +36,17 @@ deus.sprite = (function($, createjs, undefined) {
         else if (that.position === 2) {
           that.bitmap.x = stage.canvas.width - bounds.width - 50;
         }
+        else if (that.position === 3) {
+          that.bitmap.x = (stage.canvas.width - bounds.width) / 2;
+          that.bitmap.y = 0;
+        }
         // 150 is the amount from the top, that the stage starts
-        that.bitmap.y = (stage.canvas.height - bounds.height + 150) / 2;
+        // 
+        if (that.totalOptions == 3 && (that.position == 1 || that.position == 2)) {
+          that.bitmap.y = (stage.canvas.height - bounds.height) / 2; 
+        }
+
+        //that.bitmap.y = (stage.canvas.height - bounds.height) / 2;
       };
     },
     draw : function(stage) {

@@ -17,6 +17,8 @@
   	<tr>
   	  <th>Cue</th>
           <th>Phone</th>
+          <th>Timeout</th>
+          <th>Screen</th>
           <th>State</th>
   	  <th>&nbsp;</th>
   	</tr>
@@ -25,6 +27,8 @@
     <tr ng-repeat='event in events'>
       <td><a href="/events/{{event.shortname}}" target="_results">{{event.name}}</a></td>
       <td>{{event.phonenumber}}</td>
+      <td>{{event.timer}}</td>
+      <td>{{event.screen}}</td>
       <td>
         <div class="onoffswitch">
           <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onoff-{{event._id}}" ng-change="toggleState(event)" ng-model="event.state" ng-true-value="on" ng-false-value="off"/>

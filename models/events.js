@@ -6,7 +6,7 @@ var config = require('../config'),
   // Local caches for event and voting information (will be periodically flushed)    
   ,
   eventsCache = {}, secondsToInvalidateEvents = config.couchdb.secondsToInvalidateEvents,
-  votesCache = {}, timers = {}, votingEvents = {}, msToFlushVotes = config.couchdb.msToFlushVotes,
+  votesCache = {}, timers = {}, msToFlushVotes = config.couchdb.msToFlushVotes,
   getDb = function(cookie) {
     var params = {};
     if(cookie) {
@@ -20,7 +20,7 @@ var config = require('../config'),
   // Look up the phone number, get the document's ID, then lookup the full document (including votes)
   , findByPhonenumber = exports.findByPhonenumber = function(phonenumber, callback) {
     findBy('byPhonenumber', {
-      key: phonenumber
+      key: [phonenumber, 'on']
     }, function(err, event) {
       if(err) {
         callback(err, null);
@@ -131,18 +131,26 @@ var config = require('../config'),
             phonenumber: from,
             votes: 1
           };
+        } else {
+          if (!show.winners || show.winners.legnth == 0) {
+            // returning voter give 'em a bonus
+            voter.votes = Number(voter.votes) + Number(config.deus.returningVotes);
+          }
+        }
+        if (!voter.shows) {
+          voter.shows = [];
+        }
+        
+        if (voter.shows.indexOf(show._id) < 0) {
+          voter.shows.push(show._id);
         }
         voters.save(getDb(), voter, function() {
           console.log("Inserting " + voter.votes + " votes.");
-          var votingEvent = votingEvents[event._id];
-          if(!votingEvent) {
-            return;
-          }
+          var seconds = new Date().getTime();
           var i;
           for(i = 0; i < voter.votes; i++) {
             var voteDoc = {
-              _id: 'vote:' + event._id + ':' + from + ":" + votingEvent.startSeconds + ":" + i,
-              voteGroup: event._id + ':' + from + ":" + votingEvent.startSeconds,
+              _id: 'vote:' + event._id + ':' + from + ":" + show._id + ":" + i,
               type: 'vote',
               show_id: show._id,
               event_id: event._id,
@@ -152,16 +160,18 @@ var config = require('../config'),
               seconds: new Date().getTime(),
               phonenumber: from
             };
-            votesCache[voteDoc.voteGroup] = voteDoc;
+            votesCache[voteDoc._id] = voteDoc;
             io.sockets.in(event._id).emit('vote', vote);
           }
-          // zero out the votes
+          // figure out how to give a second visit bonus
+          /*
           if(voter.votes > 1) {
             voters.findByPhonenumber(from, function(err, voter) {
               voter.votes = 1;
               voters.save(getDb(), voter, function(err) {});
             });
           }
+          */
         });
       });
     });
@@ -175,9 +185,10 @@ var config = require('../config'),
         if(err) {
           console.log("Failed to save votes, popping them back on the cache");
           votesToSave.forEach(function(v) {
-            votesCache[v.voteGroup] = v;
+            votesCache[v._id] = v;
           });
         } else {
+          var notified = [];
           // loop through the response to detect votes that were rejected as duplicates
           for(var i in votesToSave) {
             if(body[i].error) {
@@ -189,11 +200,15 @@ var config = require('../config'),
                 Body: 'Sorry, the gods will only hear you once per prayer.'
               });
             } else {
-              client.sendSms({
-                To: votesToSave[i].phonenumber,
-                From: votesToSave[i].event_phonenumber,
-                Body: 'The gods have heard your voice.'
-              });
+              if (notified.indexOf(votesToSave[i].phonenumber) < 0) {
+                
+                client.sendSms({
+                  To: votesToSave[i].phonenumber,
+                  From: votesToSave[i].event_phonenumber,
+                  Body: 'The gods have heard your voice.'
+                });
+                notified.push(votesToSave[i].phonenumber);
+              }
             }
           }
         }
@@ -205,21 +220,43 @@ var config = require('../config'),
       return;
     }
     if(event.state == 'on' && event.timer > 0) {
-      var votingEvent = {
-        type: 'votingEvent',
-        event_id: event._id,
-        startSeconds: new Date().getTime(),
-      };
-      votingEvents[event._id] = votingEvent;
-      console.log('starting timer');
-      io.sockets. in (event._id).emit('stateUpdate', {
-        state: 'on',
-        id: event._id,
-        rev: event.rev
+      // TODO: add notification of options to all voters
+      shows.findCurrent(function(err, show) {
+        if (err || !show) {
+          console.log("Couldn't notify voters without show.");
+          return;
+        }
+        
+        var msg ="", j;
+        for (j = 0; j < event.voteoptions.length; j++) {
+          var option = event.voteoptions[j];
+          msg += option.id + ": " + option.name + "\n";
+        }
+// 
+        voters.list(cookie, function (err, voters) {
+          var i;
+          for (i = 0; i < voters.length; i++) {
+            var voter = voters[i];
+            if (voter.shows && voter.shows.indexOf(show._id) >= 0) {
+              //console.log("Notifying " + voter.phonenumber);
+              client.sendSms({
+                To: voter.phonenumber,
+                From: event.phonenumber,
+                Body: msg
+              });
+            }
+          }
+        });
+        console.log('starting timer');
+        io.sockets. in (event._id).emit('stateUpdate', {
+          state: 'on',
+          id: event._id,
+          rev: event.rev
+        });
+        updateTimer(cookie, event, event.timer);
       });
-      updateTimer(cookie, event, event.timer, votingEvent);
     }
-  }, updateTimer = exports.updateTimer = function(cookie, event, expiration, votingEvent) {
+  }, updateTimer = exports.updateTimer = function(cookie, event, expiration) {
     shows.findCurrent(function(err, show) {
       if (err || !show) {
         console.log("Couldn't save vote without show.");
@@ -230,27 +267,28 @@ var config = require('../config'),
       get(cookie, event._id, function(err, body) {
         io.sockets. in (body._id).emit('timer', expiration);
         if(expiration > 0 && body.state == 'on') {
-          timers[body._id] = setTimeout(updateTimer.bind(null, cookie, body, expiration, votingEvent), 1000);
+          console.log("Timer: " + expiration);
+          timers[body._id] = setTimeout(updateTimer.bind(null, cookie, body, expiration), 1000);
         } else {
+          console.log("Deleting timer");
           delete timers[body._id];
-          delete votingEvents[body._id];
-          votingEvent.endSeconds = new Date().getTime();
 
           // here we should set the show's winners
-          updateVotes(cookie, show, event._id, function() {
-            getDb(cookie).insert(votingEvent, function() {
-              body.state = 'off';
-              save(cookie, body, function(err, savedBody) {
-                if(savedBody && savedBody.ok) {
-                  io.sockets. in (event._id).emit('stateUpdate', {
-                    state: 'off',
-                    id: savedBody.id,
-                    rev: savedBody.rev
-                  });
-                } else {
-                  console.log(err);
-                }
-              });
+          updateVotes(cookie, show, event._id, function(err) {
+            if (err) {
+              console.log(err);
+            }
+            body.state = 'off';
+            save(cookie, body, function(err, savedBody) {
+              if(savedBody && savedBody.ok) {
+                io.sockets. in (event._id).emit('stateUpdate', {
+                  state: 'off',
+                  id: savedBody.id,
+                  rev: savedBody.rev
+                });
+              } else {
+                console.log(err);
+              }
             });
           });
         }
@@ -272,7 +310,7 @@ var config = require('../config'),
       }
       // TODO: This needs to be the cue number, not the event ID. How to get???
       if (!show.cues) {
-        log.console("Cannot figure out what cue to save these winners to.");
+        callback.call(undefined, "Cannot figure out what cue to save these winners to.", {ok: false});
         return;
       }
       var cues = show.cues;
@@ -281,6 +319,10 @@ var config = require('../config'),
       shows.save(cookie, show, function() {
         console.log("Saved winners");
       });
+      
+      if (callback()) {
+        callback.call(undefined, undefined, {ok: true});
+      }
     });
   }, invalidateEvents = function() {
     eventsCache = {};

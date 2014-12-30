@@ -12,6 +12,21 @@ app.directive('cue', function () {
           '</span>'
     };
 });
+app.filter('regex', function() {
+  return function(input, field, regexField) {
+      var out = [];
+      if (!input) {
+        return;
+      }
+      var patt = new RegExp(this[regexField], "g");      
+      
+      for (var i = 0; i < input.length; i++){
+          if(patt.test(input[i][field]))
+              out.push(input[i]);
+      }      
+    return out;
+  };
+});
 app.config(function($routeProvider) {
   $routeProvider.when('/', {
     templateUrl: 'event-list.html',
@@ -19,6 +34,9 @@ app.config(function($routeProvider) {
   }).when('/voters', {
     templateUrl: 'voter-list.html',
     controller: 'VoterListCtrl'
+  }).when('/performances', {
+    templateUrl: 'performance-list.html',
+    controller: 'PerformanceListCtrl'    
   }).when('/manage', {
     templateUrl: 'manage.html',
     controller: 'CueMapCtrl'    
@@ -128,6 +146,7 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
       }
     }
     data.cueName = currentCue.name;
+    data.voting = currentCue.voting;
     data.nodes = [];
     for(i = 0; i < currentCue.voteoptions.length; i++) {
       var option = currentCue.voteoptions[i];
@@ -218,7 +237,6 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
       $scope.currentShow = data;
     });    
   });
-  
 });
 app.controller('EventListCtrl', function($scope, $location, SimulatorService, EventService) {
   var socket = io.connect();
@@ -274,7 +292,12 @@ app.controller('EventListCtrl', function($scope, $location, SimulatorService, Ev
       phonenumber: event.phonenumber,
       state: 'off',
       timer: event.timer,
-      voteoptions: event.voteoptions
+      voteoptions: event.voteoptions,
+      screen: event.screen,      
+      voting: event.voting,
+      stage: event.stage,
+      view: event.view
+      
     };
   };
   $scope.toggleState = function(event) {
@@ -330,7 +353,34 @@ app.controller('EventListCtrl', function($scope, $location, SimulatorService, Ev
     });
   };
 });
-app.controller('VoterListCtrl', function($scope, $location, VoterService) {
+app.controller('PerformanceListCtrl', function($scope, $location, ShowService) {
+  $scope.load = function() {
+    ShowService.query(function(shows) {
+      $scope.shows = shows;
+
+      var i;
+      for (i = 0; i < shows.length; i++) {
+        if (shows[i]._id == $scope.currentShowId) {
+          $scope.currentShow = shows[i];
+        }
+      }
+    });
+  };
+  ShowService.query(function(shows) {
+    $scope.shows = shows;
+
+    $scope.currentShow = shows[0];
+    $scope.currentShowId = shows[0]._id;
+    var i;
+    for (i = 0; i < shows.length; i++) {
+      if (shows[i].current) {
+        $scope.currentShow = shows[i];
+        $scope.currentShowId = shows[i]._id;
+      }
+    }
+  });
+});
+app.controller('VoterListCtrl', function($scope, $location, $filter, VoterService, ShowService) {
   var socket = io.connect();
 
   function init() {
@@ -351,9 +401,64 @@ app.controller('VoterListCtrl', function($scope, $location, VoterService) {
       });
     });
   };
-  VoterService.query(function(voters) {
-    $scope.voters = voters;
-    init();
+  $scope.addVotes = function(votesToAdd) {
+    $scope.filtered.forEach(function(v, index) {
+      v.votes = Number(v.votes) + Number(votesToAdd);
+      v.$save();
+    });
+  };
+  $scope.setVotes = function(votesToSet) {
+    $scope.filtered.forEach(function(v, index) {
+      v.votes = Number(votesToSet);
+      v.$save();
+    });
+  };  
+  $scope.getData = function(voters, query) {
+    var filtered = $filter('regex').bind($scope)(voters, 'phonenumber', 'searchText');
+    
+    $scope.filtered = [];
+    if (filtered.length != voters.length ) {
+      $scope.filtered = filtered;
+    }
+  };
+  $scope.sort = function() {
+    $scope.voters.sort(function(a, b) {
+      return b.votes - a.votes;
+    });
+    
+  };
+  $scope.load = function() {
+    $scope.voters = [];
+    VoterService.query(function(voters) {      
+      var i;
+      for (i = 0; i < voters.length; i++) {
+        if (voters[i].shows && voters[i].shows.indexOf($scope.currentShow) >= 0) {
+          $scope.voters.push(voters[i]);
+        }
+      }
+      $scope.sort();
+    });    
+  };
+  ShowService.query(function(shows) {
+    $scope.shows = shows;
+    
+    $scope.currentShow = shows[0]._id;
+    var i;
+    for (i = 0; i < shows.length; i++) {
+      if (shows[i].current) {
+        $scope.currentShow = shows[i]._id;
+      }
+    }
+    VoterService.query(function(voters) {      
+      $scope.voters = [];
+      for (i = 0; i < voters.length; i++) {
+        if (voters[i].shows && voters[i].shows.indexOf($scope.currentShow) >= 0) {
+          $scope.voters.push(voters[i]);
+        }
+      }
+      $scope.sort();
+      init();
+    });    
   });
   $scope.editVoter = function(voter) {
     $scope.opts = ['on', 'off'];
@@ -383,6 +488,7 @@ app.controller('VoterListCtrl', function($scope, $location, VoterService) {
         }
       });
     }
+    $scope.sort();
   };
   $scope.delete = function() {
     $scope.voters.forEach(function(v, index) {

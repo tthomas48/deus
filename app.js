@@ -121,6 +121,8 @@ var routes = require('./routes')(io, plugins);
 
 app.get ('/sound-test',    routes.getSoundTest);
 app.get ('/hud',    routes.getHud);
+app.get ('/oracle',    routes.getOracle);
+app.get ('/leaderboard',    routes.getLeaderboard);
 
 app.get ('/events/:shortname',    routes.getEvent);
 app.get ('/e/:shortname',    routes.getEventSnippet);

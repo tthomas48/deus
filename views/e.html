@@ -1,12 +1,12 @@
 
 <div class="container help">
        
-	<div>
+	<!--div>
 		<span class="">SMS or Call</span> <span
 			class="phone"> {{ phonenumber }} </span> <span
 			class=""> to Vote!</span>
-	</div>
-	<h2 class="{{ state }} countdown"></h2>
+	</div-->
+	<!--h2 class="{{ state }} countdown"></h2-->
 	<!--div style="min-width: 400px; margin: 0; max-width: 95%;">
 		<div id="chart"
 			style="min-width: 400px; height: 500px; margin: 0 auto;"></div>
@@ -36,11 +36,14 @@
   var closedMessage = 'Voting is closed';
   socket.on('timer', function(data) {
     console.log('Timer update', data);
+    if (data == 5) {
+      // we stop animation at 5, but keep accepting votes.
+    }
     if (data == 0) {
-      $('.countdown').html(closedMessage);
+      //$('.countdown').html(closedMessage);
       return;
     }
-    $('.countdown').html("Voting ends in " + data + " seconds");
+    //$('.countdown').html("Voting ends in " + data + " seconds");
   });
   socket.on('/events/stateUpdate', function(data) {
     if(data.state == 'off') {

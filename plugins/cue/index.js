@@ -58,7 +58,7 @@ function cue(name, deps) {
         console.log("No current show found:" + err);
         return;
       }
-      if(show.cues.indexOf(cueNumber) === -1) {
+      if(show.cues && show.cues.indexOf(cueNumber) === -1) {
         show.cues.push(String(cueNumber));
         shows.save(undefined, show, function(err, show) {
         });
@@ -140,7 +140,7 @@ function cue(name, deps) {
           return;
         }
         var cues = show.cues;
-        if (cues.length > 0) {
+        if (cues && cues.length > 0) {
           cueNumber = cues[cues.length - 1];
         }
         emitStatus(deps);
@@ -173,6 +173,18 @@ function cue(name, deps) {
       setCue(String(cmd.cue));
       emitStatus(deps, 'go');
     });
+    socket.on('/cue/manual', function(cmd) {
+      events.findBy('all', {key: [cmd.event_id], reduce:false}, function(err, event) {
+        deps.io.sockets.emit('cue.status', {
+          'enabled': true,
+          'cue': -1,
+          'go': 'go',          
+          'view': event,
+          'screen': cmd.screen
+        });
+      });
+    });
+    
     socket.on('/cue/vote', function(cmd) {
       console.log("cue vote", cmd);
       emitStatus(deps, 'vote');

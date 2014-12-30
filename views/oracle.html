@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width = device-width, initial-scale = 0.8"/>
+  <meta charset="utf-8">
+  <title>{{ name }}</title>
+  <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
+  <link href="/stylesheets/bootstrap-responsive.min.css" rel="stylesheet">
+  <link href="/stylesheets/style.css" rel="stylesheet">
+  <link rel="stylesheet" href="/stylesheets/animations.css">{{#styles}}
+  <link rel="stylesheet" href="{{.}}">{{/styles}}
+  <style>
+    body {
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+    }
+    #backvid {
+      top: 0;
+      left: 0;
+      height: 1200px;
+      width: 1600px;
+      position: absolute;
+      z-index: 0;
+      pointer-events: none;
+      object-fit: fill;
+    }
+    #frontvid {
+      top: 0;
+      left: 0;
+      height: 1200px;
+      width: 1600px;
+      position: absolute;
+      z-index: 50;
+      pointer-events: none;
+      object-fit: fill;      
+    }
+    #hud {
+      display: none;
+    }
+    header {
+      position: absolute;
+      z-index: 50;
+      right: 50px;
+    }
+    .oracle-view, .all-view {
+      z-index: 50;
+      position: absolute;
+      top: 0px;
+      left: 0;
+      top: 0;
+      padding: 0 0 0 0;
+      margin: 0 0 0 0;
+    }
+  </style>
+</head>
+
+<body>
+  
+  <div class="oracle-view all-view">
+    
+  </div>
+  <video loop id="backvid" autoplay>
+     <source src="http://162.221.181.72:3000/plugin/cue/images/WhisperSmoke.mov" type="video/mp4"/>
+  </video>  
+  <!--img src="/img/frame2.png" id="frame" /-->
+
+
+  <script type="text/javascript" src="/socket.io/socket.io.js">
+  </script>
+  <script src="/javascripts/mustache.js">
+  </script>
+  <script src="/javascripts/jquery.js">
+  </script>
+  <script src="/javascripts/createjs-2013.12.12.min.js">
+  </script>
+  <script type="text/javascript" src="/javascripts/olympus.js">
+  </script>
+  {{#scripts}}
+  <script type="text/javascript" src="{{.}}">
+  </script>
+  {{/scripts}}
+  <script>
+      var olympus = new Olympus();
+    
+    {{#eventOverride}}
+      var socket = io.connect();
+      socket.emit('/cue/manual', {
+        event_id: '{{eventOverride}}',
+        screen: 'oracle'
+      });
+    {{/eventOverride}}    
+  </script>
+
+</body>
+
+</html>

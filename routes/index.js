@@ -65,6 +65,16 @@ var smsify = function(str) {
       scripts: plugins.scripts,
       styles: plugins.styles
     });
+  }, getLeaderboard = exports.getLeaderboard = function(req, res) {
+    res.render('leaderboard', {
+      scripts: plugins.scripts,
+      styles: plugins.styles
+    });    
+  }, getOracle = exports.getOracle = function(req, res) {
+    res.render('oracle', {
+      scripts: plugins.scripts,
+      styles: plugins.styles
+    });    
   }, renderEvent = function(req, res, view) {
     events.findBy('all', {
       key: ['event:' + req.params.shortname],
@@ -107,19 +117,10 @@ var smsify = function(str) {
             console.log(err);
             res.send(500, err);
           } else {
-            res.render('event', {
-              id: event._id,
-              name: event.name,
-              shortname: event.shortname,
-              state: event.state,
-              timer: event.timer,
-              phonenumber: formatPhone(event.phonenumber),
-              voteoptions: JSON.stringify(event.voteoptions),
+            res.render(event.screen, {
               scripts: plugins.scripts,
               styles: plugins.styles,
-              partials: {
-                e: 'e'
-              }
+              eventOverride: event._id
             });
           }
         });
@@ -327,8 +328,24 @@ var smsify = function(str) {
     }
   }, voteVoice = exports.voteVoice = function(request, response) {
     if(twilio.validateExpressRequest(request, config.twilio.key) || config.twilio.disableSigCheck) {
-      response.header('Content-Type', 'text/xml');
-      response.render('voice');
+        var msg = "";
+        events.findByPhonenumber(request.param('To'), function(err, event) {
+          if(err || !event || event.state == "off") {
+            console.log(err);
+            msg = "<Say>There aren\'t prophecies or prayers to answer at this time. Keep this tool ready to serve the gods as they instruct.</Say>"
+          } else {
+            msg = '<Say>After the tone use your phone\'s keypad to vote.</Say><Pause length="1"/>';
+            for (j = 0; j < event.voteoptions.length; j++) {
+              var option = event.voteoptions[j];
+              msg += "<Say>Press " + option.id + " for " + option.name + "</Say><Pause length=\"1\"/>";
+            }
+            msg += "<Say>Press pound when you are done.</Say>";
+          }
+          response.header('Content-Type', 'text/xml');
+          response.render('voice', {message: msg});
+          
+          
+        });
     } else {
       response.status(403).render('forbidden');
     }

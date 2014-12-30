@@ -21,7 +21,7 @@
     elements.push(new deus.stage.DualStage());
     elements.push(ouroborus);
     {{#voteoptions}}
-    elements.push(new deus.sprite.Sprite(ouroborus, elements.length - 1, '{{img}}', '{{snd}}'));
+    elements.push(new deus.sprite.Sprite(ouroborus, elements.length - 1, 2, '{{img}}', '{{snd}}'));
     {{/voteoptions}}
     var i;
     for(i = 0; i < elements.length; i++) {
