@@ -60,16 +60,13 @@ deus.ouroboros = (function($, createjs, undefined) {
       };
 
       var socket = io.connect();
-      socket.on('timer', function(data) {
-        console.log("In here", data);
-        that.time = data;
-      });
+      socket.on('timer', that.setTime.bind(that));
       socket.on('vote', that.moveRelative.bind(that));
 
       socket.on('cue.status', function(data) {
         if (data.go) {
+          socket.removeListener('timer', that.setTime.bind(that));
           socket.removeListener('vote', that.moveRelative.bind(that));
-          socket.removeListener('timer', setTime);
           if (that.transitionInstance) {
 
             that.transitionInstance.stop();
@@ -178,6 +175,9 @@ deus.ouroboros = (function($, createjs, undefined) {
 
       //this.bitmap.updateCache();
 
+    },
+    setTime: function(data) {
+      this.time = data;
     },
     moveRelative: function(vote) {
       this.saveVotes(vote);
