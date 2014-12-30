@@ -34,7 +34,7 @@ deus.ouroboros = (function($, createjs, undefined) {
       $('#cue-view').show();
       $('canvas').show();
       
-      this.bitmap = new createjs.Bitmap("/plugin/cue/images/OuroborosGold.png");
+      this.bitmap = new createjs.Bitmap("/plugin/cue/images/Ouroboros.png");
       this.bitmap.scaleX = this.cues.length == 3 ? 0.5 : 0.75;
       this.bitmap.scaleY = this.cues.length == 3 ? 0.5 : 0.75;
       stage.addChild(this.bitmap);
