@@ -134,6 +134,15 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
     $scope.tree = branches;
     //init();
   });
+  $scope.changeEventState = function(data) {
+    console.log($scope.cueState)
+    console.log(data);
+    if ($scope.cueState[data] == 'on') {
+      socket.emit('/cue/set', { cue: data, go: 'vote'});
+    } else {
+      socket.emit('/cue/novote', { cue: data, go: 'vote'});
+    }
+  };
   $scope.change = function(data) {
     //window.console.log($filter('json')($scope.tree));
     var i, j;
@@ -228,6 +237,7 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
   CurrentShowService.get(function(data) {
       $scope.currentShow = data;
   });
+  $scope.cueState = [];
   socket.on('connect', function() {
     console.log("Connected, lets sign-up for updates about this show");
   });
