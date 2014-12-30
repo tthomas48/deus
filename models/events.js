@@ -238,7 +238,7 @@ var config = require('../config'),
           for (i = 0; i < voters.length; i++) {
             var voter = voters[i];
             if (voter.shows && voter.shows.indexOf(show._id) >= 0) {
-              console.log("Notifying " + voter.phonenumber);
+              //console.log("Notifying " + voter.phonenumber);
               client.sendSms({
                 To: voter.phonenumber,
                 From: event.phonenumber,

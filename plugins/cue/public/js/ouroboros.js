@@ -59,12 +59,11 @@ deus.ouroboros = (function($, createjs, undefined) {
         that.loaded = true;
       };
 
-      var setTime = function(data) {
-        that.time = data;
-      };
-      
       var socket = io.connect();
-      socket.on('timer', setTime);
+      socket.on('timer', function(data) {
+        console.log("In here", data);
+        that.time = data;
+      });
       socket.on('vote', that.moveRelative.bind(that));
 
       socket.on('cue.status', function(data) {
@@ -109,7 +108,6 @@ deus.ouroboros = (function($, createjs, undefined) {
       if (!this.loaded) {
         return;
       }
-      
       if (this.time > 5 || this.spinning) {
         if (!this.transitionInstance && this.time > 5) {
             this.transitionInstance = createjs.Sound.play("transition", {interrupt: createjs.Sound.INTERRUPT_ANY, loop:1, volume: 1});
