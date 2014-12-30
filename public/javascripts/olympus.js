@@ -45,6 +45,7 @@
           if (stage) {
             stage.removeAllChildren();
             stage.update();      
+            
           }
         });
     };
