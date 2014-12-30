@@ -25,12 +25,12 @@ var config = require('../config'),
     var newPrayerData = {'athena': 0, 'apollo': 0, 'hera': 0, 'zeus': 0};
     return newPrayerData;
   },
-  getPrayerId = function(show_id, deity_name) {
-    return 'prayer:' + show_id + '-' + deity_name;
+  getPrayerCountId = function(show_id, deity_name) {
+    return 'prayerCount:' + show_id + '-' + deity_name;
   },
   getCountForDeity = exports.getCountForDeity = function(deity, show_id, callback) {
-    prayerId = getPrayerId(show_id, deity);
-    getDb().view('event', 'prayers', {
+    prayerId = getPrayerCountId(show_id, deity);
+    getDb().view('event', 'prayerCounts', {
         startkey: [prayerId],
         endkey: [prayerId, {}, {}],
         //group_level: 2
@@ -62,7 +62,7 @@ var config = require('../config'),
       } else {
         //console.log("found current show: "+JSON.stringify(show));
         // retrieve current count for this deity by show ID
-        getDb().view('event', 'prayersByShow', {
+        getDb().view('event', 'prayerCountsByShow', {
             startkey: show.id,
             endkey: show.id,
             //group_level: 2
@@ -88,22 +88,22 @@ var config = require('../config'),
       }
     }
   )},
-  save = exports.save = function(cookie, prayer, callback) {
-    if(!prayer._id) {
-      if(!prayer.show_id) {
-          callback("Can't save Prayer without ShowID", null);
+  saveCount = exports.saveCount = function(cookie, prayerCount, callback) {
+    if(!prayerCount._id) {
+      if(!prayerCount.show_id) {
+          callback("Can't save PrayerCount without ShowID", null);
           return;
-      } else if(!prayer.deity_name) {
-          callback("Can't save Prayer without DeityName", null);
+      } else if(!prayerCount.deity_name) {
+          callback("Can't save PrayerCount without DeityName", null);
           return;
       }
-      prayer._id = getPrayerId(prayer.show_id, prayer.deity_name);
-      console.log("Setting prayer _id to: "+prayer._id);
+      prayerCount._id = getPrayerCountId(prayerCount.show_id, prayerCount.deity_name);
+      console.log("Setting prayerCount._id to: "+prayerCount._id);
     }
-    if(!prayer.type) {
-      prayer.type = 'prayer'
+    if(!prayerCount.type) {
+      prayerCount.type = 'prayerCount'
     }
-    getDb(cookie).insert(prayer, function(err, body) {
+    getDb(cookie).insert(prayerCount, function(err, body) {
       callback(err, body);
     });
   },

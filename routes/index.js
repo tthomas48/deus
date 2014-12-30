@@ -337,6 +337,8 @@ var smsify = function(str) {
               if(err) {
                 // [validation] if there is no current show, ignore the incoming message
                 console.log("No current show, can't process prayers. Detail: " + err);
+                // silently fail for the user
+                response.send('<Response></Response>');
               } else {
                 //#TODO: [version 2]
                 //    1. check database for existing conversation with this user; create one if non exists
@@ -365,7 +367,7 @@ var smsify = function(str) {
                   }
                   // save updated counters
                   console.log("saving now prayer count for "+deity_name+": "+JSON.stringify(prayer_count));
-                  prayers.save(null, prayer_count, function(err, prayer) {
+                  prayers.saveCount(null, prayer_count, function(err, prayer) {
                     if(err) {
                       console.log("Problem saving new prayer count: "+err);
                     }
@@ -392,7 +394,6 @@ var smsify = function(str) {
                   var deity_name_capitalized = deity_name.charAt(0).toUpperCase() + deity_name.slice(1).toLowerCase();
                   var deity_response = deity_name_capitalized + ' hears your prayer';
                   response.send('<Response><Sms>'+deity_response+'</Sms></Response>');
-                  //#TODO: write (olympus.js)  like the clearOlympus handler, new handler for /environmentControls
                   
                 });//EO(get prayer count for deity)
               }//EO(found current show)
