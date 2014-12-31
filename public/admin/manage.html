@@ -22,7 +22,7 @@
             <a class="btn btn-success btn-xs" ng-click="setCue(data.id)">Jump</a>
             
             <div class="onoffswitch" ng-show="data.voting">
-              <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onoff-{{data.cue}}" ng-true-value="on" ng-false-value="off" ng-change="changeEventState(data.id)" ng-model="cueState[data.id]" />
+              <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onoff-{{data.cue}}" ng-true-value="on" ng-false-value="off" ng-change="changeEventState(data.id)" ng-model="cueState[data.id]" cue-id="{{data.id}}" />
               <label class="onoffswitch-label" for="onoff-{{data.cue}}">
                 <span class="onoffswitch-inner"></span>
                 <span class="onoffswitch-switch"></span>
@@ -78,10 +78,12 @@
     toggleTree(link);
   })
   
-  socket.on('stateUpdate', function(data) {
-    console.log("State update", data);
-    $('#onoff-' + data.id.replace(':', '\\:')).prop('checked', data.state == 'on' ? true : false);
-  });
+//   socket.on('stateUpdate', function(data) {
+//     console.log("State update", data);
+//     cueState[data.id]
+//     $('#onoff-' + data.id.replace(':', '\\:')).prop('checked', data.state == 'on' ? true : false);
+//     console.log($('#onoff-' + data.id.replace(':', '\\:')).prop('checked'));
+//   });
 
 //   socket.on('cue.status', function(data) {
     

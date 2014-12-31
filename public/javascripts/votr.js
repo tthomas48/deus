@@ -253,6 +253,14 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
       $scope.currentShow = data;
     });    
   });
+  socket.on('stateUpdate', function(data) {
+    console.log("State update", data);
+    var cueId = $('#onoff-' + data.id.replace(':', '\\:')).attr('cue-id');
+    $scope.cueState[cueId] = data.state;
+//     $('#onoff-' + data.id.replace(':', '\\:')).prop('checked', data.state == 'on' ? true : false);
+//     console.log($('#onoff-' + data.id.replace(':', '\\:')).prop('checked'));
+  });
+  
 });
 app.controller('EventListCtrl', function($scope, $location, SimulatorService, EventService) {
   var socket = io.connect();
