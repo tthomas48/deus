@@ -131,7 +131,7 @@ deus.ouroboros = (function($, createjs, undefined) {
         if (this.transitionInstance) {
           this.fadeOut(function () {
             if (this.enbiggened) {
-              if (this.oneVotes > this.twoVotes) {
+              if (this.oneVotes >= this.twoVotes) {
                 ouroborus.filter([
 		              new createjs.ColorFilter(5,0,0,1, 0,0,255,0)
 	              ]);
