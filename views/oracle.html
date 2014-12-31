@@ -110,9 +110,14 @@
         screen: 'hud'
       });
     {{/eventOverride}}
+    
     socket.on("/cue/playvideo", function(cmd) {
-      window.console.log("Got request to play video", cmd);
-      // don't forget to hook into this done message and clear both screens
+      window.console.log("Got request to play video", cmd.mov);
+      $('.oracle-view').html($('<video id="frontvid" autoplay><source src="http://162.221.181.72:3000/plugin/cue/images/' + cmd.mov + '" type="video/mp4"/></video>'));
+      $('#frontvid')[0].onended = function(e) {
+        window.console.log("Clearing screen.");
+        socket.emit('/clear', 'all');
+      };
     });
     
   </script>

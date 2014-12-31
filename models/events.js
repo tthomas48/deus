@@ -272,7 +272,7 @@ var config = require('../config'),
           delete timers[body._id];
 
           // here we should set the show's winners
-          updateVotes(cookie, show, event._id, function(err) {
+          updateVotes(cookie, show, event, function(err) {
             if (err) {
               console.log(err);
             }
@@ -294,31 +294,24 @@ var config = require('../config'),
         }
       });
     });
-  }, updateVotes = exports.updateVotes = function(cookie, show, event_id, callback) {
+  }, updateVotes = exports.updateVotes = function(cookie, show, event, callback) {
+    var event_id = event._id;
     getDb(cookie).view('event', 'votesByShowEvent', {key: [show._id, event_id]}, function(err, body) {
       var rows = body.rows;
-      var results = {};
+      var results = {'1': 0, '2': 0, '3': 0};
       var i;
       for (i = 0; i < rows.length; i++) {
-        if (!results[rows[i].value]) {
-          results[rows[i].value] = 0;
-        }
         results[rows[i].value]++;
       }
       if (!show.winners) {
         show.winners = {};
       }
       
-      var max = Math.max(results['1'], results['2'], 0);
-      if (results.length === 3) {
-        max = Math.max(results['1'], results['2'], results['3'], 0);
-      }
-        
-      // can you tell I'm sleepy?
-      console.log(results, max);
+      var max = Math.max(results['1'], results['2'], results['3'], 0);
+      
       if (max === 0 || results['1'] == max) {
         if (event.voteoptions && event.voteoptions.length > 0 && event.voteoptions[0].mov) {
-          socket.emit("/cue/playvideo", {
+          io.sockets.emit("/cue/playvideo", {
             mov: event.voteoptions[0].mov
           })
         }
@@ -330,7 +323,7 @@ var config = require('../config'),
           })
         }
       }
-      else if (results.length === 3 && results['3'] == max) {
+      else if (results['3'] == max) {
         if (event.voteoptions && event.voteoptions.length > 0 && event.voteoptions[2].mov) {
           socket.emit("/cue/playvideo", {
             mov: event.voteoptions[2].mov
