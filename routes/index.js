@@ -12,6 +12,7 @@ module.exports = function(socketio, pluginInfo) {
   voters = require('../models/voters')(io);
   tree = require('../models/tree')(io);
   shows = require('../models/shows')(io);
+  prayers = require('../models/prayers')(io);
   return exports;
 };
 /**********************************************
@@ -305,9 +306,129 @@ var smsify = function(str) {
       var from = request.param('From');
       events.findByPhonenumber(to, function(err, event) {
         if(err) {
-          console.log(err);
-          // silently fail for the user
-          response.send('<Response></Response>');
+          // no active cue was found for this phone number
+          console.log("no active cues found, looking for keywords...");
+          var deity_name;
+          //#TODO: [enhancement] handle different To addresses?
+
+          //    1. check message body for keywords: if they match, increment counter and send response; if not, send error response
+          //#TODO: [enhancement] move these hard-coded keyword strings into DB-backed admin configuration settings
+          if(body.toLowerCase().indexOf('athena') > -1) {
+            deity_name = 'athena';
+          } else if(body.toLowerCase().indexOf('apollo') > -1) {
+            deity_name = 'apollo';
+          } else if(body.toLowerCase().indexOf('hera') > -1) {
+            deity_name = 'hera';
+          } else if(body.toLowerCase().indexOf('zeus') > -1) {
+            deity_name = 'zeus';
+          } else if(body.toLowerCase() == 'test') {
+            console.log("testing...");
+            prayers.getPrayerCounts(function(err, data) {
+              if(err) {
+                console.log("Error getting prayer counts: "+err);
+              } else {
+                console.log("prayer count data is: " + JSON.stringify(data));
+              }
+            });
+          }
+          if(deity_name) {
+            console.log("found keywords for: "+deity_name);
+            shows.findCurrent(function(err, show) {
+              if(err) {
+                // [validation] if there is no current show, ignore the incoming message
+                console.log("No current show, can't process prayers. Detail: " + err);
+                // silently fail for the user
+                response.send('<Response></Response>');
+              } else {
+                //#TODO: [version 2]
+                //    1. check database for existing conversation with this user; create one if non exists
+                //    2. WHEN checking message body for keywords: 
+                //        if they match THE NEXT STEP, 
+                //            increment CONVERSATION STEP
+                //            if CONVERSATION END
+                //                increment counters, trigger events, etc.
+                //            send response
+                //        if not, send error response
+
+                //console.log("found current show: "+JSON.stringify(show));
+                
+                prayers.getPrayer(from, show.id, deity_name, function(err, prayer) {
+                  if(err) {
+                    console.log("Problem querying prayer data: "+err);
+                    // silently fail for the user
+                    response.send('<Response></Response>');
+                  } else if(prayer) {
+                    console.log("user has already prayed to this deity during this show");
+                    // silently fail for the user
+                    response.send('<Response></Response>');
+                  } else {
+                    // record the user's prayer
+                    var prayer = {show_id: show.id, deity_name: deity_name, phonenumber: from};
+                    prayers.savePrayer(null, prayer, function(err, prayer) {
+                      if(err) {
+                        console.log("Problem saving new prayer record: "+err);
+                      } else {
+                        console.log("Saved new prayer record for "+deity_name);
+                      }
+                    });
+                
+                
+                    // retrieve current count for this deity by show ID
+                    prayers.getCountForDeity(deity_name, show.id, function(err, prayer_count) {
+                      console.log("prayer count for "+deity_name+" is: "+JSON.stringify(prayer_count));
+                      var trigger_update = false;
+                      var trigger_event = false;
+                      // increment counter, save updated result
+                      prayer_count.total_count++;
+                      prayer_count.current_count++;
+                      trigger_update = true;
+                      if(prayer_count.current_count >= prayers.trigger_threshhold(deity_name)) {
+                          prayer_count.current_count = 0;
+                          prayer_count.trigger_count++;
+                          trigger_event = true;
+                      }
+                      // save updated counters
+                      console.log("saving now prayer count for "+deity_name+": "+JSON.stringify(prayer_count));
+                      prayers.saveCount(null, prayer_count, function(err, prayer) {
+                        if(err) {
+                          console.log("Problem saving new prayer count: "+err);
+                        }
+                      });
+
+                      if(trigger_update) {
+                        // trigger new emission to update deity counters
+                        console.log("* triggering prayer count update...");
+                        // get current values for all the other deities as well, pass as data into signal/event
+                        prayers.getPrayerCounts(function(err, prayerCounts) {
+                          if(err) {
+                            console.log("Error getting prayer counts: "+err);
+                          } else {
+                            console.log("prayer count data is: " + JSON.stringify(prayerCounts));
+                            io.sockets.emit("/environmentControlsUpdate", prayerCounts);
+                          }
+                        });
+                      }
+                      if(trigger_event) {
+                        // trigger an environmental event for this deity
+                        console.log("* triggering prayer event for "+deity_name+"...");
+                        io.sockets.emit("/environmentControlsThreshold", deity_name);
+                      }
+                      var deity_name_capitalized = deity_name.charAt(0).toUpperCase() + deity_name.slice(1).toLowerCase();
+                      var deity_response = deity_name_capitalized + ' hears your prayer';
+                      response.send('<Response><Sms>'+deity_response+'</Sms></Response>');
+
+                    });//EO(get prayer count for deity)
+                  }//EO(no existing prayer found)
+                });//EO(get existing prayers for this user/deity/show)
+              }//EO(found current show)
+            });//EO(look for current show)
+          //EO(if deity_name was recognized)
+
+          } else {
+            console.log("No active cues for "+to+" and keywords did not match. Detail: "+err);
+            // silently fail for the user
+            response.send('<Response></Response>');
+          }
         } else if(event.state == "off") {
           response.send('<Response><Sms>Olympus listens. There aren\'t prophecies or prayers to answer at this time (too fast? too slow?). Keep this tool ready to serve the gods as they instruct.</Sms></Response>');
         } else if(!testint(body)) {

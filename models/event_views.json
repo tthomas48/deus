@@ -1,6 +1,6 @@
 {
     "_id": "_design/event", 
-    "_rev": "20-280dbd61ea33ddc0c5ce5063663b9fbe",
+    "_rev": "6-a65111cacae634227228d8e96be06456",
     "views": {
         "all": {
             "map": "function (doc) { if (doc.type == 'event'){ emit([doc._id], doc); } else if (doc.type == 'voter') { emit([doc._id], doc); } else if (doc.type == 'vote') { emit([doc.event_id, doc.vote, doc._id], doc); } }", 
@@ -27,6 +27,15 @@
         "currentShow": {
             "map": "function (doc) { if (doc.type == 'show' && doc.current == true) { emit(doc.current, {_id: doc._id, state: doc.state}) } } "
         },       
+        "prayers": {
+            "map": "function (doc) { if (doc.type == 'prayer') { emit(doc._id, doc); }}"
+        },
+        "prayerCounts": {
+            "map": "function (doc) { if (doc.type == 'prayerCount') { emit([doc._id], doc); }}"
+        },
+        "prayerCountsByShow": {
+            "map": "function (doc) { if (doc.type == 'prayerCount') { emit(doc.show_id, doc); }}"
+        },
         "votes": {
             "map": "function (doc) { if (doc.type == 'vote') { emit([doc.event_id, doc._id], doc.event_id); }}"
         }, 
