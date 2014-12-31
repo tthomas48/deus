@@ -43,10 +43,18 @@ server.listen(app.get('port'), function(){
 io.configure('production', function(){
   io.enable('browser client etag');
   io.set('log level', 1);
+  io.set('reconnection', true);
+  io.set('reconnectionDelay', 250);
+  io.set('reconnectionDelayMax', 1000);
+  io.set('timeout', 345600000);
 });
 
 io.configure('development', function(){
   io.set('log level', 1);
+  io.set('reconnection', true);
+  io.set('reconnectionDelay', 250);
+  io.set('reconnectionDelayMax', 1000);
+  io.set('timeout', 345600000);  
 });
 
 io.sockets.on('connection', function(socket) {

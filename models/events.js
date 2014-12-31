@@ -279,6 +279,7 @@ var config = require('../config'),
             body.state = 'off';
             save(cookie, body, function(err, savedBody) {
               if(savedBody && savedBody.ok) {
+                
                 // could we emit the video cue here?
                 io.sockets.emit('stateUpdate', {
                   state: 'off',
@@ -307,6 +308,36 @@ var config = require('../config'),
       if (!show.winners) {
         show.winners = {};
       }
+      
+      var max = Math.max(results['1'], results['2'], 0);
+      if (results.length === 3) {
+        max = Math.max(results['1'], results['2'], results['3'], 0);
+      }
+        
+      // can you tell I'm sleepy?
+      console.log(results, max);
+      if (max === 0 || results['1'] == max) {
+        if (event.voteoptions && event.voteoptions.length > 0 && event.voteoptions[0].mov) {
+          socket.emit("/cue/playvideo", {
+            mov: event.voteoptions[0].mov
+          })
+        }
+      }
+      else if (results['2'] == max) {
+        if (event.voteoptions && event.voteoptions.length > 0 && event.voteoptions[1].mov) {
+          socket.emit("/cue/playvideo", {
+            mov: event.voteoptions[1].mov
+          })
+        }
+      }
+      else if (results.length === 3 && results['3'] == max) {
+        if (event.voteoptions && event.voteoptions.length > 0 && event.voteoptions[2].mov) {
+          socket.emit("/cue/playvideo", {
+            mov: event.voteoptions[2].mov
+          })
+        }        
+      }
+      
       // TODO: This needs to be the cue number, not the event ID. How to get???
       if (!show.cues) {
         callback.call(undefined, "Cannot figure out what cue to save these winners to.", {ok: false});
@@ -315,6 +346,7 @@ var config = require('../config'),
       var cues = show.cues;
       var cueNumber = cues[cues.length - 1];
       show.winners[cueNumber] = results;
+      console.log(show.winners);
       shows.save(cookie, show, function() {
         console.log("Saved winners");
       });

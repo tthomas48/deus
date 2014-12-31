@@ -102,13 +102,18 @@
     
     var olympus = new Olympus();
     
+    var socket = io.connect();
+    
     {{#eventOverride}}
-      var socket = io.connect();
       socket.emit('/cue/manual', {
         event_id: '{{eventOverride}}',
         screen: 'hud'
       });
     {{/eventOverride}}
+    socket.on("/cue/playvideo", function(cmd) {
+      window.console.log("Got request to play video", cmd);
+      // don't forget to hook into this done message and clear both screens
+    });
     
   </script>
 
