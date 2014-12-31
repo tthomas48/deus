@@ -24,6 +24,8 @@ deus.ouroboros = (function($, createjs, undefined) {
     this.loaded = false;
     this.transitionInstance = undefined;
     this.cues = cues;
+    this.videoFade = false;
+    this.videoFadeParams = {};
     this.socket = io.connect();
   }
 
@@ -117,6 +119,10 @@ deus.ouroboros = (function($, createjs, undefined) {
       if (!this.loaded) {
         return;
       }
+      if (this.videoFade) {
+        this.doVideoFade(stage);
+        return;
+      }
       if (this.time > 5 || this.spinning) {
         if (!this.transitionInstance && this.time > 5) {
             this.transitionInstance = createjs.Sound.play(this.sound.name, {interrupt: createjs.Sound.INTERRUPT_ANY, loop: this.sound.repeat ? 1 : 0, volume: 1});
@@ -126,45 +132,41 @@ deus.ouroboros = (function($, createjs, undefined) {
         }
         this.cuedWinner = false;
         this.bitmap.rotation = this.bitmap.rotation - 3;
+        
+        if(!this.bitmap.filters || this.bitmap.filters.length == 0) {
+         var saturator = new createjs.ColorMatrixFilter(new createjs.ColorMatrix(0, 0, -50, 0));        
+         this.bitmap.filters = [
+           saturator
+         ];
+        } else {
+          this.bitmap.filters[0].matrix.adjustSaturation(0.25);
+        }
+        if (this.timer % 5) {
+          this.bitmap.updateCache(this.bitmap.x, this.bitmap.y, this.bitmap.image.width, this.bitmap.image.height);
+        }
       }
       if (this.spinning === false && this.cuedWinner === false && this.time == 0) {
         if (this.transitionInstance) {
           this.fadeOut(function () {
             if (this.enbiggened) {
               if (this.oneVotes >= this.twoVotes) {
-                ouroborus.filter([
-		              new createjs.ColorFilter(5,0,0,1, 0,0,255,0)
-	              ]);
+//                 ouroborus.filter([
+// 		              new createjs.ColorFilter(5,0,0,1, 0,0,255,0)
+// 	              ]);
 	              var instance = createjs.Sound.play("yes");
 	              instance.volume = 1;
- 	              return;
               } else {
-	              ouroborus.filter([
-	                new createjs.ColorFilter(1,5,1,1, 0,0,255,0)
-                ]);
+// 	              ouroborus.filter([
+// 	                new createjs.ColorFilter(1,5,1,1, 0,0,255,0)
+//                 ]);
                 var instance = createjs.Sound.play("no");
                 instance.volume = 1;
               }
+              this.startVideoFade();
             }
           });
         }
         this.cuedWinner = true;
-        if (this.enbiggened) {
-          return;
-        }
-
-         
-        if (this.oneVotes == Math.max(this.oneVotes, this.twoVotes, this.threeVotes)) {
-          $('.choice-num1').css('color', 'red');
-        }
-        else if (this.threeVotes == Math.max(this.oneVotes, this.twoVotes, this.threeVotes)) {
-          $('.choice-num3').css('color', 'red');
-        } 
-        else {
-          $('.choice-num2').css('color', 'red');
-        }
- 
-//        }
       }
       if (this.enbiggened) {
         // we don't move the enbiggened
@@ -186,6 +188,27 @@ deus.ouroboros = (function($, createjs, undefined) {
 
       //this.bitmap.updateCache();
 
+    },
+    startVideoFade: function() {
+      this.videoFade = true;
+      this.videoFadeParams = {
+        alpha: 1,
+        skipSteps: 20
+      };
+    },
+    doVideoFade: function(stage) {
+      
+      this.videoFadeParams.skipSteps -= 1;
+      if (this.videoFadeParams.skipSteps > 0) {
+        return;
+      }
+      if (this.videoFadeParams.alpha < 0) {
+        this.videoFade = false;
+        this.videoFadeParams = {};
+        return;
+      }
+      this.videoFadeParams.alpha -= 0.05;
+      this.bitmap.set({alpha: this.videoFadeParams.alpha});
     },
     setTime: function(data) {
       this.time = data;

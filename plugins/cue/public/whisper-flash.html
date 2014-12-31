@@ -15,19 +15,10 @@
     
     $('.help').hide();
 
-    var alpha = 1;
-    var skipSteps = 20;
     elements = [];
     ouroborus = new deus.ouroboros.Ouroboros(cues, {name: "whisper-transition", repeat: true, fadeOut: true}, true); 
     elements.push(ouroborus);
-    ouroborus.draw = function() {
-      skipSteps -= 1;
-      if (skipSteps > 0) {
-        return;
-      }
-      alpha -= 0.05;
-      ouroborus.bitmap.set({alpha: alpha});
-    };
+    ouroborus.startVideoFade();
       
     var i;
     for(i = 0; i < elements.length; i++) {

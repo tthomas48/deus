@@ -45,6 +45,11 @@ deus.cue = (function(window, document, $, undefined) {
       $('#cue-view').remove();
       return;
     }
+    
+    if ($('.' + view.screen + '-view').html() === '') {
+      forceLoad = true;
+    }
+    
     if(this.previous == this.cue && !forceLoad) {
       window.console.log("Skipping reload of current cue");
       return;

@@ -18,7 +18,7 @@ function cue(name, deps) {
       if (leaf.id == cueNumber) {
         return leaf;
       }
-      if (leaf.nodes.length > 0) {
+      if (leaf.nodes && leaf.nodes.length > 0) {
         var leaf = findLeaf(cueNumber, leaf.nodes);
         if (leaf) {
           return leaf;
