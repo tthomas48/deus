@@ -1,36 +1,36 @@
 
 HP_FXTest01.mov
-HP_Pg17_ClytDialog2.mov *
-HP_Pg17_ClytDialog.mov *
-HP_Pg19_ClytDialog.mov *
-HP_Pg19_ClytPrayerChant.mov *
-HP_Pg19_ClytProphecy_02a.mov * 
-HP_Pg19_ClytProphecy_02b.mov * 
-HP_Pg7c_ZeusPrayerChant.mov *
-HP_Pg8_ZeusProphecy_01a.mov * 
-HP_Pg8_ZeusProphecy_01b.mov * 
-HP_PgA1-15_OresPrayerChant.mov *
-HP_PgA19_ElecDialog.mov *
+HP_Pg17_ClytDialog2.mov [in use]
+HP_Pg17_ClytDialog.mov [in use]
+HP_Pg19_ClytDialog.mov [in use]
+HP_Pg19_ClytPrayerChant.mov [in use]
+HP_Pg19_ClytProphecy_02a.mov [in use]
+HP_Pg19_ClytProphecy_02b.mov [in use]
+HP_Pg7c_ZeusPrayerChant.mov [in use]
+HP_Pg8_ZeusProphecy_01a.mov [in use]
+HP_Pg8_ZeusProphecy_01b.mov [in use]
+HP_PgA1-15_OresPrayerChant.mov [in use]
+HP_PgA19_ElecDialog.mov [in use]
 HP_PgA2-1_ElecDialog.mov
-HP_PgA21_ElecPrayerChant.mov *
-HP_PgA21_ElecProphecy_03Aa.mov * 
-HP_PgA21_ElecProphecy_03Ab.mov * 
-HP_PgA2-21_OresPrayerChant.mov *
-HP_PgA25_ElecPrayerChant.mov *
-HP_PgA25_ElecProphecy_05Aa.mov * 
-HP_PgA25_ElecProphecy_05Ab.mov *
-HP_PgB1-20_OresPrayerChant.mov *
-HP_PgB20-No_ElecDialog1.mov *
-HP_PgB20-No_ElecDialog2.mov *
-HP_PgB20-No_ElecDialog3.mov *
-HP_PgB20-Yes_ElecDialog.mov *
-HP_PgB2-16_OresPrayerChant.mov *
-HP_PgB22_ElecPrayerChant.mov *
-HP_PgB22_ElecProphecy_04Ba.mov *
-HP_PgB22_ElecProphecy_04Bb.mov *
-HP_PgB26_ElecPrayerChant.mov *
-HP_PgB26_ElecProphecy_05Ba.mov *
-HP_PgB26_ElecProphecy_05Bb.mov *
+HP_PgA21_ElecPrayerChant.mov [in use]
+HP_PgA21_ElecProphecy_03Aa.mov [in use]
+HP_PgA21_ElecProphecy_03Ab.mov [in use]
+HP_PgA2-21_OresPrayerChant.mov [in use]
+HP_PgA25_ElecPrayerChant.mov [in use]
+HP_PgA25_ElecProphecy_05Aa.mov [in use]
+HP_PgA25_ElecProphecy_05Ab.mov [in use]
+HP_PgB1-20_OresPrayerChant.mov [in use]
+HP_PgB20-No_ElecDialog1.mov [in use]
+HP_PgB20-No_ElecDialog2.mov [in use]
+HP_PgB20-No_ElecDialog3.mov [in use]
+HP_PgB20-Yes_ElecDialog.mov [in use]
+HP_PgB2-16_OresPrayerChant.mov [in use]
+HP_PgB22_ElecPrayerChant.mov [in use]
+HP_PgB22_ElecProphecy_04Ba.mov [in use]
+HP_PgB22_ElecProphecy_04Bb.mov [in use]
+HP_PgB26_ElecPrayerChant.mov [in use]
+HP_PgB26_ElecProphecy_05Ba.mov [in use]
+HP_PgB26_ElecProphecy_05Bb.mov [in use]
 VE_Smoke_Bkgrnd.mov
 WhisperSmoke.mov
 HP_OresDialog2_Scream.mov
