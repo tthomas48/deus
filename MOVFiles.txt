@@ -35,4 +35,9 @@ VE_Smoke_Bkgrnd.mov [in use]
 WhisperSmoke.mov [in use]
 HP_OresDialog2_Scream.mov [in use]
 HP_PgA1-17_OresDialog1.mov [in use]
-HP_PgA2-1_ElecDialog.mov
+HP_PgA1-15_OresProphecy_06Aa1
+HP_PgA1-15_OresProphecy_06Aa2
+HP_PgA1-15_OresProphecy_06Aa3
+HP_PgA2-21_OresProphecy_06Ab1
+HP_PgA2-21_OresProphecy_06Ab2
+HP_PgA2-21_OresProphecy_06Ab3

@@ -279,6 +279,7 @@ var config = require('../config'),
             body.state = 'off';
             save(cookie, body, function(err, savedBody) {
               if(savedBody && savedBody.ok) {
+                // could we emit the video cue here?
                 io.sockets.emit('stateUpdate', {
                   state: 'off',
                   id: savedBody.id,
