@@ -1,6 +1,6 @@
 'use strict';
 var app = angular.module('votr', ['ngResource', 'ngRoute'],  function($rootScopeProvider) { 
-  $rootScopeProvider.digestTtl(150); 
+  $rootScopeProvider.digestTtl(500); 
 });
 
 app.directive('cue', function () {
@@ -164,7 +164,7 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
       var option = currentCue.voteoptions[i];
       
       var node = {};
-      if (oldNodes[i]) {
+      if (oldNodes && i < oldNodes.length) {
         node = oldNodes[i];
       }
       node.id = data.id + "." + option.id;
@@ -172,9 +172,18 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
       data.nodes.push(node);
     }
   };
+  $scope.insert = function(data) {
+    window.console.log("insert before", data);
+    window.console.log($scope.tree);
+    /*
+    var oldcue = data;
+    data.id = data.id + ".i";
+    data.nodes = oldcue;
+    */
+  };
   $scope.delete = function(data) {
     data.nodes = [];
-  }
+  };
   $scope.startShow = function(data) {
     window.console.log("Starting show");
     var startDate = new Date();

@@ -338,6 +338,7 @@ var config = require('../config'),
       }
       var cues = show.cues;
       var cueNumber = cues[cues.length - 1];
+      // TODO: I have the events. We should add that with the cue number
       show.winners[cueNumber] = results;
       console.log(show.winners);
       shows.save(cookie, show, function() {

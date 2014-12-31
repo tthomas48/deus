@@ -18,6 +18,8 @@
     elements = [];
     ouroborus = new deus.ouroboros.Ouroboros(cues, {name: "whisper-transition", repeat: true, fadeOut: true}, true); 
     elements.push(ouroborus);
+    var instance = createjs.Sound.play("whisper-start");
+    instance.volume = 1;
     ouroborus.startVideoFade();
       
     var i;

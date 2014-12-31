@@ -13,9 +13,9 @@
   <script type="text/ng-template" id="tree_item_renderer.html">        
           <div ng-model="data" ng-show="data.nodes.length > 0" class="clearfix">
             <div class="pull-left">
-            <a class="btn btn-xs btn-expand" data-nodrag="" onclick="return false">
+            <button class="btn btn-xs btn-expand" data-nodrag="" onclick="return false">
             <span class="icon-chevron-down"></span>
-            </a>
+            </button>
             </div>
             <div class="pull-left well">
             <cue show="currentShow" id="data.id" name="data.cueName"></cue>

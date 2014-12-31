@@ -67,7 +67,8 @@ deus.cue = (function(window, document, $, undefined) {
     for(i = 0; i < intervals.length; i++) {
       clearInterval(intervals[i]);
     }
-    $.get("/plugin/cue/" + view.view, {}, function(responseText, textStatus) {
+    $.get("/plugin/cue/" + view.view, function(responseText, textStatus) {
+      window.console.log(view);
       var output = Mustache.render(responseText, view);
       $('.' + view.screen + '-view').html($(output));
     });
