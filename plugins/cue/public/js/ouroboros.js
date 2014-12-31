@@ -133,16 +133,19 @@ deus.ouroboros = (function($, createjs, undefined) {
         this.cuedWinner = false;
         this.bitmap.rotation = this.bitmap.rotation - 3;
         
-        if(!this.bitmap.filters || this.bitmap.filters.length == 0) {
-         var saturator = new createjs.ColorMatrixFilter(new createjs.ColorMatrix(0, 0, -50, 0));        
-         this.bitmap.filters = [
-           saturator
-         ];
-        } else {
-          this.bitmap.filters[0].matrix.adjustSaturation(0.25);
-        }
-        if (this.timer % 5) {
-          this.bitmap.updateCache(this.bitmap.x, this.bitmap.y, this.bitmap.image.width, this.bitmap.image.height);
+        if (this.enbiggened) {
+
+          if(!this.bitmap.filters || this.bitmap.filters.length == 0) {
+           var saturator = new createjs.ColorMatrixFilter(new createjs.ColorMatrix(0, 0, -50, 0));        
+           this.bitmap.filters = [
+             saturator
+           ];
+          } else {
+            this.bitmap.filters[0].matrix.adjustSaturation(0.25);
+          }
+          if (this.timer % 5) {
+            this.bitmap.updateCache(this.bitmap.x, this.bitmap.y, this.bitmap.image.width, this.bitmap.image.height);
+          }
         }
       }
       if (this.spinning === false && this.cuedWinner === false && this.time == 0) {
