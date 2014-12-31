@@ -4,7 +4,7 @@ deus.ouroboros = (function($, createjs, undefined) {
 
   function Ouroboros(cues, sound, enbiggened) {
     console.log("Updating ouroborus", enbiggened);
-    this.sound = sound;
+    this.sound = sound;    
     this.enbiggened = enbiggened;
     this.timer = 0;
     this.bitmap = undefined;
@@ -24,6 +24,7 @@ deus.ouroboros = (function($, createjs, undefined) {
     this.loaded = false;
     this.transitionInstance = undefined;
     this.cues = cues;
+    this.socket = io.connect();
   }
 
   Ouroboros.prototype = {
@@ -64,14 +65,13 @@ deus.ouroboros = (function($, createjs, undefined) {
         that.loaded = true;
       };
 
-      var socket = io.connect();
-      socket.on('timer', that.setTime.bind(that));
-      socket.on('vote', that.moveRelative.bind(that));
+      this.socket.on('timer', that.setTime.bind(that));
+      this.socket.on('vote', that.moveRelative.bind(that));
 
-      socket.on('cue.status', function(data) {
+      this.socket.on('cue.status', function(data) {
         if (data.go === 'go') {
-          socket.removeListener('timer', that.setTime.bind(that));
-          socket.removeListener('vote', that.moveRelative.bind(that));
+          this.socket.removeListener('timer', that.setTime.bind(that));
+          this.socket.removeListener('vote', that.moveRelative.bind(that));
           if (that.transitionInstance) {
 
             that.transitionInstance.stop();
@@ -90,6 +90,10 @@ deus.ouroboros = (function($, createjs, undefined) {
       this.enbiggen();
     },
     fadeOut: function(callback) {
+      if (!this.sound.fadeOut) {
+        callback.call(this);
+        return;
+      }
       if (this.transitionInstance) {
         if (this.transitionInstance.volume > 0) { 
           this.transitionInstance.volume -= 0.05;
@@ -104,6 +108,10 @@ deus.ouroboros = (function($, createjs, undefined) {
         callback.call(this);
       }
     },
+    handleComplete: function() {
+      window.console.log("Complete!");
+      socket.emit('/cue/novote', {});
+    },
     draw : function(stage) {
       this.timer++;
       if (!this.loaded) {
@@ -111,19 +119,13 @@ deus.ouroboros = (function($, createjs, undefined) {
       }
       if (this.time > 5 || this.spinning) {
         if (!this.transitionInstance && this.time > 5) {
-            this.transitionInstance = createjs.Sound.play(this.sound, {interrupt: createjs.Sound.INTERRUPT_ANY, loop:1, volume: 1});
-          window.console.log(this.transitionInstance);
+            this.transitionInstance = createjs.Sound.play(this.sound.name, {interrupt: createjs.Sound.INTERRUPT_ANY, loop: this.sound.repeat ? 1 : 0, volume: 1});
+            if (!this.sound.fadeOut) {
+              this.transitionInstance.on("complete", createjs.proxy(this.handleComplete, this));
+            }
         }
         this.cuedWinner = false;
         this.bitmap.rotation = this.bitmap.rotation - 3;
-        if (this.timer % 40 == 0) {
-//          var instance = createjs.Sound.play("tock");
-//          instance.volume = 1 / this.time;
-        }
-        else if (this.timer % 20 == 0) {
-//          var instance = createjs.Sound.play("tick");
-//          instance.volume = 1 / this.time;
-        }
       }
       if (this.spinning === false && this.cuedWinner === false && this.time == 0) {
         if (this.transitionInstance) {

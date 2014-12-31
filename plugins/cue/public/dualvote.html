@@ -17,7 +17,7 @@
     
 
     elements = [];
-    var ouroborus = new deus.ouroboros.Ouroboros(cues, "oracle-transition"); 
+    var ouroborus = new deus.ouroboros.Ouroboros(cues, {name: "oracle-transition", repeat: false, fadeOut: false}); 
     elements.push(new deus.stage.DualStage());
     elements.push(ouroborus);
     {{#voteoptions}}

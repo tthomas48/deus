@@ -17,7 +17,7 @@
 
     var alpha = 1;
     var skipSteps = 20;
-    ouroborus = new deus.ouroboros.Ouroboros(cues, "whisper-transition", true); 
+    ouroborus = new deus.ouroboros.Ouroboros(cues, {name: "whisper-transition", repeat: true, fadeOut: true}, true); 
     elements.push(ouroborus);
     ouroborus.draw = function() {
       if (skipSteps < 0) {

@@ -158,14 +158,18 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
     }
     data.cueName = currentCue.name;
     data.voting = currentCue.voting;
+    var oldNodes = data.nodes;
     data.nodes = [];
     for(i = 0; i < currentCue.voteoptions.length; i++) {
       var option = currentCue.voteoptions[i];
-      data.nodes.push({
-        id: data.id + "." + option.id,
-        title: option.name,
-        nodes: []
-      });
+      
+      var node = {};
+      if (oldNodes[i]) {
+        node = oldNodes[i];
+      }
+      node.id = data.id + "." + option.id;
+      node.title = option.name;
+      data.nodes.push(node);
     }
   };
   $scope.delete = function(data) {
