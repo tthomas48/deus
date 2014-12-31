@@ -24,6 +24,13 @@ var smsify = function(str) {
   } else {
     return str.substr(0, 157) + '...';
   }
+}, maxVoteOptions = function(event) {
+  
+  if (event.stage === "whisper") {
+    return 2;
+  }
+  return event.voteoptions.length;
+  
 }, initcap = function(str) {
     return str.substring(0, 1).toUpperCase() + str.substring(1);
   }, testint = function(str) {
@@ -427,16 +434,17 @@ var smsify = function(str) {
           } else {
             console.log("No active cues for "+to+" and keywords did not match. Detail: "+err);
             // silently fail for the user
-            response.send('<Response></Response>');
+            response.send('<Response><Sms>Olympus listens. There aren\'t prophecies or prayers to answer at this time (too fast? too slow?). Keep this tool ready to serve the gods as they instruct.</Sms></Response>');
+            //response.send('<Response></Response>');
           }
         } else if(event.state == "off") {
           response.send('<Response><Sms>Olympus listens. There aren\'t prophecies or prayers to answer at this time (too fast? too slow?). Keep this tool ready to serve the gods as they instruct.</Sms></Response>');
         } else if(!testint(body)) {
           console.log('Bad vote: ' + event.name + ', ' + from + ', ' + body);
-          response.send('<Response><Sms>Sorry, invalid vote. Please text a number between 1 and ' + event.voteoptions.length + '</Sms></Response>');
-        } else if(testint(body) && (parseInt(body) <= 0 || parseInt(body) > event.voteoptions.length)) {
-          console.log('Bad vote: ' + event.name + ', ' + from + ', ' + body + ', ' + ('[1-' + event.voteoptions.length + ']'));
-          response.send('<Response><Sms>Sorry, invalid vote. Please text a number between 1 and ' + event.voteoptions.length + '</Sms></Response>');
+          response.send('<Response><Sms>Sorry, invalid vote. Please text a number between 1 and ' + maxVoteOptions(event) + '</Sms></Response>');
+        } else if(testint(body) && (parseInt(body) <= 0 || parseInt(body) > maxVoteOptions(event))) {
+          console.log('Bad vote: ' + event.name + ', ' + from + ', ' + body + ', ' + ('[1-' + maxVoteOptions(event) + ']'));
+          response.send('<Response><Sms>Sorry, invalid vote. Please text a number between 1 and ' + maxVoteOptions(event) + '</Sms></Response>');
         } else {
           var vote = parseInt(body);
           events.saveVote(event, vote, from);
@@ -456,7 +464,7 @@ var smsify = function(str) {
             msg = "<Say>There aren\'t prophecies or prayers to answer at this time. Keep this tool ready to serve the gods as they instruct.</Say>"
           } else {
             msg = '<Say>After the tone use your phone\'s keypad to vote.</Say><Pause length="1"/>';
-            for (j = 0; j < event.voteoptions.length; j++) {
+            for (j = 0; j < maxVoteOptions(event); j++) {
               var option = event.voteoptions[j];
               msg += "<Say>Press " + option.id + " for " + option.name + "</Say><Pause length=\"1\"/>";
             }
@@ -485,9 +493,9 @@ var smsify = function(str) {
           response.send('<Response><Say>Error: could not locate event. Goodbye.</Say></Response>');
         } else if(event.state == "off") {
           response.send('<Response><Say>Voting is now closed. Goodbye.</Say></Response>');
-        } else if(parseInt(digits) <= 0 || parseInt(digits) > event.voteoptions.length) {
-          console.log('Bad voice vote:', event.name, from, digits, ('[1-' + event.voteoptions.length + ']'));
-          response.send('<Response><Say>Sorry, invalid vote. Please enter a number between 1 and ' + event.voteoptions.length + '</Say><Redirect method="POST">/vote/voice</Redirect></Response>');
+        } else if(parseInt(digits) <= 0 || parseInt(digits) > maxVoteOptions(event)) {
+          console.log('Bad voice vote:', event.name, from, digits, ('[1-' + maxVoteOptions(event) + ']'));
+          response.send('<Response><Say>Sorry, invalid vote. Please enter a number between 1 and ' + maxVoteOptions(event) + '</Say><Redirect method="POST">/vote/voice</Redirect></Response>');
         } else {
           var vote = parseInt(digits);
           console.log('Accepting voice vote:', event.name, from, digits);

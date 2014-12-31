@@ -1,5 +1,5 @@
 
-HP_FXTest01.mov
+HP_FXTest01.mov  
 HP_Pg17_ClytDialog2.mov [in use]
 HP_Pg17_ClytDialog.mov [in use]
 HP_Pg19_ClytDialog.mov [in use]
@@ -31,7 +31,8 @@ HP_PgB22_ElecProphecy_04Bb.mov [in use]
 HP_PgB26_ElecPrayerChant.mov [in use]
 HP_PgB26_ElecProphecy_05Ba.mov [in use]
 HP_PgB26_ElecProphecy_05Bb.mov [in use]
-VE_Smoke_Bkgrnd.mov
-WhisperSmoke.mov
-HP_OresDialog2_Scream.mov
-HP_PgA1-17_OresDialog1.mov
+VE_Smoke_Bkgrnd.mov [in use]
+WhisperSmoke.mov [in use]
+HP_OresDialog2_Scream.mov [in use]
+HP_PgA1-17_OresDialog1.mov [in use]
+HP_PgA2-1_ElecDialog.mov

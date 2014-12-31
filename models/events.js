@@ -163,15 +163,6 @@ var config = require('../config'),
             votesCache[voteDoc._id] = voteDoc;
             io.sockets.in(event._id).emit('vote', vote);
           }
-          // figure out how to give a second visit bonus
-          /*
-          if(voter.votes > 1) {
-            voters.findByPhonenumber(from, function(err, voter) {
-              voter.votes = 1;
-              voters.save(getDb(), voter, function(err) {});
-            });
-          }
-          */
         });
       });
     });
@@ -228,11 +219,17 @@ var config = require('../config'),
         }
         
         var msg ="", j;
-        for (j = 0; j < event.voteoptions.length; j++) {
-          var option = event.voteoptions[j];
+        
+        var voteoptions = event.voteoptions;
+        if (event.stage === 'whisper') {
+          voteoptions = [{id:"1", name:"Yes"}, {id:"2", name:"No"}];
+        }
+        
+        for (j = 0; j < voteoptions.length; j++) {
+          var option = voteoptions[j];
           msg += option.id + ": " + option.name + "\n";
         }
-// 
+        
         voters.list(cookie, function (err, voters) {
           var i;
           for (i = 0; i < voters.length; i++) {
