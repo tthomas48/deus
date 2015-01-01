@@ -63,6 +63,12 @@ io.sockets.on('connection', function(socket) {
       io.sockets.emit('clearOlympus', data);
     });
   
+    socket.on('/leaderboard', function(data) {
+      console.log("Messaging to show leaderboard");
+      io.sockets.emit('/cue/leaderboard', data);
+    });
+  
+  
     socket.on('event', function(event) {
         socket.join(event);
     });

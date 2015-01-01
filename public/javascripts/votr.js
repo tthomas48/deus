@@ -235,6 +235,12 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
     socket.emit("/clear", view);
     return false;
   };
+  $scope.leaderboard = function(view) {
+    window.console.log("Emitting a leaderboard");
+    socket.emit("/leaderboard");
+    return false;
+  };
+  
   $scope.go = function() {
     socket.emit('/cue/go', {});
   };
@@ -506,6 +512,13 @@ app.controller('VoterListCtrl', function($scope, $location, $filter, VoterServic
     } else {
       $scope.newVoter = false;
       $scope.voter = voter;
+    }
+    
+    if (!$scope.voter.shows) {
+      $scope.voter.shows = [];
+    }
+    if ($scope.voter.shows.indexOf($scope.currentShow) < 0) {
+      $scope.voter.shows.push($scope.currentShow);
     }
   };
   $scope.save = function() {

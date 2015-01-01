@@ -250,6 +250,12 @@ var config = require('../config'),
           id: event._id,
           rev: event.rev
         });
+        if (event.movie) {
+          io.sockets.emit("/cue/playvideo", {
+            mov: event.movie
+          })
+        }
+        
         updateTimer(cookie, event, event.timer);
       });
     }

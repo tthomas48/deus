@@ -82,6 +82,10 @@ deus.ouroboros = (function($, createjs, undefined) {
         }
         else if (data.go === 'novote') {
           console.log("Stop voting");
+          if (!that.sound.fadeOut && that.transitionInstance) {
+            that.transitionInstance.stop();
+            that.transitionInstance = undefined;
+          }
           that.setTime(0);
         }
       });
