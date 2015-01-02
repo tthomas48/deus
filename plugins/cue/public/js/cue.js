@@ -38,7 +38,7 @@ deus.cue = (function(window, document, $, undefined) {
     cue.previous = cue.cue;
     cue.cue = data.cue;
     cue.go = data.go;
-    cue.updateUI(data.view, cue.go === 'go' || cue.go === 'vote');
+    cue.updateUI(data.view, cue.go === 'go');
   };
   Cue.prototype.updateUI = function updateUI(view, forceLoad) {
     if(this.cue.enabled === false) {
@@ -50,16 +50,11 @@ deus.cue = (function(window, document, $, undefined) {
       forceLoad = true;
     }
     
-    
-    
     if(this.previous == this.cue && !forceLoad) {
       window.console.log("Skipping reload of current cue");
       return;
     }
     
-    if(this.go === 'go' || this.go === 'vote') {
-      this.clearScreen();
-    }
     window.console.log("Loading...");
     $.ajaxSetup({
       // Disable caching of AJAX responses
