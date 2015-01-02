@@ -186,14 +186,14 @@ function cue(name, deps) {
         cmd.go = 'go';
       }
       else if (cmd.go == 'vote' && cueNumber != cmd.cue) {
-        deps.io.sockets.emit('clearOlympus');
+        de//ps.io.sockets.emit('clearOlympus');
         // jump to the cue
         cueNumber = String(cmd.cue);
       }
       
-      if (cmd.go == 'go') {
-        deps.io.sockets.emit('clearOlympus');
-      }
+//       if (cmd.go == 'go') {
+//         deps.io.sockets.emit('clearOlympus');
+//       }
       
       emitStatus(deps, cmd.go);
     });

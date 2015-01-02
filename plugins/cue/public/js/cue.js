@@ -65,6 +65,17 @@ deus.cue = (function(window, document, $, undefined) {
     for(i = 0; i < intervals.length; i++) {
       clearInterval(intervals[i]);
     }
+
+    if (typeof stage !== 'undefined') {
+      stage.removeAllChildren();
+      stage.update();      
+    }
+    
+    if ($('.' + view.screen + '-view').length == 0) {
+      $('.all-view').html('');
+      return;
+    }
+    
     $.get("/plugin/cue/" + view.view, function(responseText, textStatus) {
       window.console.log(view);
       var output = Mustache.render(responseText, view);
