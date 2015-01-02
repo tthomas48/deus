@@ -351,14 +351,14 @@ var config = require('../config'),
       }
       else if (results['2'] == max) {
         if (event.voteoptions && event.voteoptions.length > 0 && event.voteoptions[1].mov) {
-          socket.emit("/cue/playvideo", {
+          io.sockets.emit("/cue/playvideo", {
             mov: event.voteoptions[1].mov
           })
         }
       }
       else if (results['3'] == max) {
         if (event.voteoptions && event.voteoptions.length > 0 && event.voteoptions[2].mov) {
-          socket.emit("/cue/playvideo", {
+          io.sockets.emit("/cue/playvideo", {
             mov: event.voteoptions[2].mov
           })
         }        
