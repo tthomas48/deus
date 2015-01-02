@@ -13,10 +13,10 @@ var config = require('../config'),
   trigger_threshhold = exports.trigger_threshhold = function(deity_name) {
       //#TODO: [enhancement] move the threshhold values to admin configuration
       var prayerThreshholds = {
-        'athena': 10, 
-        'apollo': 10, 
-        'hera': 10, 
-        'zeus': 10
+        'athena': 500, 
+        'apollo': 500, 
+        'hera': 500, 
+        'zeus': 500
       };
       return prayerThreshholds[deity_name] || 10;
   },
