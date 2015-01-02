@@ -182,14 +182,17 @@ function cue(name, deps) {
       console.log("cue set", cmd);
       nextCue = cmd.cue;
       setCue(String(cmd.cue));
-      
-      deps.io.sockets.emit('clearOlympus');
       if (!cmd.go) {
         cmd.go = 'go';
       }
       else if (cmd.go == 'vote' && cueNumber != cmd.cue) {
+        deps.io.sockets.emit('clearOlympus');
         // jump to the cue
         cueNumber = String(cmd.cue);
+      }
+      
+      if (cmd.go == 'go') {
+        deps.io.sockets.emit('clearOlympus');
       }
       
       emitStatus(deps, cmd.go);
