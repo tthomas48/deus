@@ -14,7 +14,7 @@
           <div ng-model="data" ng-show="data.nodes.length > 0" class="clearfix">
             <div class="pull-left">
             <button class="btn btn-xs btn-expand" data-nodrag="" onclick="return false">
-            <span class="icon-chevron-down"></span>
+            <span class="icon-chevron-right"></span>
             </button>
             </div>
             <div class="pull-left well">
@@ -32,19 +32,17 @@
 
             
           </div>
-          <ul ng-model="data.nodes">
+          <ul ng-model="data.nodes" style="display: none">
             <li ng-repeat="data in data.nodes" ng-include="'tree_item_renderer.html'"></li>
           </ul>
   </script>
 
   
   <div class="row">
-    <div class="span5">
-    <ul ng-mode="tree">
-      <li ng-repeat="data in tree" ng-include="'tree_item_renderer.html'"></li>
-    </ul>
-    </div>
     <div class="span4">
+      <div style="position:fixed">
+        
+      
       <div class="row">
         <a class="btn btn-success btn-xl" ng-click="go()">Go</a>  
       </div>
@@ -62,9 +60,16 @@
       <div class="row">
         <a class="btn btn-warning btn-xs" ng-click="leaderboard()">Show Leaderboard</a>
       </div>
+        </div>
       
       <!--pre ng-show="currentShow" class="code">{{ currentShow | json }}</pre-->
     </div>
+    <div class="span5">
+    <ul ng-mode="tree">
+      <li ng-repeat="data in tree" ng-include="'tree_item_renderer.html'"></li>
+    </ul>
+    </div>
+    
   </div>
       <div class='footer'>
     </div>
@@ -79,16 +84,6 @@
     e.stopPropagation();
     var link = $(e.target);
     toggleTree(link);
-  })
+  });
   
-//   socket.on('stateUpdate', function(data) {
-//     console.log("State update", data);
-//     cueState[data.id]
-//     $('#onoff-' + data.id.replace(':', '\\:')).prop('checked', data.state == 'on' ? true : false);
-//     console.log($('#onoff-' + data.id.replace(':', '\\:')).prop('checked'));
-//   });
-
-//   socket.on('cue.status', function(data) {
-    
-//   });
 </script>
