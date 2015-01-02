@@ -50,6 +50,12 @@ deus.cue = (function(window, document, $, undefined) {
       forceLoad = true;
     }
     
+    if (typeof stage !== 'undefined') {
+      stage.removeAllChildren();
+      stage.update();      
+    }
+    
+    
     if(this.previous == this.cue && !forceLoad) {
       window.console.log("Skipping reload of current cue");
       return;
