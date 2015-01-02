@@ -129,6 +129,7 @@ deus.ouroboros = (function($, createjs, undefined) {
       }
       if (this.time > 5 || this.spinning) {
         if (!this.transitionInstance && this.time > 5) {
+            createjs.Sound.stop();
             this.transitionInstance = createjs.Sound.play(this.sound.name, {interrupt: createjs.Sound.INTERRUPT_ANY, loop: this.sound.repeat ? 1 : 0, volume: 1});
             if (!this.sound.fadeOut) {
               this.transitionInstance.on("complete", createjs.proxy(this.handleComplete, this));
