@@ -186,7 +186,7 @@ function cue(name, deps) {
         cmd.go = 'go';
       }
       else if (cmd.go == 'vote' && cueNumber != cmd.cue) {
-        de//ps.io.sockets.emit('clearOlympus');
+        //deps.io.sockets.emit('clearOlympus');
         // jump to the cue
         cueNumber = String(cmd.cue);
       }
