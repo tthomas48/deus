@@ -38,7 +38,7 @@ deus.cue = (function(window, document, $, undefined) {
     cue.previous = cue.cue;
     cue.cue = data.cue;
     cue.go = data.go;
-    cue.updateUI(data.view, cue.go === 'go');
+    cue.updateUI(data.view, cue.go === 'go' || cue.go === 'vote');
   };
   Cue.prototype.updateUI = function updateUI(view, forceLoad) {
     if(this.cue.enabled === false) {
