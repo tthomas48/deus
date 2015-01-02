@@ -6,4 +6,5 @@ var toggleTree = function(link) {
   var span = link.children('span');
   var down = link.children('span').hasClass('icon-chevron-down');
   span.removeClass('icon-chevron-down').removeClass('icon-chevron-right').addClass(down ? 'icon-chevron-right' : 'icon-chevron-down');
+  jQuery(document.body).scrollTop(link.position().top);
 };

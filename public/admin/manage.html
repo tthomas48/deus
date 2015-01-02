@@ -1,4 +1,12 @@
 <script src="/socket.io/socket.io.js"></script>
+<style>
+  li > div {
+    line-height: 40px;
+  }
+  ul ol {
+    margin: 0px 0 0px 10px;
+  }
+</style>
 
 
 <div ng-show="loggedIn">
@@ -17,7 +25,7 @@
             <span class="icon-chevron-right"></span>
             </button>
             </div>
-            <div class="pull-left well">
+            <div class="pull-left">
             <cue show="currentShow" id="data.id" name="data.cueName"></cue>
             <a class="btn btn-success btn-xs" ng-click="setCue(data.id)">Jump</a>
             
