@@ -432,17 +432,21 @@ var smsify = function(str) {
           //EO(if deity_name was recognized)
 
           } else {
+            events.saveVoter(from);
             console.log("No active cues for "+to+" and keywords did not match. Detail: "+err);
             // silently fail for the user
             response.send('<Response><Sms>Olympus listens. There aren\'t prophecies or prayers to answer at this time (too fast? too slow?). Keep this tool ready to serve the gods as they instruct.</Sms></Response>');
             //response.send('<Response></Response>');
           }
         } else if(event.state == "off") {
+          events.saveVoter(from);
           response.send('<Response><Sms>Olympus listens. There aren\'t prophecies or prayers to answer at this time (too fast? too slow?). Keep this tool ready to serve the gods as they instruct.</Sms></Response>');
         } else if(!testint(body)) {
+          events.saveVoter(from);
           console.log('Bad vote: ' + event.name + ', ' + from + ', ' + body);
           response.send('<Response><Sms>Sorry, invalid vote. Please text a number between 1 and ' + maxVoteOptions(event) + '</Sms></Response>');
         } else if(testint(body) && (parseInt(body) <= 0 || parseInt(body) > maxVoteOptions(event))) {
+          events.saveVoter(from);
           console.log('Bad vote: ' + event.name + ', ' + from + ', ' + body + ', ' + ('[1-' + maxVoteOptions(event) + ']'));
           response.send('<Response><Sms>Sorry, invalid vote. Please text a number between 1 and ' + maxVoteOptions(event) + '</Sms></Response>');
         } else {

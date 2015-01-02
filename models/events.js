@@ -116,6 +116,33 @@ var config = require('../config'),
         callback();
       }
     });
+  }, saveVoter = exports.saveVoter = function(from) {
+    shows.findCurrent(function(err, show) {
+      if (err || !show) {
+        console.log("Couldn't save voter without show.");
+        return;
+      }
+      voters.findByPhonenumber(from, function(err, voter) {
+        if(err) {
+          console.log("Creating new voter");
+          voter = {
+            phonenumber: from,
+            votes: 1
+          };
+        }
+        
+        if (!voter.shows) {
+          voter.shows = [];
+        }
+        
+        if (voter.shows.indexOf(show._id) < 0) {
+          voter.shows.push(show._id);
+        }
+        voters.save(getDb(), voter, function() {
+          console.log("Saved voter");
+        });
+      });  
+    });
   }, saveVote = exports.saveVote = function(event, vote, from) {
     // The _id of our vote document will be a composite of our event_id and the
     // person's phone number. This will guarantee one vote per event 
