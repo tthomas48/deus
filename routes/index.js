@@ -5,10 +5,11 @@ var config = require('../config'),
   sessions = require('../models/sessions'),
   crypto = require('crypto'),
   events, voters, tree, io;
-module.exports = function(socketio, pluginInfo) {
+module.exports = function(socketio, pluginInfo, emitter) {
   io = socketio;
   plugins = pluginInfo;
-  events = require('../models/events')(io);
+  emitter = emitter;
+  events = require('../models/events')(io, emitter);
   voters = require('../models/voters')(io);
   tree = require('../models/tree')(io);
   shows = require('../models/shows')(io);
@@ -359,7 +360,6 @@ var smsify = function(str) {
 
                 //console.log("found current show: "+JSON.stringify(show));
                 
-                var deity_name_capitalized = deity_name.charAt(0).toUpperCase() + deity_name.slice(1).toLowerCase();
                 prayers.getPrayer(from, show.id, deity_name, function(err, prayer) {
                   if(err) {
                     console.log("Problem querying prayer data: "+err);
@@ -367,9 +367,8 @@ var smsify = function(str) {
                     response.send('<Response></Response>');
                   } else if(prayer) {
                     console.log("user has already prayed to this deity during this show");
-                    // send the user an acknowledgement
-                    var deity_response = deity_name_capitalized + ' only hears your prayer once';
-                    response.send('<Response><Sms>'+deity_response+'</Sms></Response>');
+                    // silently fail for the user
+                    response.send('<Response></Response>');
                   } else {
                     // record the user's prayer
                     var prayer = {show_id: show.id, deity_name: deity_name, phonenumber: from};

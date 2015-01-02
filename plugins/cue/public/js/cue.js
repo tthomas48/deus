@@ -33,11 +33,16 @@ deus.cue = (function(window, document, $, undefined) {
     });
   };
   Cue.prototype.updateCue = function(data) {
+    console.log(data);
     var cue = this;
     cue.enabled = data.enabled;
     cue.previous = cue.cue;
     cue.cue = data.cue;
     cue.go = data.go;
+    if (cue.go === 'novote') {
+      window.console.log("Stopping voting, don't do any UI updates.");
+      return;
+    }
     cue.updateUI(data.view, cue.go === 'go');
   };
   Cue.prototype.updateUI = function updateUI(view, forceLoad) {

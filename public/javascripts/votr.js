@@ -10,7 +10,7 @@ app.directive('cue', function () {
         restrict: 'E',
         template: '<span class="{{show.cues.indexOf(\'\' +id) >= 0 ? \'triggered-cue text-success\' : \'\'}}">' + 
           '{{ name }}' + 
-          '<span ng-show="show.winners[id]">- ({{show.winners[id]["1"]}}/{{show.winners[id]["2"]}}/{{show.winners[id]["3"]}})</span>' +
+          '<span ng-show="show.winners[id]">- ({{show.winners[id].results["1"]}}/{{show.winners[id].results["2"]}}/{{show.winners[id].results["3"]}})</span>' +
           '</span>'
     };
 });
@@ -262,18 +262,35 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
   socket.on('connect', function() {
     console.log("Connected, lets sign-up for updates about this show");
   });
+  socket.on('winner.display', function(data) {
+    console.log(data);
+    $scope.lastWinner = data;
+  });
+  socket.on('cue.status', function(data) {
+    window.console.log('Cue Status', data);
+    window.console.log($scope.cueState);
+    window.console.log(data.cue + " setting to " + data.view.state);
+    $scope.cueState[data.cue] = data.view.state;
+  });
   socket.on('currentShow.update', function(response) {
-    window.console.log("Current show updated.");
+    window.console.log("Current show updated.", response);
     CurrentShowService.get(function(data) {
       $scope.currentShow = data;
     });    
   });
   socket.on('stateUpdate', function(data) {
     console.log("State update", data);
-    var cueId = $('#onoff-' + data.id.replace(':', '\\:')).attr('cue-id');
-    $scope.cueState[cueId] = data.state;
-//     $('#onoff-' + data.id.replace(':', '\\:')).prop('checked', data.state == 'on' ? true : false);
-//     console.log($('#onoff-' + data.id.replace(':', '\\:')).prop('checked'));
+    if (data.state === 'on') {
+      // intentionally not showing this, it's confusing
+      return;
+    }
+    var allNodes = $('input[event-id=' + data.id.replace(':', '\\:') + ']');
+    
+    var i;
+    for (i = 0; i < allNodes.length; i++) {
+      var cueId = $(allNodes[i]).attr('cue-id');
+      $scope.cueState[cueId] = data.state;
+    }
   });
   
 });

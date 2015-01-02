@@ -71,7 +71,8 @@ deus.ouroboros = (function($, createjs, undefined) {
       this.socket.on('vote', that.moveRelative.bind(that));
 
       this.socket.on('cue.status', function(data) {
-        if (data.go === 'go') {
+        if (data.go === 'go' || data.go === 'vote') {
+          console.log("Unbinding ouroboros");
           this.socket.removeListener('timer', that.setTime.bind(that));
           this.socket.removeListener('vote', that.moveRelative.bind(that));
           if (that.transitionInstance) {

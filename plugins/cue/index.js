@@ -86,17 +86,8 @@ function cue(name, deps) {
     });
   }
   
-  var markWinner = function(cueNumber, cmd) {
-    
-    shows.findCurrent(function(err, show) {
-      if (err || !show) {
-        console.log("No current show found:" + err);
-        return;
-      }
-      show.winners[cueNumber] = cmd;
-      shows.save(undefined, show, function(err, show) {
-      });
-    });
+  var markWinner = function(cueNumber) {
+    nextCue = cueNumber;
   };
   
   var setCue = function(cueNumber) {
@@ -119,6 +110,23 @@ function cue(name, deps) {
       });
     });
   };
+  
+  deps.emitter.on('cue.winner', function(winner) {
+    console.log('Winner!', winner);
+    var winIndex = winner.winner;
+    if (winner.event.nextcues.length == 1) {
+      nextCue = winner.event.nextcues[0].id;
+    } else {
+      if (winner.event.nextcues.length > winIndex) {
+        nextCue = winner.event.nextcues[winIndex].id;
+      } else {
+        console.log("Bad winning index", winner);
+      }
+    }
+    console.log('Next cue', nextCue);
+    deps.io.sockets.emit('winner.display', winIndex + 1);
+    
+  });
   
   deps.io.sockets.on('connection', function(socket) {
     var toggle = false;

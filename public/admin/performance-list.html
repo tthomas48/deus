@@ -13,7 +13,7 @@
   
     <ul ng-mode="tree">
       
-      <li ng-repeat="(cue, value) in currentShow.winners">{{cue}} {{value["1"]}}/{{value["2"]}}<span ng-show="value['3']">/{{value["3"]}}</span></li>
+      <li ng-repeat="(cue, value) in currentShow.winners">[{{cue}}]{{value.cueName}} - {{value.results["1"]}}/{{value.results["2"]}}<span ng-show="value.results['3']">/{{value.results["3"]}}</span></li>
     </ul>
   </div>
 </div>

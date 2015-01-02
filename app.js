@@ -8,6 +8,7 @@ var express = require('express')
   , path = require('path')
   , socketio = require('socket.io')
   , fs = require('fs')  
+  , EventEmitter = require('events').EventEmitter
   , config = require('./config');
 
 var app = express()
@@ -74,7 +75,7 @@ io.sockets.on('connection', function(socket) {
     });
 });
 
-
+var emitter = new EventEmitter();
 // load plugins
 
 // Keep track of plugins js and css to load them in the view
@@ -89,6 +90,7 @@ var deps = {
   , app: app
   , io: io
   , config: config
+  , emitter: emitter
 };
 
 
@@ -131,7 +133,7 @@ config.plugins.forEach(function (plugin) {
 });
 
 
-var routes = require('./routes')(io, plugins);
+var routes = require('./routes')(io, plugins, emitter);
 
 app.get ('/sound-test',    routes.getSoundTest);
 app.get ('/hud',    routes.getHud);

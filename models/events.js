@@ -343,24 +343,30 @@ var config = require('../config'),
       var max = Math.max(results['1'], results['2'], results['3'], 0);
       
       if (max === 0 || results['1'] == max) {
+        emitter.emit("cue.winner", {winner: 0, event: event});
         if (event.voteoptions && event.voteoptions.length > 0 && event.voteoptions[0].mov) {
           io.sockets.emit("/cue/playvideo", {
             mov: event.voteoptions[0].mov
           })
+          
         }
       }
       else if (results['2'] == max) {
-        if (event.voteoptions && event.voteoptions.length > 0 && event.voteoptions[1].mov) {
+        if (event.voteoptions && event.voteoptions.length > 1 && event.voteoptions[1].mov) {
+          emitter.emit("cue.winner", {winner: 1, event: event});
           io.sockets.emit("/cue/playvideo", {
             mov: event.voteoptions[1].mov
           })
+          
         }
       }
       else if (results['3'] == max) {
-        if (event.voteoptions && event.voteoptions.length > 0 && event.voteoptions[2].mov) {
+        if (event.voteoptions && event.voteoptions.length > 2 && event.voteoptions[2].mov) {
+          emitter.emit("cue.winner", {winner: 2, event:event});
           io.sockets.emit("/cue/playvideo", {
             mov: event.voteoptions[2].mov
           })
+          
         }        
       }
       
@@ -372,7 +378,11 @@ var config = require('../config'),
       var cues = show.cues;
       var cueNumber = cues[cues.length - 1];
       // TODO: I have the events. We should add that with the cue number
-      show.winners[cueNumber] = results;
+      show.winners[cueNumber] = {
+        results: results,
+        cue: event._id,
+        cueName: event.name
+      };
       console.log(show.winners);
       shows.save(cookie, show, function() {
         console.log("Saved winners");
@@ -387,7 +397,8 @@ var config = require('../config'),
   }, invalidateEventsJob = setInterval(invalidateEvents, 1000 * secondsToInvalidateEvents),
   flushVotesJob = setInterval(flushVotes, msToFlushVotes),
   io;
-module.exports = function(socketio) {
+module.exports = function(socketio, msgEmitter) {
   io = socketio;
+  emitter = msgEmitter;
   return exports;
 };
