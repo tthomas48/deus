@@ -69,6 +69,12 @@ io.sockets.on('connection', function(socket) {
       io.sockets.emit('/cue/leaderboard', data);
     });
   
+    socket.on('/dimmer', function(data) {
+      console.log("Messaging to dimmer");
+      io.sockets.emit('/cue/dimmer', data);
+    });
+  
+  
   
     socket.on('event', function(event) {
         socket.join(event);

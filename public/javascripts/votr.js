@@ -239,10 +239,17 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
     return false;
   };
   $scope.leaderboard = function(view) {
-    window.console.log("Emitting a leaderboard");
+    window.console.log("Toggling leaderboard");
     socket.emit("/leaderboard");
     return false;
   };
+  
+  $scope.dimmer = function(view) {
+    window.console.log("Toggling dimmer");
+    socket.emit("/dimmer");
+    return false;
+  };
+  
   
   $scope.go = function() {
     socket.emit('/cue/go', {});

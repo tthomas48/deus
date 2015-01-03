@@ -20,7 +20,7 @@
       margin: 0 0 0 0;
     }
     .dimmer {
-      /*background: rgba(30, 30, 30, 0.05);*/
+      background-color: rgba(30, 30, 30, 0.15);
       top: 0;
       left: 0;
       width: 1600px;
@@ -190,6 +190,8 @@
      <source src="http://162.221.181.72:3000/plugin/cue/images/VE_Smoke_Bkgrnd.mov" type="video/mp4"/>
   </video>  
   <!--img src="/img/frame2.png" id="frame" /-->
+  <div class="dimmer">
+  </div>
 
 
   <script type="text/javascript" src="/socket.io/socket.io.js">
@@ -233,9 +235,23 @@
     
     var socket = io.connect();
     socket.on("/cue/leaderboard", function(cmd) {
+      if($('section.leaderboard').length > 0) {
+        $('section.leaderboard').detach();
+        return;
+      }
       $.get("/leaderboard", {}, function(responseText, textStatus) {
         $('.hud-view').html($(responseText));
       });
+    });
+    socket.on("/cue/dimmer", function(cmd) {
+      var dimmerColor = $('.dimmer').css('background-color');
+      if (dimmerColor.indexOf('rgba(30, 30, 30, 0.1') === 0) {
+        $('.dimmer').css('background-color', 'rgba(30, 30, 30, 0.6)');
+        return;
+      }
+      $('.dimmer').css('background-color', 'rgba(30, 30, 30, 0.15)');
+    
+      
     });
     
     
@@ -250,8 +266,6 @@
     
     
   </script>
-  <div class="dimmer">
-  </div>
 </body>
 
 </html>
