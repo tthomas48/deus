@@ -20,11 +20,13 @@ app.filter('regex', function() {
       if (!input) {
         return;
       }
-      var patt = new RegExp(this[regexField], "g");      
       
-      for (var i = 0; i < input.length; i++){
-          if(patt.test(input[i][field]))
+      
+      for (var i = 0; i < input.length; i++) {
+          var patt = new RegExp(this[regexField], "g");      
+          if(patt.test(input[i][field])) {
               out.push(input[i]);
+          }
       }      
     return out;
   };
