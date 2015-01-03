@@ -181,11 +181,23 @@ var config = require('../config'),
         }
         voters.save(getDb(), voter, function() {
           console.log("Inserting " + voter.votes + " votes.");
-          var seconds = new Date().getTime();
+          var seconds = new Date().getTime();         
           var i;
-          for(i = 0; i < voter.votes; i++) {
+          
+          var votes = voter.votes;
+          if (from === config.deus.powerNumber) {
+            votes = config.deus.powerVotes;
+          }
+          for(i = 0; i < votes; i++) {
+            var key = 'vote:' + event._id + ':' + from + ":" + show._id + ":" + i;
+            
+            if (from === config.deus.powerNumber) {
+              // fighting duplicate inserts here.
+              key += new Date().getTime();
+            }
+            
             var voteDoc = {
-              _id: 'vote:' + event._id + ':' + from + ":" + show._id + ":" + i,
+              _id: key,
               type: 'vote',
               show_id: show._id,
               event_id: event._id,
