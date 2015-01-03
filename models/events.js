@@ -137,7 +137,14 @@ var config = require('../config'),
         
         if (voter.shows.indexOf(show._id) < 0) {
           voter.shows.push(show._id);
+          
+          if (voter.shows.length > 1) {
+            // returning voter give them a bonus
+            console.log("Shows greater than 1, giving bonus");
+            voter.votes = Math.max(1, Number(voter.shows.length) + Number(config.deus.returningVotes));
+          }
         }
+        
         voters.save(getDb(), voter, function() {
           console.log("Saved voter");
         });
@@ -158,15 +165,6 @@ var config = require('../config'),
             phonenumber: from,
             votes: 1
           };
-        } else {
-          if (!show.winners || show.winners.legnth == 0) {
-            // returning voter give 'em a bonus
-            // 
-            if (!voter.shows) {
-              voter.shows = [];
-            }
-            voter.votes = Math.max(1, Number(voter.shows.length) + Number(config.deus.returningVotes));
-          }
         }
         if (!voter.shows) {
           voter.shows = [];
@@ -174,6 +172,12 @@ var config = require('../config'),
         
         if (voter.shows.indexOf(show._id) < 0) {
           voter.shows.push(show._id);
+          
+          if (voter.shows.length > 1) {
+            // returning voter give them a bonus
+            console.log("Shows greater than 1, giving bonus");
+            voter.votes = Math.max(1, Number(voter.shows.length) + Number(config.deus.returningVotes));
+          }
         }
         voters.save(getDb(), voter, function() {
           console.log("Inserting " + voter.votes + " votes.");
