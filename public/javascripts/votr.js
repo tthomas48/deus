@@ -268,6 +268,10 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
     console.log(data);
     $scope.lastWinner = data;
   });
+  socket.on('vote', function(data) {
+    console.log(data);
+  });
+  
   socket.on('cue.status', function(data) {
     window.console.log('Cue Status', data);
     window.console.log($scope.cueState);

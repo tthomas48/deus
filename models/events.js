@@ -188,7 +188,7 @@ var config = require('../config'),
               phonenumber: from
             };
             votesCache[voteDoc._id] = voteDoc;
-            io.sockets.in(event._id).emit('vote', vote);
+            io.sockets.emit('vote', vote);
           }
         });
       });

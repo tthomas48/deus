@@ -56,7 +56,21 @@ deus.sprite = (function($, createjs, undefined) {
     },
     draw : function(stage) {
       // noop
-    }
+    },
+    doVideoFade: function(stage) {
+      
+      this.videoFadeParams.skipSteps -= 1;
+      if (this.videoFadeParams.skipSteps > 0) {
+        return;
+      }
+      if (this.videoFadeParams.alpha < 0) {
+        this.videoFade = false;
+        this.videoFadeParams = {};
+        return;
+      }
+      this.videoFadeParams.alpha -= 0.05;
+      this.bitmap.set({alpha: this.videoFadeParams.alpha});
+    },
   };
   
   return {
