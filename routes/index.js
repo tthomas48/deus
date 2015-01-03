@@ -340,6 +340,7 @@ var smsify = function(str) {
             });
           }
           if(deity_name) {
+            var deity_name_capitalized = deity_name.charAt(0).toUpperCase() + deity_name.slice(1).toLowerCase();
             console.log("found keywords for: "+deity_name);
             shows.findCurrent(function(err, show) {
               if(err) {
@@ -421,7 +422,6 @@ var smsify = function(str) {
                         console.log("* triggering prayer event for "+deity_name+"...");
                         io.sockets.emit("/environmentControlsThreshold", deity_name);
                       }
-                      var deity_name_capitalized = deity_name.charAt(0).toUpperCase() + deity_name.slice(1).toLowerCase();
                       var deity_response = deity_name_capitalized + ' hears your prayer';
                       response.send('<Response><Sms>'+deity_response+'</Sms></Response>');
 
