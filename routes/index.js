@@ -367,8 +367,8 @@ var smsify = function(str) {
                     response.send('<Response></Response>');
                   } else if(prayer) {
                     console.log("user has already prayed to this deity during this show");
-                    // silently fail for the user
-                    response.send('<Response></Response>');
+                    var deity_response = deity_name_capitalized + ' only hears your prayer once';
+                    response.send('<Response><Sms>'+deity_response+'</Sms></Response>');                    
                   } else {
                     // record the user's prayer
                     var prayer = {show_id: show.id, deity_name: deity_name, phonenumber: from};

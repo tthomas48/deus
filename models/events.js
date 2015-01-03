@@ -161,7 +161,11 @@ var config = require('../config'),
         } else {
           if (!show.winners || show.winners.legnth == 0) {
             // returning voter give 'em a bonus
-            voter.votes = Number(voter.votes) + Number(config.deus.returningVotes);
+            // 
+            if (!voter.shows) {
+              voter.shows = [];
+            }
+            voter.votes = Math.max(1, Number(voter.shows.length) + Number(config.deus.returningVotes));
           }
         }
         if (!voter.shows) {
@@ -187,8 +191,7 @@ var config = require('../config'),
               seconds: new Date().getTime(),
               phonenumber: from
             };
-            votesCache[voteDoc._id] = voteDoc;
-            io.sockets.emit('vote', vote);
+            votesCache[voteDoc._id] = voteDoc;            
           }
         });
       });
@@ -196,6 +199,7 @@ var config = require('../config'),
   }, flushVotes = function() {
     var votesToSave = _und.values(votesCache);
     votesCache = {};
+    var dupes = [];
     if(votesToSave.length > 0) {
       getDb().bulk({
         docs: votesToSave
@@ -211,12 +215,16 @@ var config = require('../config'),
           for(var i in votesToSave) {
             if(body[i].error) {
               // send the person an SMS to alert them that you can only vote once
-              console.log('Notifying of duplicate vote: ', votesToSave[i])
-              client.sendSms({
-                To: votesToSave[i].phonenumber,
-                From: votesToSave[i].event_phonenumber,
-                Body: 'Sorry, the gods will only hear you once per prayer.'
-              });
+              
+              if (dupes.indexOf(votesToSave[i].phoneNumber) < 0) {
+                console.log('Notifying of duplicate vote: ', votesToSave[i]);
+                client.sendSms({
+                  To: votesToSave[i].phonenumber,
+                  From: votesToSave[i].event_phonenumber,
+                  Body: 'Sorry, the gods will only hear you once per prayer.'
+                });
+                dupes.push(votesToSave[i].phoneNumber);
+              }
             } else {
               if (notified.indexOf(votesToSave[i].phonenumber) < 0) {
                 
@@ -227,6 +235,7 @@ var config = require('../config'),
                 });
                 notified.push(votesToSave[i].phonenumber);
               }
+              io.sockets.emit('vote', votesToSave[i].vote);
             }
           }
         }
