@@ -14,15 +14,18 @@
   <link rel="stylesheet" href="{{.}}">{{/styles}}
   <style>
     body {
-      width: 1600;
+      width: 1600px;
       height: 1200px;
       overflow: hidden;
       margin: 0 0 0 0;
     }
     .dimmer {
-      background: rgba(30, 30, 30, 0.5);
+      /*background: rgba(30, 30, 30, 0.05);*/
       top: 0;
       left: 0;
+      width: 1600px;
+      height: 1200px;
+      z-index: 10000;
       position: absolute;
     }
     #backvid {
@@ -36,17 +39,21 @@
       object-fit: fill;
     }
     #hud {
+      z-index: 50;
+    }
+    /*
+    #hud {
       border-top: thin solid rgba(30,30,30,.20);
       padding-top: 20px;
       width: 100%;
       max-height: 200px;
       overflow: hidden;
       text-align: center;
-      /*margin: auto;*/
       position: absolute;
       bottom: 20px;
       z-index: 50;
     }
+    */
     header {
       position: absolute;
       z-index: 50;
@@ -62,13 +69,20 @@
       z-index: 50;
       
     }
+    /*
     #hud .row {
       width: 1200px;
       margin: auto;
     }
+    */
     #hud img {
        max-width: 90px;
        max-height: 91px;
+    }
+    #deity-counters {
+      font-weight: bold;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 32px;
     }
     #deity-counters .overlay {
       font-family: 'Josefin Sans', sans-serif;
@@ -79,10 +93,67 @@
       background-color: yellow;
       display: none;
     }
+    #hera-count, #athena-count, #zeus-count, #apollo-count {
+      margin-top: -18px;
+    }
+    
+    #apollo-icon {
+      padding: 5px;
+      margin: 0;
+      position: absolute;
+      border-right: thin solid rgba(30,30,30,.20);
+      border-bottom: thin solid rgba(30,30,30,.20);
+      width: 98px;
+      height: 98px;
+      z-index: 100;
+      top: 0px;
+      left: 0px;
+    }
+    #hera-icon {
+      padding: 5px;
+      margin: 0;
+      position: absolute;
+      border-left: thin solid rgba(30,30,30,.20);
+      border-bottom: thin solid rgba(30,30,30,.20);
+      width: 98px;
+      height: 98px;
+      z-index: 100;
+      top: 0px;
+      right: 0px;
+    }
+    #athena-icon {
+      padding: 5px;
+      margin: 0;
+      position: absolute;
+      border-right: thin solid rgba(30,30,30,.20);
+      border-top: thin solid rgba(30,30,30,.20);
+      width: 98px;
+      height: 98px;
+      z-index: 100;
+      bottom: 0px;
+      left: 0px;
+    }
+    #zeus-icon {
+      padding: 5px;
+      margin: 0;
+      position: absolute;
+      border-left: thin solid rgba(30,30,30,.20);
+      border-top: thin solid rgba(30,30,30,.20);
+      width: 98px;
+      height: 98px;
+      z-index: 100;
+      bottom: 0px;
+      right: 0px;
+    }
+    
+    
   </style>
 </head>
 
 <body>
+  
+    
+  
   
   <div id="glasspane">
   </div>
@@ -177,7 +248,10 @@
     {{/eventOverride}}
     
     
+    
   </script>
+  <div class="dimmer">
+  </div>
 </body>
 
 </html>
