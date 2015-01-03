@@ -31,7 +31,7 @@ deus.sprite = (function($, createjs, undefined) {
       this.bitmap.image.onload = function() {
         var bounds = that.bitmap.getTransformedBounds();
         if (that.position === 1) {
-          that.bitmap.x = 0;
+          that.bitmap.x = 50;
           that.bitmap.y = 250; 
         }
         else if (that.position === 2) {

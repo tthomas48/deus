@@ -17,6 +17,7 @@
       width: 1600;
       height: 1200px;
       overflow: hidden;
+      margin: 0 0 0 0;
     }
     #backvid {
       top: 0;
@@ -48,7 +49,7 @@
     .hud-view, .all-view {
       z-index: 50;
       position: absolute;
-      top: 50px;
+      top: 0px;
     }
     canvas {
       position: absolute;
@@ -153,8 +154,16 @@
     
     var olympus = new Olympus();
     
+    var socket = io.connect();
+    socket.on("/cue/leaderboard", function(cmd) {
+      $.get("/leaderboard", {}, function(responseText, textStatus) {
+        $('.hud-view').html($(responseText));
+      });
+    });
+    
+    
     {{#eventOverride}}
-      var socket = io.connect();
+      
       socket.emit('/cue/manual', {
         event_id: '{{eventOverride}}',
         screen: 'hud'
