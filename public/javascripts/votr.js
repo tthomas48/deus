@@ -142,7 +142,7 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
     console.log($scope.cueState)
     console.log(data);
     if ($scope.cueState[data] == 'on') {
-      $scope.liveVotes = ['0': 0, '1': 0, '2': 0];
+      $scope.liveVotes = {'0': 0, '1': 0, '2': 0};
       socket.emit('/cue/set', { cue: data, go: 'vote'});
     } else {
       socket.emit('/cue/novote', { cue: data, go: 'vote'});
@@ -270,13 +270,16 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
     $scope.lastWinner = data;
   });
   socket.on('vote', function(data) {
+    console.log(data);
     if (!$scope.liveVotes) {
-      $scope.liveVotes;
+      $scope.liveVotes = {};
     }
     if (!$scope.liveVotes[data]) {
       $scope.liveVotes[data] = 0;
     }
     $scope.liveVotes[data]++;
+    console.log($scope.liveVotes);
+    $scope.$apply();
   });
   
   socket.on('cue.status', function(data) {
