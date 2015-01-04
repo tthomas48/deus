@@ -20,7 +20,7 @@
       margin: 0 0 0 0;
     }
     .dimmer {
-      background-color: rgba(30, 30, 30, 0.15);
+      background-color: rgba(30, 30, 30, 0.30);
       top: 0;
       left: 0;
       width: 1600px;
@@ -253,11 +253,12 @@
     });
     socket.on("/cue/dimmer", function(cmd) {
       var dimmerColor = $('.dimmer').css('background-color');
-      if (dimmerColor.indexOf('rgba(30, 30, 30, 0.1') === 0) {
-        $('.dimmer').css('background-color', 'rgba(30, 30, 30, 0.6)');
+      console.log(dimmerColor);
+      if (dimmerColor.indexOf('rgba(30, 30, 30, 0.3') === 0 || dimmerColor.indexOf('rgba(30, 30, 30, 0.2') === 0) {
+        $('.dimmer').css('background-color', 'rgba(30, 30, 30, 0.8)');
         return;
       }
-      $('.dimmer').css('background-color', 'rgba(30, 30, 30, 0.15)');
+      $('.dimmer').css('background-color', 'rgba(30, 30, 30, 0.30)');
     
       
     });
