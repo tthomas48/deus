@@ -303,16 +303,15 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
   });
   socket.on('stateUpdate', function(data) {
     console.log("State update", data);
-    if (data.state === 'on') {
-      // intentionally not showing this, it's confusing
-      return;
-    }
     var allNodes = $('input[event-id=' + data.id.replace(':', '\\:') + ']');
+    console.log(allNodes);
     
     var i;
     for (i = 0; i < allNodes.length; i++) {
       var cueId = $(allNodes[i]).attr('cue-id');
+      console.log(cueId);
       $scope.cueState[cueId] = data.state;
+      $scope.$apply();
     }
   });
   
@@ -528,13 +527,16 @@ app.controller('VoterListCtrl', function($scope, $location, $filter, VoterServic
         $scope.currentShow = shows[i]._id;
       }
     }
+    //VoterService.query({show_id: $scope.currentShow}, function(voters) {      
     VoterService.query(function(voters) {      
+      console.log(voters.length);
       $scope.voters = [];
       for (i = 0; i < voters.length; i++) {
         if (voters[i].shows && voters[i].shows.indexOf($scope.currentShow) >= 0) {
           $scope.voters.push(voters[i]);
         }
       }
+      console.log($scope.voters.length);
       $scope.sort();
       init();
     });    

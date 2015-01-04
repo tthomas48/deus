@@ -30,6 +30,12 @@ var config = require('../config')
       });
     }
 
+  , findByShow = exports.findByShow = function(show_id, callback) {
+
+      findBy('votersByShow', {startkey: [ show_id ], endkey: [ show_id, {}]}, callback);
+    }
+
+
   , findBy = exports.findBy = function(view, params, callback) {
 
       var voter;

@@ -234,6 +234,20 @@ var smsify = function(str) {
       }
     });
   }, getVoterList = exports.getVoterList = function(req, res) {
+    console.log("In here", req.query);
+    if (req.query.show_id) {
+      console.log("Loading by show id" , req.query.show_id);
+      voters.findByShow(req.query.show_id, function(err, list) {
+        if(err) {
+          res.send(404, JSON.stringify({
+            error: true
+          }));
+        } else {
+          res.send(list);
+        }
+      });
+      return;
+    }
     voters.list(req.cookies['AuthSession'], function(err, list) {
       if(err) {
         res.send(401, JSON.stringify({
