@@ -282,20 +282,22 @@ var config = require('../config'),
           msg += option.id + ": " + option.name + "\n";
         }
         
-        voters.list(cookie, function (err, voters) {
-          var i;
-          for (i = 0; i < voters.length; i++) {
-            var voter = voters[i];
-            if (voter.shows && voter.shows.indexOf(show._id) >= 0) {
-              //console.log("Notifying " + voter.phonenumber);
-              client.sendSms({
-                To: voter.phonenumber,
-                From: event.phonenumber,
-                Body: msg
-              });
+        if (config.twilio.sendPrompts) {
+          voters.list(cookie, function (err, voters) {
+            var i;
+            for (i = 0; i < voters.length; i++) {
+              var voter = voters[i];
+              if (voter.shows && voter.shows.indexOf(show._id) >= 0) {
+                //console.log("Notifying " + voter.phonenumber);
+                client.sendSms({
+                  To: voter.phonenumber,
+                  From: event.phonenumber,
+                  Body: msg
+                });
+              }
             }
-          }
-        });
+          });
+        }
         console.log('starting timer');
         io.sockets.emit('stateUpdate', {
           state: 'on',

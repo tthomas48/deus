@@ -14,8 +14,12 @@ config.twilio.key = 'yyy';
 config.twilio.smsWebhook = 'https://nodeserver/vote/sms';
 config.twilio.voiceWebhook = 'https://nodeserver/vote/voice';
 config.twilio.disableSigCheck = false;
+config.twilio.sendPrompts = false;
 
 config.deus.returningVotes = 1;
+config.deus.powerNumber = '';
+config.deus.powerVotes = 15;
+
 
 config.cookiesecret = 'make-this-a-secret';
 config.salt = 'make-this-match-your-square-webhook';
