@@ -95,10 +95,8 @@ var config = require('../config'),
     //console.log("found current show: "+JSON.stringify(show));
     // retrieve current count for this deity by show ID
     var prayerId = getPrayerId(show_id, deity_name, from_phonenumber);
-    getDb().view('event', 'prayers', {
-        startkey: prayerId,
-        endkey: prayerId,
-      }, function(err, body) {
+    getDb().view('event', 'prayers', { key: prayerId }, function(err, body) {
+      console.log(body);
         if(err || body.rows.length == 0) {
           if(err) {
             callback("Error querying prayer with ID "+prayerId+": "+err, null);

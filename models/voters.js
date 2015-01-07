@@ -32,7 +32,13 @@ var config = require('../config')
               return;
             }
             var voter = rows[0];
-            findBy('all', {key: [voter._id], reduce: false}, callback);
+            findBy('all', {key: [voter._id], reduce: false}, function(err, rows) {
+              if (rows && rows.length > 0) {
+                callback(err, rows[0]);  
+                return;
+              }
+              callback(err, undefined);
+            });
           }
       });
     }

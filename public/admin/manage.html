@@ -75,6 +75,9 @@
           <h3>Option 2: {{liveVotes[2]}}</h3>
           <h3>Option 3: {{liveVotes[3]}}</h3>
         </div>
+        <div class="well environmental">
+          <h3>Environmental</h3>
+        </div>
         </div>
       
       <!--pre ng-show="currentShow" class="code">{{ currentShow | json }}</pre-->
@@ -94,6 +97,13 @@
 
 <script type="text/javascript">
   var socket = io.connect();
+  
+  this.socket.on('/environmentControlsThreshold', function(deity_name) {
+    // trigger the event for the specified deity
+    window.console.log('* received threshhold trigger for '+JSON.stringify(deity_name));
+    $('div.environmental').append($('<div class="alert"><button type="button" class="close" data-dismiss="alert">&times;</button><h4>' + deity_name + '</h4></div>'));
+  });
+  
   
   $(document).on('click.expand', '.btn-expand, .btn-expand span', function(e) {
     e.stopPropagation();

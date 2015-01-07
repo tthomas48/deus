@@ -159,6 +159,7 @@ var config = require('../config'),
         return;
       }
       voters.findByPhonenumber(from, function(err, voter) {
+        console.log(voter);
         if(err) {
           console.log("Creating new voter");
           voter = {
@@ -232,6 +233,7 @@ var config = require('../config'),
             if(body[i].error) {
               // send the person an SMS to alert them that you can only vote once
               
+              console.log("Dupe");
               if (dupes.indexOf(votesToSave[i].phoneNumber) < 0) {
                 console.log('Notifying of duplicate vote: ', votesToSave[i]);
                 client.sendSms({
@@ -251,6 +253,7 @@ var config = require('../config'),
                 });
                 notified.push(votesToSave[i].phonenumber);
               }
+              console.log("Notifying of vote");
               io.sockets.emit('vote', votesToSave[i].vote);
             }
           }
