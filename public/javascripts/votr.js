@@ -255,6 +255,7 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
     socket.emit('/cue/go', {});
   };
   $scope.vote = function() {
+    $scope.liveVotes = {'0': 0, '1': 0, '2': 0};
     socket.emit('/cue/vote', {});
   };
   $scope.simulate = function() {
@@ -527,9 +528,11 @@ app.controller('VoterListCtrl', function($scope, $location, $filter, VoterServic
         $scope.currentShow = shows[i]._id;
       }
     }
-    //VoterService.query({show_id: $scope.currentShow}, function(voters) {      
-    VoterService.query(function(voters) {      
-      console.log(voters.length);
+    VoterService.query({show_id: $scope.currentShow}, function(voters) {      
+    //VoterService.query(function(voters) {      
+      $scope.voters = voters;
+      /*
+      
       $scope.voters = [];
       for (i = 0; i < voters.length; i++) {
         if (voters[i].shows && voters[i].shows.indexOf($scope.currentShow) >= 0) {
@@ -537,6 +540,7 @@ app.controller('VoterListCtrl', function($scope, $location, $filter, VoterServic
         }
       }
       console.log($scope.voters.length);
+      */
       $scope.sort();
       init();
     });    

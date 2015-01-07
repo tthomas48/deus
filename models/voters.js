@@ -20,19 +20,26 @@ var config = require('../config')
   // Look up the phone number, get the document's ID, then lookup the full document (including votes)
   , findByPhonenumber = exports.findByPhonenumber = function(phonenumber, callback) {
 
-      findBy('voterByPhonenumber', {key: phonenumber}, function(err, event) {
+    console.log("Looking up ", phonenumber);
+      findBy('voterByPhonenumber', {key: phonenumber}, function(err, rows) {
           if (err) {
             callback(err, null);
           }
           else {
-              findBy('all', {key: [event._id], reduce: false}, callback);
+            console.log(rows);
+            if (rows.length < 1) {
+              callback("No rows found", null);
+              return;
+            }
+            var voter = rows[0];
+            findBy('all', {key: [voter._id], reduce: false}, callback);
           }
       });
     }
 
   , findByShow = exports.findByShow = function(show_id, callback) {
 
-      findBy('votersByShow', {startkey: [ show_id ], endkey: [ show_id, {}]}, callback);
+      findBy('votersByShow', {key: show_id}, callback);
     }
 
 
@@ -52,15 +59,11 @@ var config = require('../config')
               callback(msg, null);              
             }
             else {
-              event = body.rows[0].value;
-              if (body.rows.length > 1) {
-                 for (var i = 0; i < body.rows.length; i++) {
-                   if (body.rows[i].value.state != 'off') {
-                     event = body.rows[i].value;
-                   }
-                 }
+              var values = [], i;
+              for(i = 0; i < body.rows.length; i++) {
+                values.push(body.rows[i].value);
               }
-              callback(null, event);
+              callback(null, values);
             }
           }
         });

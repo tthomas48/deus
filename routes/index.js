@@ -687,13 +687,14 @@ var smsify = function(str) {
     if(phonenumber.charAt(1) !== '1') {
       phonenumber = '+1' + phonenumber.substr(1);
     }
-    voters.findByPhonenumber(phonenumber, function(err, voter) {
+    voters.findByPhonenumber(phonenumber, function(err, voters) {
       if(err) {
         var voter = {
           phonenumber: phonenumber,
           votes: Number(request.body.amount) + 1
         };
       } else {
+        
         voter.votes += Number(request.body.amount);
       }
       voters.save(undefined, voter, function() {

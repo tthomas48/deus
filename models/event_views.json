@@ -1,49 +1,62 @@
 {
-    "_id": "_design/event", 
-    "_rev": "21-05b8fc7bbe05bcee5886b1b387c22f58",
-    "views": {
-        "all": {
-            "map": "function (doc) { if (doc.type == 'event'){ emit([doc._id], doc); } else if (doc.type == 'voter') { emit([doc._id], doc); } else if (doc.type == 'vote') { emit([doc.event_id, doc.vote, doc._id], doc); } }", 
-            "reduce": "_count"
-        }, 
-        "byPhonenumber": {
-            "map": "function (doc) { if (doc.type == 'event') { emit([doc.phonenumber, doc.state], {_id: doc._id, state: doc.state}) } } "
-        }, 
-        "voterByPhonenumber": {
-            "map": "function (doc) { if (doc.type == 'voter') { emit(doc.phonenumber, {_id: doc._id, state: doc.state}) } } "
-        }, 
-        "list": {
-            "map": "function (doc) { if (doc.type == 'event'){ emit([doc._id], doc); } }"
-        }, 
-        "tree": {
-            "map": "function (doc) { if (doc.type == 'tree'){ emit([doc._id], doc); } }"
-        }, 
-        "voters": {
-            "map": "function (doc) { if (doc.type == 'voter') { emit([doc._id], doc); }}"
-        }, 
-        "shows": {
-            "map": "function (doc) { if (doc.type == 'show') { emit([doc._id], doc); }}"
-        },       
-        "currentShow": {
-            "map": "function (doc) { if (doc.type == 'show' && doc.current == true) { emit(doc.current, {_id: doc._id, state: doc.state}) } } "
-        },       
-        "prayers": {
-            "map": "function (doc) { if (doc.type == 'prayer') { emit([doc._id], doc); }}"
-        },
-        "prayerCounts": {
-            "map": "function (doc) { if (doc.type == 'prayerCount') { emit([doc._id], doc); }}"
-        },
-        "prayerCountsByShow": {
-            "map": "function (doc) { if (doc.type == 'prayerCount') { emit(doc.show_id, doc); }}"
-        },
-        "votes": {
-            "map": "function (doc) { if (doc.type == 'vote') { emit([doc.event_id, doc._id], doc.event_id); }}"
-        }, 
-        "votesByShowEvent": {
-            "map": "function (doc) { if (doc.type == 'vote') { emit([doc.show_id, doc.event_id], doc.vote); }}"
-        }, 
-        "votingEvents": {
-            "map": "function (doc) { if (doc.type == 'votingEvent') { emit([doc.event_id, doc._id], doc); }}"
-        }
+  "_id": "_design/event",
+  "_rev": "27-dc3670d2b347459da8bb4717c5cf8d85",
+  "views": {
+    "all": {
+      "map": "function (doc) { if (doc.type == 'event'){ emit([doc._id], doc); } else if (doc.type == 'voter
+') { emit([doc._id], doc); } else if (doc.type == 'vote') { emit([doc.event_id, doc.vote, doc._id], doc); } }",
+      "reduce": "_count"
+    },
+    "byPhonenumber": {
+      "map": "function (doc) { if (doc.type =
+= 'event') { emit([doc.phonenumber, doc.state], {_id: doc._id, state: doc.state}) } } "
+    },
+    "voterByPhonenumber": {
+      "map": "function (doc) { if (doc.type == 'voter') { emit(doc.phonenumber, {
+_id: doc._id, state: doc.state}) } } "
+    },
+    "list": {
+      "map": "function (doc) { if (doc.type == 'event'){ emit([doc._id], doc); } }"
+    },
+    "tree": {
+      "map": "function (doc) { if (doc.type == 'tree'){ em
+it([doc._id], doc); } }"
+    },
+    "voters": {
+      "map": "function (doc) { if (doc.type == 'voter') { emit([doc._id], doc); }}"
+    },
+    "shows": {
+      "map": "function (doc) { if (doc.type == 'show') { emit([doc._i
+d], doc); }}"
+    },
+    "currentShow": {
+      "map": "function (doc) { if (doc.type == 'show' && doc.current == true) { emit(doc.current, {_id: doc._id, state: doc.state}) } } "
+    },
+    "prayers": {
+      "map": "funct
+ion (doc) { if (doc.type == 'prayer') { emit([doc._id], doc); }}"
+    },
+    "prayerCounts": {
+      "map": "function (doc) { if (doc.type == 'prayerCount') { emit([doc._id], doc); }}"
+    },
+    "prayerCountsBySho
+w": {
+      "map": "function (doc) { if (doc.type == 'prayerCount') { emit(doc.show_id, doc); }}"
+    },
+    "votes": {
+      "map": "function (doc) { if (doc.type == 'vote') { emit([doc.event_id, doc._id], doc.ev
+ent_id); }}"
+    },
+    "votersByShow": {
+      "map": "function (doc) { if (doc.type == 'voter') { for (i = 0; i < doc.shows.length; i++) { emit(doc.shows[i], doc); }}}"
+    },
+    "votesByShowEvent": {
+      "map": "funct
+ion (doc) { if (doc.type == 'vote') { emit([doc.show_id, doc.event_id], doc.vote); }}"
+    },
+    "votingEvents": {
+      "map": "function (doc) { if (doc.type == 'votingEvent') { emit([doc.event_id, doc.
+_id], doc); }}"
     }
+  }
 }
