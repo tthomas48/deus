@@ -86,15 +86,23 @@
     }
     #deity-counters .overlay {
       font-family: 'Josefin Sans', sans-serif;
+      font-size: 16pt;
       position: absolute;
       top: 50px;
+      right: 0px;
+      padding: 15px 5px 15px 5px;
       font-weight: bold;
       color: red;
       background-color: yellow;
+      text-align: center;
+      overflow: hidden;
       display: none;
     }
     #hera-count, #athena-count, #zeus-count, #apollo-count {
       margin-top: -18px;
+    }
+    #apollo-icon .overlay {
+      left: 0px;
     }
     
     #apollo-icon {
@@ -173,22 +181,22 @@
   <div id="hud" class="clearfix">
       <div class="row clearfix" id='deity-counters'>
         <div class="span3" id='apollo-icon'>
-          <span class='overlay'>*PRAYER ANSWERED*</span>
+          <span class='overlay'>PRAYER ANSWERED</span>
           <img height="180px" src="/plugin/cue/images/GodIcon_Apollo.png"/>  
           <div id='apollo-count'></div>
         </div>
         <div class="span3" id='hera-icon'>
-          <span class='overlay'>*PRAYER ANSWERED*</span>
+          <span class='overlay'>PRAYER ANSWERED</span>
           <img src="/plugin/cue/images/GodIcon_Hera.png"/>
           <div id='hera-count'></div>
         </div>
         <div class="span3" id='athena-icon'>
-          <span class='overlay'>*PRAYER ANSWERED*</span>
+          <span class='overlay'>PRAYER ANSWERED</span>
           <img src="/plugin/cue/images/GodIcon_Athena.png"/>
           <div id='athena-count'></div>
         </div>
         <div class="span3" id='zeus-icon'>
-          <span class='overlay'>*PRAYER ANSWERED*</span>
+          <span class='overlay'>PRAYER ANSWERED</span>
           <img src="/plugin/cue/images/GodIcon_Zeus.png"/>
           <div id='zeus-count'></div>
         </div>
