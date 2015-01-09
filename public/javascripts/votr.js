@@ -465,9 +465,9 @@ app.controller('VoterListCtrl', function($scope, $location, $filter, VoterServic
   function init() {
     socket.on('connect', function() {
       console.log("Connected, lets sign-up for updates about this voter");
-      $scope.voters.forEach(function(v) {
-        socket.emit('voter', v._id);
-      });
+       $scope.voters.forEach(function(v) {
+         socket.emit('voter', v._id);
+       });
     });
   };
   $scope.addVotes = function(votesToAdd) {
@@ -519,6 +519,14 @@ app.controller('VoterListCtrl', function($scope, $location, $filter, VoterServic
       }
     }
     VoterService.query({show_id: $scope.currentShow}, function(voters) {      
+      if (!voters) {
+        voters = [];
+      }
+      $scope.voters = voters;
+      $scope.sort();
+      init();
+    }, function() {
+      var voters = [];
       $scope.voters = voters;
       $scope.sort();
       init();
@@ -549,27 +557,25 @@ app.controller('VoterListCtrl', function($scope, $location, $filter, VoterServic
   $scope.save = function() {
     if(!$scope.voter._id) {
       var newVoter = new VoterService($scope.voter);
-      newVoter.$save(function(err, voter) {
-        if (err) {
-          alert(err);
-          return;
-        }
+      newVoter.$save(function(voter) {
         $scope.voters.push(voter);
+        $scope.sort();
+      }, function(error) {
+        alert("Error saving voter. Please refresh page and try again.");
       });
     } else {
       $scope.voters.forEach(function(v) {
         if(v._id === $scope.voter._id) {
-          v.$save(function(err, voter) {
-            if (err) {
-              alert(err);
-              return;
-            }
+          v.$save(function(voter) {
             v._rev = voter._rev;
+            $scope.sort();
+          }, function(error) {
+            alert("Error saving voter. Please refresh page and try again.");
           });
         }
       });
     }
-    $scope.sort();
+    
   };
   $scope.delete = function() {
     $scope.voters.forEach(function(v, index) {
