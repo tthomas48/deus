@@ -49,7 +49,7 @@ function cue(name, deps) {
         if (event) {
           event.nextcues = leaf.nodes;
           
-          if (go === 'vote') {
+          if (go === 'vote' && event.state === 'off') {
             event.state = 'on';
             events.save(undefined, event, function() {
               console.log("Turned voting on for " + event._id);
@@ -57,7 +57,7 @@ function cue(name, deps) {
             });
             return;
           }
-          if (go === 'novote') {
+          if (go === 'novote' && event.state === 'on') {
             event.state = 'off';
             events.save(undefined, event, function() {
               console.log("Turned voting off for " + event._id);
@@ -81,6 +81,9 @@ function cue(name, deps) {
       if(show.cues && show.cues.indexOf(cueNumber) === -1) {
         show.cues.push(String(cueNumber));
         shows.save(undefined, show, function(err, show) {
+          if (err) {
+            console.log(err);
+          }
         });
       }
     });
@@ -98,15 +101,20 @@ function cue(name, deps) {
         return;
       }
       
-      if(show.cues.indexOf(cueNumber) === -1) {
-        // add this cue to the end
-        show.cues.push(String(cueNumber));
-      } else {
-        var cueIndex = show.cues.indexOf(cueNumber);
-        var newCues = show.cues.slice(0, cueIndex + 1);
-        show.cues = newCues;
+      var newcues = [], i;
+      for (i = 0; i < show.cues.length; i++) {
+        var existingCue = show.cues[i];
+        if (existingCue.length < cueNumber.length) {
+          newcues.push(existingCue);
+        }
       }
+      newcues.push(cueNumber);
+      show.cues = newcues;
+      
       shows.save(undefined, show, function(err, show) {
+        if (err) {
+          console.log(err);
+        }
       });
     });
   };

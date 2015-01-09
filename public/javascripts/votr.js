@@ -469,16 +469,6 @@ app.controller('VoterListCtrl', function($scope, $location, $filter, VoterServic
         socket.emit('voter', v._id);
       });
     });
-    socket.on('stateUpdate', function(data) {
-      console.log("Voter updated.", data);
-      $scope.voters.forEach(function(v, index) {
-        if(v._id == data.id) {
-          v._rev = data.rev;
-          v.state = data.state;
-          $scope.$apply();
-        }
-      });
-    });
   };
   $scope.addVotes = function(votesToAdd) {
     $scope.filtered.forEach(function(v, index) {
@@ -529,18 +519,7 @@ app.controller('VoterListCtrl', function($scope, $location, $filter, VoterServic
       }
     }
     VoterService.query({show_id: $scope.currentShow}, function(voters) {      
-    //VoterService.query(function(voters) {      
       $scope.voters = voters;
-      /*
-      
-      $scope.voters = [];
-      for (i = 0; i < voters.length; i++) {
-        if (voters[i].shows && voters[i].shows.indexOf($scope.currentShow) >= 0) {
-          $scope.voters.push(voters[i]);
-        }
-      }
-      console.log($scope.voters.length);
-      */
       $scope.sort();
       init();
     });    
@@ -570,13 +549,23 @@ app.controller('VoterListCtrl', function($scope, $location, $filter, VoterServic
   $scope.save = function() {
     if(!$scope.voter._id) {
       var newVoter = new VoterService($scope.voter);
-      newVoter.$save(function() {
-        $scope.voters.push(newVoter);
+      newVoter.$save(function(err, voter) {
+        if (err) {
+          alert(err);
+          return;
+        }
+        $scope.voters.push(voter);
       });
     } else {
       $scope.voters.forEach(function(v) {
         if(v._id === $scope.voter._id) {
-          v.$save();
+          v.$save(function(err, voter) {
+            if (err) {
+              alert(err);
+              return;
+            }
+            v._rev = voter._rev;
+          });
         }
       });
     }
