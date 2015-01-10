@@ -29,13 +29,15 @@ function cue(name, deps) {
   };
   
   var emitStatusMessage = function(toggle, cueNumber, go, event, leaf) {
-        deps.io.sockets.emit('cue.status', {
+    var data = {
           'enabled': toggle,
           'cue': cueNumber,
           'go': go,          
           'view': event,
           'screen': leaf.screen
-        });
+        };
+    log.console("status", data)
+    deps.io.sockets.emit('cue.status', );
   };
   
   var findEvent = function(toggle, cueNumber, go, leaf) {
@@ -215,13 +217,15 @@ function cue(name, deps) {
     });
     socket.on('/cue/manual', function(cmd) {
       events.findBy('all', {key: [cmd.event_id], reduce:false}, function(err, event) {
-        deps.io.sockets.emit('cue.status', {
+        var data = {
           'enabled': true,
           'cue': -1,
           'go': 'go',          
           'view': event,
           'screen': cmd.screen
-        });
+        };
+        console.log("manual", data);
+        deps.io.sockets.emit('cue.status', data);
       });
     });
     
