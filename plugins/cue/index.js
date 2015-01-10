@@ -37,7 +37,7 @@ function cue(name, deps) {
           'screen': leaf.screen
         };
     log.console("status", data)
-    deps.io.sockets.emit('cue.status', );
+    deps.io.sockets.emit('cue.status', data);
   };
   
   var findEvent = function(toggle, cueNumber, go, leaf) {
