@@ -78,6 +78,8 @@ function cue(name, deps) {
     shows.findCurrent(function(err, show) {
       if (err || !show) {
         console.log("No current show found:" + err);
+	cueNumber = 0;
+        nextCue = undefined;
         return;
       }
       if(show.cues && show.cues.indexOf(cueNumber) === -1) {
@@ -100,6 +102,8 @@ function cue(name, deps) {
     shows.findCurrent(function(err, show) {
       if (err || !show) {
         console.log("No current show found:" + err);
+	cueNumber = 0;
+        nextCue = undefined;
         return;
       }
       
