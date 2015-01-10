@@ -36,7 +36,7 @@ function cue(name, deps) {
           'view': event,
           'screen': leaf.screen
         };
-    log.console("status", data)
+    console.log("status", data)
     deps.io.sockets.emit('cue.status', data);
   };
   
