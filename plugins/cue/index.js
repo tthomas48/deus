@@ -159,7 +159,7 @@ function cue(name, deps) {
       shows.findCurrent(function(err, show) {
         if(!show) {
           my.cueNumber = "0";
-          my.nextCue = undefind;
+          my.nextCue = undefined;
           return;
         }
         var cues = show.cues;

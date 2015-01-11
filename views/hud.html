@@ -253,7 +253,7 @@
       stage.update();
     }
     
-    var olympus = new Olympus();
+    window.olympusInstance = new Olympus(stage);
     
     var socket = io.connect();
     socket.on("/cue/leaderboard", function(cmd) {

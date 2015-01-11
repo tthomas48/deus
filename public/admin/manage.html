@@ -97,11 +97,11 @@
 
 <script type="text/javascript">
   var socket = io.connect();
-  
+
   this.socket.on('/environmentControlsThreshold', function(deity_name) {
     // trigger the event for the specified deity
     window.console.log('* received threshhold trigger for '+JSON.stringify(deity_name));
-    $('div.environmental').append($('<div class="alert"><button type="button" class="close" data-dismiss="alert">&times;</button><h4>' + deity_name + '</h4></div>'));
+    $('div.environmental').append($('<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">&times;</button><h4>' + deity_name + '</h4></div>'));
   });
   
   

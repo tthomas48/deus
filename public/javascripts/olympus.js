@@ -2,9 +2,10 @@
         
     var hostname = document.location.hostname ? document.location.hostname : "localhost";
 
-    var Olympus = function Olympus() {
+    var Olympus = function Olympus(stage) {
 
         this.socket = io.connect();
+        this.stage = stage;
         this.loadPlugins();
 
         // Fullscreen on doubleclick
@@ -40,13 +41,7 @@
         });
       window.console.log("Adding olympus clear handler");
         this.socket.on('clearOlympus', function(view) {
-          window.console.log("Clearing");
-          $('.' + view + '-view').html('');
-          if (typeof stage !== 'undefined') {
-            stage.removeAllChildren();
-            stage.update();      
-            
-          }
+          this.clearScreen(view);
         });
         if($('.hud-view').length) {
           //window.console.log("adding environmental controls handlers");
@@ -71,6 +66,13 @@
             }
           });
         }
+      
+      this.clearScreen = function(view) {
+          window.console.log("Clearing");
+          $('.' + view + '-view').html('');
+          this.stage.removeAllChildren();
+          this.stage.update();      
+      };
     };
 
     Olympus.prototype.loadPlugins = function loadPlugins() {

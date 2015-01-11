@@ -104,7 +104,7 @@
       stage.update();
     }
     
-    var olympus = new Olympus();
+    window.olympusInstance = new Olympus(stage);
     
     var socket = io.connect();
     

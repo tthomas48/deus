@@ -51,10 +51,6 @@ deus.cue = (function(window, document, $, undefined) {
     cue.updateUI(data.view, cue.go === 'go');
   };
   Cue.prototype.updateUI = function updateUI(view, forceLoad) {
-    if(this.cue.enabled === false) {
-      $('#cue-view').remove();
-      return;
-    }
     
     if ($('.' + view.screen + '-view').html() === '') {
       forceLoad = true;
@@ -75,19 +71,15 @@ deus.cue = (function(window, document, $, undefined) {
     for(i = 0; i < intervals.length; i++) {
       clearInterval(intervals[i]);
     }
-
-    if (typeof stage !== 'undefined') {
-      stage.removeAllChildren();
-      stage.update();      
-    }
     
+    window.olympusInstance.clearScreen(view.screen);
+
     if ($('.' + view.screen + '-view').length == 0) {
       $('.all-view').html('');
       return;
     }
     
     $.get("/plugin/cue/" + view.view, function(responseText, textStatus) {
-      window.console.log(view);
       var output = Mustache.render(responseText, view);
       $('.' + view.screen + '-view').html($(output));
     });
