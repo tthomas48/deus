@@ -39,6 +39,11 @@ deus.cue = (function(window, document, $, undefined) {
     cue.previous = cue.cue;
     cue.cue = data.cue;
     cue.go = data.go;
+    cue.visible = data.visible;
+    if (!data.visible) {
+      window.console.log("Invisible cue. Don't load it");
+      return;
+    }
     if (cue.go === 'novote') {
       window.console.log("Stopping voting, don't do any UI updates.");
       return;
