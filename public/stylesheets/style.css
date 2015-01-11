@@ -47,3 +47,10 @@ h2.off { }
 button.close {
   opacity: 1;
 }
+h3 {
+  line-height: 22px;
+  font-size: 20px;
+}
+.well {
+  margin-bottom: 0;
+}
