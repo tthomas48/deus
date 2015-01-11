@@ -39,9 +39,10 @@
                 html     : 'Error : ' + JSON.stringify(e)
               });
         });
+      var that = this;
       window.console.log("Adding olympus clear handler");
         this.socket.on('clearOlympus', function(view) {
-          this.clearScreen(view);
+          that.clearScreen(view);
         });
         if($('.hud-view').length) {
           //window.console.log("adding environmental controls handlers");
