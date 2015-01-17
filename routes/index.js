@@ -429,12 +429,17 @@ var smsify = function(str) {
                           }
                         });
                       }
-                      if(trigger_event) {
+                      
+                      // only let this ttrigger once
+                      if(trigger_event && prayer_count.trigger_count === 1) {
                         // trigger an environmental event for this deity
                         console.log("* triggering prayer event for "+deity_name+"...");
                         io.sockets.emit("/environmentControlsThreshold", deity_name);
                       }
                       var deity_response = deity_name_capitalized + ' hears your prayer';
+                      if (prayer_count.trigger_count > 1) {
+                        deity_response = deity_name_capitalized + ' is tired of hearing from humans.';
+                      }
                       response.send('<Response><Sms>'+deity_response+'</Sms></Response>');
 
                     });//EO(get prayer count for deity)
