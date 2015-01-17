@@ -664,9 +664,13 @@ var smsify = function(str) {
       }
     });
   }, saveTransaction = exports.saveTransaction = function(request, response) {
-    console.log(request.body.amount);
-    console.log(request.body.phone);
-    console.log(request.body.hash);
+
+    if (!request.body.amount || !request.body.phone || !request.body.hash) {
+      response.send(422, "Mismatched hash");
+      console.log("Could not save transaction.");
+      return;
+    }
+
     var shasum = crypto.createHash('sha1');
     shasum.update(config.salt);
     shasum.update(request.body.amount);
