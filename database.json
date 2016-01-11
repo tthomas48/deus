@@ -1,0 +1,17 @@
+{
+  "dev": {
+    "driver": "mysql",
+    "user": "deus",
+    "password": "deus",
+    "database": "deus",
+    "multipleStatements": true
+  },
+  "prod": {
+    "driver": "mysql",
+    "user": "deus",
+    "password": "deus",
+    "database": "deus",
+    "multipleStatements": true
+  }
+}
+

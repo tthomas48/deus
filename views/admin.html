@@ -2,44 +2,70 @@
 <html ng-app='votr'>
 
 <head>
-  <title>Deus Ex Machina</title>
-  <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
-  <link rel='stylesheet' href='/stylesheets/bootstrap-responsive.min.css' />
+<title>Deus Ex Machina</title>
+<link rel="stylesheet"
+	href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700"
+	type="text/css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+	rel="stylesheet">
 
-  <link rel='stylesheet' href='/stylesheets/switch.css' />
-  <link rel='stylesheet' href='/stylesheets/style.css' />
-  <script src="/javascripts/jquery.min.js"></script>
-  <script src="/javascripts/bootstrap.min.js"></script>
-  <script src="/javascripts/angular.js"></script>
-  <script src="/javascripts/angular-resource.min.js"></script>
-  <script src="/javascripts/angular-route.min.js"></script>
-  <script src="/javascripts/votr.js"></script>
-  <script src="/javascripts/util.js"></script>
+<link
+	href="/components/bootstrap/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link rel='stylesheet'
+	href='/components/bootstrap-material-design/dist/css/bootstrap-material-design.min.css' />
+<link rel='stylesheet'
+	href='/components/bootstrap-material-design/dist/css/ripples.min.css' />
+
+<link rel='stylesheet' href='/stylesheets/switch.css' />
+<link rel='stylesheet' href='/stylesheets/style.css' />
+
+<script src="/components/jquery/dist/jquery.min.js"></script>
+<script
+  src="/components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script
+	src="/components/bootstrap-material-design/dist/js/material.min.js"></script>
+<script
+	src="/components/bootstrap-material-design/dist/js/ripples.min.js"></script>
+<script src="/components/angular/angular.min.js"></script>
+<script src="/components/angular-resource/angular-resource.min.js"></script>
+<script src="/components/angular-route/angular-route.min.js"></script>
+<script src="/javascripts/votr.js"></script>
+<script src="/javascripts/util.js"></script>
+<script>
+	$.material.init();
+</script>
 </head>
 
 <body ng-init="username='{{username}}'">
-  <div class="container">
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div style="margin-left:20px">
-          <a class="brand" href="#/">Mount Olympus</a>
-          <ul class="nav">
-            <li ng-show="loggedIn"><a href="#/">Cues</a>
-            </li>
-            <li ng-show="loggedIn"><a href="#/manage">Manage</a>
-            </li>
-            <li ng-show="loggedIn"><a href="#/performances">Performances</a>
-            </li>
-            <li ng-show="loggedIn"><a href="#/voters">Voters</a>
-            </li>
-            <li ng-show="loggedIn"><a href="#/logout">Logout</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div class="content" ng-view></div>
-  </div>
+	<div class="container">
+		<div class="bs-component">
+			<div class="navbar navbar-inverse">
+				<div class="container-fluid">
+					<div class="navbar-inner">
+						<div class="navbar-header">
+							<a class="navbar-brand" href="#/">Mount Olympus</a>
+							<button type="button" class="navbar-toggle"
+								data-toggle="collapse" data-target=".navbar-inverse-collapse">
+								<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+									class="icon-bar"></span>
+							</button>
+
+						</div>
+						<ul class="nav navbar-nav">
+							<li ng-show="loggedIn"><a href="#/">Cues</a></li>
+							<li ng-show="loggedIn"><a href="#/manage">Manage</a></li>
+							<li ng-show="loggedIn"><a href="#/performances">Performances</a>
+							</li>
+							<li ng-show="loggedIn"><a href="#/voters">Voters</a></li>
+							<li ng-show="loggedIn"><a href="#/logout">Logout</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="content" ng-view></div>
+	</div>
 </body>
 
 </html>

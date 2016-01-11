@@ -1,63 +1,134 @@
-<div class='modal-header'>
-  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-  <h3 ng-hide='newEvent'>Edit Cue: {{event.name}}</h3>
-  <h3 ng-show='newEvent'>New Cue</h3>
+<div class="modal-dialog">
+	<div class="modal-content">
+		<div class='modal-header'>
+			<button type="button" class="close" data-dismiss="modal"
+				aria-hidden="true">×</button>
+			<h3 ng-hide='newEvent'>Edit Cue: {{event.name}}</h3>
+			<h3 ng-show='newEvent'>New Cue</h3>
+		</div>
+		<form>
+			<fieldset>
+				<div class='modal-body'>
+					<div class="form-group">
+						<label for="event-name" class="col-md-2 control-label">Name</label>
+						<div class="col-md-10">
+							<input class="form-control" type='text' ng-model="event.name"
+								id="event-name" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-2 control-label">Short Name</label>
+						<div class="col-md-10">
+							<input class="form-control" type='text'
+								ng-model="event.shortname" />
+						</div>
+					</div>
+					<div class="checkbox">
+						<label class="control-label col-md-12">
+							<div class="col-md-2">Voting Cue</div>
+							<div class="col-md-10">
+								<input type='checkbox' ng-model="event.voting" /> <span
+									class="checkbox-material"> <span class="check"> </span>
+								</span>
+							</div>
+						</label>
+					</div>
+					<div class="form-group">
+						<label class="col-md-2 control-label">View</label>
+						<div class="col-md-10">
+							<input class="form-control" type='text' ng-model="event.view" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-2 control-label">Movie</label>
+						<div class="col-md-10">
+							<input class="form-control" type='text' ng-model="event.movie" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-2 control-label">Screen</label>
+						<div class="col-md-10">
+							<select class="form-control" ng-model="event.screen">
+								<option value="all">All</option>
+								<option value="hud">HUD</option>
+								<option value="oracle">oracle</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-2 control-label">Stage</label>
+						<div class="col-md-10">
+							<select class="form-control" ng-model="event.stage">
+								<option value="none">none</option>
+								<option value="whisper">whisper</option>
+								<option value="dual">dual</option>
+								<option value="tri">tri</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-2 control-label">Phone Number</label>
+						<div class="col-md-10">
+							<input class="form-control" type='text'
+								ng-model="event.phonenumber" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-2 control-label">State</label>
+						<div class="col-md-10">
+							<select class="form-control" ng-model="event.state"
+								ng-options="opt for opt in opts"></select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-2 control-label"
+							title="if greater than 0 will time out after this many seconds">Timed
+							Expiration</label>
+						<div class="col-md-10">
+							<input type='text' class="form-control" ng-model="event.timer" />
+						</div>
+					</div>
+
+					<div ng-repeat="vo in event.voteoptions" class="col-md-12">
+						<fieldset  class="form-group">
+							<legend>Option</legend>
+							<div class="form-group">
+								<label class="col-md-2 control-label">Label</label>
+								<div class="col-md-10">
+									<input class="form-control" type='text' ng-model="vo.name" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-2 control-label">Image</label>
+								<div class="col-md-10">
+									<input class="form-control" type='text' ng-model="vo.img" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-2 control-label">Movie</label>
+								<div class="col-md-10">
+									<input class="form-control" type='text' ng-model="vo.mov" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-2 control-label">Sound</label>
+								<div class="col-md-10">
+									<input class="form-control" type='text' ng-model="vo.snd" />
+								</div>
+							</div>
+							<i class="material-icons" ng-click='removeVoteOption(vo)'>trash
+							</i>
+						</fieldset>
+					</div>
+				</div>
+				<div class='modal-footer'>
+					<a class="btn" ng-click='addVoteOption()'>Add Option</a>
+					<button type='submit' class="btn btn-danger" data-dismiss="modal"
+						ng-click="delete()">Delete</button>
+					<button type='submit' class="btn btn-primary" data-dismiss="modal"
+						ng-click="save()">Save</button>
+				</div>
+			</fieldset>
+		</form>
+	</div>
 </div>
-<form>
-  <fieldset>
-    <div class='modal-body'>
-      <label>Name</label>
-      <input type='text' ng-model="event.name"/>
-      <label>Short Name</label>
-      <input type='text' ng-model="event.shortname"/>
-      <label>Voting Cue</label>
-      <input type='checkbox' ng-model="event.voting" />
-      <label>View</label>
-      <input type='text' ng-model="event.view"/>
-      
-      <label>Movie</label>
-      <input type='text' ng-model="event.movie"/>
-      
-      
-      <label>Screen</label>
-      <select ng-model="event.screen">
-        <option value="all">All</option>
-        <option value="hud">HUD</option>
-        <option value="oracle">oracle</option>
-      </select>
-      
-
-      <label>Stage</label>
-      <select ng-model="event.stage">
-        <option value="none">none</option>
-        <option value="whisper">whisper</option>
-        <option value="dual">dual</option>
-        <option value="tri">tri</option>
-      </select>
-
-      <label>Phone Number</label>
-      <input type='text' ng-model="event.phonenumber"/>
-      <label>State</label>
-      <select ng-model="event.state" ng-options="opt for opt in opts"></select>
-      <label title="if greater than 0 will time out after this many seconds">Timed Expiration</label>
-      <input type='text' ng-model="event.timer"/>
-      <label>Options</label>
-      <div ng-repeat="vo in event.voteoptions">
-        <fieldset>
-          <legend>Option</legend>
-        	<label>Label</label><input type='text' ng-model="vo.name"/>
-          <label>Image</label><input type='text' ng-model="vo.img" />
-          <label>Movie</label><input type='text' ng-model="vo.mov" />
-          <label>Sound</label><input type='text' ng-model="vo.snd" />
-        	<i class="icon-trash" ng-click='removeVoteOption(vo)'></i>
-        </fieldset>
-      </div>
-    </div>
-    <div class='modal-footer'>
-      <a class="btn" ng-click='addVoteOption()'>Add Option</a>
-      <button type='submit' class="btn btn-danger" data-dismiss="modal" ng-click="delete()">Delete</button>
-      <button type='submit' class="btn btn-primary" data-dismiss="modal" ng-click="save()">Save</button>
-    </div>
-  </fieldset>
-</form>
-
