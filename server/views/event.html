@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ name }}</title>
+    <link rel='stylesheet' href='/css/deus.css'/>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/bundle.js"></script>
+
+    <style>
+      g.highcharts-legend-item {
+        display: none;
+      }
+      g.highcharts-xaxis-labels {
+        display: none;
+      }
+      body {
+        background-image: url(/img/scroll.jpg);
+        background-size: 100%;
+        background-repeat: no-repeat;
+      }
+      .container {
+        padding: 40px;
+      }
+      svg > text {
+        display: none;
+      }
+    </style>
+    <script src="http://code.highcharts.com/highcharts.js">
+    </script>
+    <script src="http://code.highcharts.com/modules/exporting.js">
+    </script>
+</head>
+<body>
+  {{> e }}
+</body>
+</html>

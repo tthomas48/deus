@@ -1,5 +1,10 @@
-config.js
+server/config.js
 node_modules
 plugins/cue/public/images/VE_Smoke_Bkgrnd.mov
 plugins/cue/public/images/*mov
 newrelic.log
+.idea
+public
+bower_components
+.tmp
+newrelic_agent.log

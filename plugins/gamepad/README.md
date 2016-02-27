@@ -68,7 +68,7 @@ module.exports = config;
 Now you can start the webflight server:
 
 ```
-(cd ardrone-webflight && node app.js)
+(cd ardrone-webflight && node server.js)
 ```
 
 Plugin your gamepad, point your browser at http://localhost:3000/ and

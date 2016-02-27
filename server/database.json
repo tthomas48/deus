@@ -1,0 +1,25 @@
+{
+  "development": {
+    "driver": "mysql",
+    "user": "deus",
+    "host": "localhost",
+    "password": "deus",
+    "database": "deus",
+    "port": "3306",
+    "pool": "true",
+    "debug": "true",
+    "multipleStatements": true
+  },
+  "production": {
+    "driver": "mysql",
+    "user": "deus",
+    "host": "localhost",
+    "password": "deus",
+    "database": "deus",
+    "port": "3306",
+    "pool": "true",
+    "debug": "false",
+    "multipleStatements": true
+  }
+}
+

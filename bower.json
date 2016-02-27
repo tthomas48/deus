@@ -1,14 +1,12 @@
 {
   "name": "deus",
   "dependencies": {
-    "bootstrap": "~3.3.6",
     "angular": "1.2.3",
     "angular-resource": "1.2.3",
     "angular-route": "1.2.3",
     "angular-ui-tree": "2.1.5",
     "highcharts": "3.0.10",
     "hogan.js": "hogan#3.0.1",
-    "mustache": "0.8.1",
-    "bootstrap-material-design": "~0.5.7"
+    "mustache": "0.8.1"
   }
 }

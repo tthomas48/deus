@@ -6,26 +6,39 @@
     "start": "app.js"
   },
   "dependencies": {
+    "angular": "^1.5.0",
+    "angular-cookies": "^1.5.0",
+    "angular-resource": "^1.5.0",
+    "angular-route": "^1.5.0",
+    "bcrypt-node": "^0.1.0",
+    "bootswatch": "^3.3.6",
+    "bootswatch-less": "^3.3.4",
+    "connect-flash": "^0.1.1",
     "db-migrate": "^0.10.0-beta.6",
     "db-migrate-mysql": "^1.1.3",
-    "exec-sync": "0.1.6",
     "express": "3.0.6",
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
+    "gulp": "^3.9.1",
     "hogan-express": "0.5.2",
+    "jquery": "^2.2.1",
+    "jsonwebtoken": "^5.7.0",
     "lodash": "^3.10.1",
+    "mandrill-api": "^1.0.45",
     "migrate-orm2": "^1.2.14",
     "mysql": "^2.10.0",
     "nano": "3.3.6",
     "newrelic": "^1.22.1",
     "orm": "^2.1.29",
     "passport": "^0.3.2",
+    "passport-http": "^0.3.0",
     "passport-local": "^1.0.0",
     "q-orm": "0.0.3",
     "request": "2.12.0",
     "socket.io": "0.9.13",
     "twilio": "1.6.0",
     "underscore": "1.4.3",
+    "uuid": "^2.0.1",
     "validator": "3.5.0"
   },
   "subdomain": "deus",
@@ -33,6 +46,13 @@
     "node": "0.10.x"
   },
   "devDependencies": {
-    "ember-cli-components": "~0.2.0"
+    "browser-sync": "^2.11.1",
+    "browserify": "^13.0.0",
+    "connect-browser-sync": "^2.0.1",
+    "ember-cli-components": "~0.2.0",
+    "gulp-clean": "^0.3.1",
+    "gulp-less": "^3.0.5",
+    "gulp-watch": "^4.3.5",
+    "vinyl-source-stream": "^1.1.0"
   }
 }

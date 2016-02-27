@@ -1,9 +1,11 @@
-var execSync = require('exec-sync');
+//var execSync = require('exec-sync');
 
 function cue(name, deps) {
-  var events = require('../../models/events')(deps.io);
-  var tree = require('../../models/tree')(deps.io);
-  var shows = require('../../models/shows')(deps.io);
+  var events = require(__dirname + '/../../server/models/events')(deps.io);
+  // FIXME: tree
+  //var tree = require('../../models/tree')(deps.io);
+  var tree = {};
+  var shows = require(__dirname + '/../../server/models/shows')(deps.io);
   var my = {
     initialized: false,
     nextCue: "0",
@@ -136,6 +138,7 @@ function cue(name, deps) {
     var toggle = false;
     var emitStatus = function(deps, go) {
       // TODO: Allow changing the template
+      /* FIXME: THIS NO LONGER WORKS
       tree.list(null, function(err, branches) {
         if(go == 'go') {
           my.cueNumber = my.nextCue;
@@ -149,6 +152,7 @@ function cue(name, deps) {
           my.nextCue = leaf.nodes[0].id;
         }
       });
+      */
     };
     var init = function() {
       if(my.initialized) {
@@ -244,6 +248,10 @@ function cue(name, deps) {
       my.visible = false;
     });
     socket.on('/cue/sim', function(cmd) {
+/*
+The same feature is now built-in with node v0.12: https://nodejs.org/api/child_process.html#child_process_child_process_execsync_command_options
+
+*/
       execSync(__dirname + '/../../scripts/load.sh +15128724637 4 250');
       console.log("Done with load");
     });

@@ -1,0 +1,87 @@
+
+
+<div ng-show="loggedIn" class="clearfix panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title">Project</h3>
+	</div>
+	<div class="panel-body">
+		<div class="form-group">
+			<label for="project" class="col-md-1 control-label">Project</label>
+
+			<div class="col-md-2">
+				<select id="project" class="form-control" ng-model=currentProject ng-change="switchProject()"
+						ng-options="project.name for project in projects track by project.id">
+						<option value="_new">Create Project</option>
+						<!--option ng-repeat="project in projects" value="{{project.id}}">{{project.name}}</option-->
+				</select>
+			</div>
+			<span class="material-input"></span></div>
+		</div>
+		<button class="btn btn-success btn-raised" ng-click="showCreateProject()">
+			<i class="icon-plus icon-white"></i>&nbsp;Create Project
+		</button>
+	</div>
+</div>
+
+<div ng-show="loggedIn" class=" panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title">Cues</h3>
+	</div>
+	<div class="panel-body">
+
+			<button class="btn btn-success btn-raised" ng-click="editEvent('new')"
+				data-toggle="modal" href="#editModal">
+					<i class="icon-calendar icon-white"></i>&nbsp;Create New Cue
+			</button>
+			<button class="btn btn-warning btn-raised" data-toggle="modal"
+				href="#generateModal">
+				<i class="icon-play icon-white"></i>&nbsp;Simulate Votes
+			</button>
+			<a class="btn btn-default btn-raised" href="/admin/#/cue-map?projectId={{currentProject.id}}"> <i
+				class="icon-map-marker icon-gray"></i>&nbsp;Cue Map
+			</a>
+
+	<table class='table table-striped'>
+		<thead>
+			<tr>
+				<th>Cue</th>
+				<th>Timeout</th>
+				<th>Screen</th>
+				<th>State</th>
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat='event in events'>
+				<td><a href="/events/{{event.shortname}}" target="_results">{{event.name}}</a></td>
+				<td>{{event.timer}}</td>
+				<td>{{event.screen}}</td>
+				<td>
+					<div class="onoffswitch" ng-show="event.voting">
+						<input type="checkbox" name="onoffswitch"
+							class="onoffswitch-checkbox" id="onoff-{{event._id}}"
+							ng-change="toggleState(event)" ng-model="event.state"
+							ng-true-value="'on'" ng-false-value="'off'" /> <label
+							class="onoffswitch-label" for="onoff-{{event._id}}"> <span
+							class="onoffswitch-inner"></span> <span
+							class="onoffswitch-switch"></span>
+						</label>
+					</div>
+				</td>
+				<td>
+					<button role='button' class='btn' ng-click="editEvent(event)"
+						data-toggle="modal" href="#editModal">Edit</button>
+					<button role='button' class='btn' ng-click="duplicateEvent(event)"
+						data-toggle="modal" href="#editModal">Duplicate</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	</div>
+	<div class="modal" ng-include="'event-detail.html'"
+		id="editModal" role='dialog'></div>
+	<div class="modal" ng-include="'generate-votes.html'"
+		id="generateModal" role='dialog'></div>
+	<div class="modal" ng-include="'create-project.html'"
+		 id="createProjectModal" role='dialog'></div>
+</div>
