@@ -29,10 +29,12 @@ exports.up = function (db, callback) {
             mapping: 'id'
           }
         },
-        leaf_id: {
-          type: 'int', foreignKey: {
-            name: 'votes_tree_leaves_id_fk',
-            table: 'tree_leaves',
+        event_id: {
+          type: 'string',
+          length: '48',
+          foreignKey: {
+            name: 'votes_event_id_fk',
+            table: 'events',
             rules: {
               onDelete: 'CASCADE',
               onUpdate: 'RESTRICT'

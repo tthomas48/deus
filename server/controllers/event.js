@@ -32,7 +32,6 @@ var exports = {
           });
         }
       ], function (err, list) {
-        console.log(err, list);
         if (err) {
           res.send(500, err);
           return;

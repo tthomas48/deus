@@ -18,7 +18,8 @@ var db = orm.connect({
           pool: database.pool
         }
       }, function() {
-        require(__dirname + '/models')(db, db.models, function(err) {
+        var savedProject;
+        require(__dirname + '/../server/models')(db, db.models, undefined, undefined, function(err) {
           if (err) return console.error('Connection error: ' + err);
           async.waterfall([
             function(next) {
@@ -33,10 +34,12 @@ var db = orm.connect({
               }, next);
             },
             function(project, next) {
+              savedProject = project;
               var events = [];
               var eventoptions = []
               _.forEach(data.docs, function (doc) {
                 if (doc.doc.type === 'event') {
+                  var id = doc.doc._id;
                   events.push({
                     id: doc.doc._id,
                     project_id: project.id,
@@ -52,7 +55,7 @@ var db = orm.connect({
                   });
                   _.forEach(doc.doc.voteoptions, function(option) {
                     eventoptions.push({
-                      event_id: doc.doc._id,
+                      event_id: id,
                       ix: option.id,
                       name: option.name,
                       img: option.img,
@@ -71,6 +74,14 @@ var db = orm.connect({
             },
             function(eventoptions, next) {
               async.each(eventoptions, db.models.eventoption.create, next);
+            },
+            function(next) {
+              _.forEach(data.docs, function (doc) {
+                  if (doc.doc.type === 'tree') {
+                    db.models.tree.saveTree(doc.doc, savedProject.id, next);
+                  }
+              });
+              
             }
           ], function(err, output) {
             if (err) {

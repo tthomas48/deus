@@ -8,10 +8,21 @@
 		<form>
 			<fieldset>
 				<div class='modal-body'>
-					<label>Phone Number</label> <input type='text'
-						name="generate.phonenumber" /> <label>Number of Options</label> <input
-						type="text" name="generate.options" /> <label>Number of
-						Users</label> <input type="text" name="generate.users" />
+					<div class="form-group has-success has-feedback">
+						<label for="generate.phonenumber" class="control-label">Phone Number</label>
+						<input class="form-control" type="text" name="generate.phonenumber" id="generate.phonenumber" required />
+						<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+					</div>
+					<div class="form-group has-success has-feedback">
+						<label for="generate.options" class="control-label">Number of Options</label>
+						<input class="form-control" type="text" name="generate.options" id="generate.options"  required />
+						<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+					</div>
+					<div class="form-group has-success has-feedback">
+						<label for="generate.users" class="control-label">Number of Users</label>
+						<input class="form-control" type="text" name="generate.users" id="generate.users"  required />
+						<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+					</div>
 				</div>
 				<div class='modal-footer'>
 					<button type='submit' class="btn btn-primary" data-dismiss="modal"

@@ -4,7 +4,7 @@
     var Event = db.define("events", {
       id: {type: 'text', key: true, length: 48},
       project_id: {type: 'number'},
-      name: {type: 'text', length: 200},
+      'name': {type: 'text', length: 200},
       shortname: {type: 'text', length: 32},
       state: {length: 10, type: 'text'},
       timer: {length: 10, type: 'text'},

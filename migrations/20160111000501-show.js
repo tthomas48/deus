@@ -39,6 +39,7 @@ exports.up = function (db, callback) {
     }, function (response, next) {
       db.createTable('show_results', {
         id: {type: 'int', primaryKey: true, autoIncrement: true},
+        eventTime: {type: 'datetime'},
         show_id: {
           type: 'int', foreignKey: {
             name: 'show_results_show_id_fk',
@@ -50,16 +51,21 @@ exports.up = function (db, callback) {
             mapping: 'id'
           }
         },
-        leaf_id: {
-          type: 'int', foreignKey: {
-            name: 'show_results_tree_leaves_id_fk',
-            table: 'tree_leaves',
+        event_id: {
+          type: 'string',
+          length: '48',
+          foreignKey: {
+            name: 'show_results_event_id_fk',
+            table: 'events',
             rules: {
               onDelete: 'CASCADE',
               onUpdate: 'RESTRICT'
             },
             mapping: 'id'
           }
+        },
+        ix: {
+          type: 'int'
         },
         result: {type: 'int'}
       }, next);

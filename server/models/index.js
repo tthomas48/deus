@@ -6,7 +6,8 @@
     require('./user_verify')(db, models);
     require('./project')(db, models);
     require('./tree')(db, models);
-    require('./treeleaf')(db, models);
+    require('./cue')(db, models);
+    require('./cue_option')(db, models);
     require('./event')(db, models, io, emitter);
     require('./event_option')(db, models);
     next();
