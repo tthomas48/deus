@@ -51,7 +51,11 @@ deus.cue = (function(window, document, $, undefined) {
     cue.updateUI(data.view, cue.go === 'go');
   };
   Cue.prototype.updateUI = function updateUI(view, forceLoad) {
-    
+
+    if ($('.' + view.screen + '-view').length === 0) {
+      console.error("Could not view view " + view-screen + "-view");
+      return;
+    }
     if ($('.' + view.screen + '-view').html() === '') {
       forceLoad = true;
     }

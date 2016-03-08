@@ -1,0 +1,22 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title">Create Project</h4>
+        </div>
+        <div class="modal-body">
+            <p>Enter a name to create a new project.</p>
+            <div class="form-group is-empty">
+                <label for="newProjectName" class="col-md-2 control-label">Name</label>
+
+                <div class="col-md-10">
+                    <input type="text" class="form-control" ng-model="newProject.name" style="cursor: auto;" />
+                </div>
+                <span class="material-input"></span></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" ng-click="createProject()">Create</button>
+        </div>
+    </div>
+</div>

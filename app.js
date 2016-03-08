@@ -144,6 +144,7 @@ var routes = require('./routes')(io, plugins, emitter);
 app.get ('/sound-test',    routes.getSoundTest);
 app.get ('/hud',    routes.getHud);
 app.get ('/oracle',    routes.getOracle);
+app.get ('/sxsw',    routes.getSxsw);
 app.get ('/leaderboard',    routes.getLeaderboard);
 
 app.get ('/events/:shortname',    routes.getEvent);

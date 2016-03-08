@@ -74,6 +74,11 @@ var smsify = function(str) {
       scripts: plugins.scripts,
       styles: plugins.styles
     });
+  }, getSxsw = exports.getSxsw = function(req, res) {
+    res.render('sxsw', {
+      scripts: plugins.scripts,
+      styles: plugins.styles
+    });
   }, getLeaderboard = exports.getLeaderboard = function(req, res) {
     res.render('leaderboard', {
       scripts: plugins.scripts,

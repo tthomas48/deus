@@ -1,4 +1,4 @@
-var execSync = require('exec-sync');
+//var execSync = require('exec-sync');
 
 function cue(name, deps) {
   var events = require('../../models/events')(deps.io);
@@ -244,8 +244,8 @@ function cue(name, deps) {
       my.visible = false;
     });
     socket.on('/cue/sim', function(cmd) {
-      execSync(__dirname + '/../../scripts/load.sh +15128724637 4 250');
-      console.log("Done with load");
+      //execSync(__dirname + '/../../scripts/load.sh +15128724637 4 250');
+      console.log("IMPLEMENT NEW EXEC SYNC");
     });
   });
 }

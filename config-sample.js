@@ -3,6 +3,7 @@ var config = {};
 config.couchdb = {};
 config.twilio = {};
 config.deus = {};
+config.twitter = {};
 
 config.couchdb.url = 'https://couchserver:port/database';
 config.couchdb.secureUrl = 'https://username:password@couchserver:port/database';
