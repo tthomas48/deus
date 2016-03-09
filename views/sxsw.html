@@ -79,6 +79,13 @@
        max-width: 90px;
        max-height: 91px;
     }
+    #timer {
+      font-size: 92pt;
+      position: absolute;
+      top: 100px;
+      right: 20px;
+
+    }
 
   </style>
 </head>
@@ -87,7 +94,9 @@
   
     
   
-  
+  <div id="timer">
+
+  </div>
   <div id="glasspane">
   </div>
   <canvas id="cue-canvas">
@@ -234,6 +243,16 @@
 
       //$('div.twitter').append(Mustache.render(template, cmd));
       //twttr.widgets.load();
+    });
+
+    socket.on("timer", function(cmd) {
+      $('#timer').html(cmd.timer);
+      $('#timer').fadeIn(1);
+      $('#timer').fadeOut(800);
+    });
+
+    socket.on("stateUpdate", function(cmd) {
+      console.log(cmd);
     });
 
     

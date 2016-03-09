@@ -328,6 +328,9 @@ var config = require('../config'),
         io.sockets. in (body._id).emit('timer', expiration);
         if(expiration > 0 && body.state == 'on') {
           console.log("Timer: " + expiration);
+          io.sockets.emit('timer', {
+            timer: expiration
+          });
           timers[body._id] = setTimeout(updateTimer.bind(null, cookie, body, expiration), 1000);
         } else {
           console.log("Deleting timer");
