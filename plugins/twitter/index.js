@@ -18,7 +18,8 @@ function twitter(name, deps) {
     });
 
     stream.on('error', function(error) {
-      throw error;
+      console.error(error);
+      //throw error;
     });
   });
 

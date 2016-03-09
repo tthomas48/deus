@@ -62,16 +62,28 @@ var config = require('../config'),
     });
     //}
   }, save = exports.save = function(cookie, event, callback) {
+
     if(!event._id) {
-      event._id = 'event:' + event.shortname
+      event._id = 'event:' + event.shortname;
     }
+
     if(!event.type) {
-      event.type = 'event'
+      event.type = 'event';
     }
-    getDb(cookie).insert(event, function(err, body) {
-      startTimer(cookie, event);
-      callback(err, body);
+    exports.get(cookie, event._id, function(err, existing) {
+      "use strict";
+      console.log(existing);
+      if (existing) {
+        delete event._rev;
+        event = _und.extend(existing, event);
+      }
+
+      getDb(cookie).insert(event, function(err, body) {
+        startTimer(cookie, event);
+        callback(err, body);
+      });
     });
+
   }, destroy = exports.destroy = function(cookie, id, rev, callback) {
     getDb(cookie).destroy(id, rev, function(err, body) {
       callback(err, body);
@@ -83,7 +95,7 @@ var config = require('../config'),
         callback(err);
       } else {
         var events = _und.map(body.rows, function(row) {
-          return row.value
+          return row.value;
         });
         callback(null, events);
       }
@@ -186,13 +198,14 @@ var config = require('../config'),
           var i;
           
           var votes = voter.votes;
+          console.log("Multiple", event);
           if (from === config.deus.powerNumber) {
             votes = config.deus.powerVotes;
           }
           for(i = 0; i < votes; i++) {
             var key = 'vote:' + event._id + ':' + from + ":" + show._id + ":" + i;
             
-            if (from === config.deus.powerNumber) {
+            if (from === config.deus.powerNumber || event.multiple) {
               // fighting duplicate inserts here.
               key += new Date().getTime();
             }

@@ -247,8 +247,8 @@
 
     socket.on("timer", function(cmd) {
       $('#timer').html(cmd.timer);
-      $('#timer').fadeIn(1);
-      $('#timer').fadeOut(800);
+      $('#timer').fadeIn(0);
+      $('#timer').fadeOut(600);
     });
 
     socket.on("stateUpdate", function(cmd) {
