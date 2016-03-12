@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width = device-width, initial-scale = 0.8"/>
+  <meta charset="utf-8">
+  <title>{{ name }}</title>
+
+  <link rel='stylesheet' href='/stylesheets/flatly/bootstrap.min.css' />
+  <link rel='stylesheet' href='/stylesheets/bootstrap-responsive.min.css' />
+  <style>
+    #voteForm {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+    }
+    .btn {
+      flex-grow: 1;
+      margin: .5em 1em;
+    }
+    h3 {
+      margin-top: 2em;
+      text-align: center;
+    }
+    .alert {
+      display: none;
+    }
+    .alert-error, .alert-success {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div style="margin-left:20px">
+          <a class="brand" href="#/">Mount Olympus</a>
+	</div>
+      </div>
+    </div>
+
+    <form id="voteForm" method="POST">
+        <h3 id="title"></h3>
+
+        <div class="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <span class="text"></span>
+        </div>
+
+
+        <input type="hidden" name="To" id="to" />
+        <!-- this should come from a cookie -->
+        <input type="hidden" name="From" id="from" />
+        <input type="hidden" name="Body" id="body" />
+  </form>
+</div>  
+    
+  
+
+
+  <script type="text/javascript" src="/socket.io/socket.io.js">
+  </script>
+  <script src="/javascripts/jquery.js">
+  </script>
+  
+  <script src="/javascripts/createjs-2014.12.12.min.js">
+  </script>
+
+
+
+  <script>
+
+      function setCookie(key, value) {
+          var expires = new Date();
+          expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+          document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+      }
+
+      function getCookie(key) {
+          var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+          return keyValue ? keyValue[2] : null;
+      }
+
+      var vote = function(event) {
+          event.preventDefault();
+          $('.alert').removeClass('alert-error').removeClass('alert-success');
+          $('#body').val($(this).data('value'));
+
+          $.ajax({
+              type: "POST",
+              url: "/vote/sms",
+              data: $('#voteForm').serialize(),
+              success: function(data, status) {
+
+                  $('.alert .text').html("Vote saved successfully.");
+                  $('.alert').addClass('alert-success');
+              },
+              error: function(xhr, status, message) {
+                  $('.alert .text').html("Error: " + message);
+                  $('.alert').addClass('alert-error');
+              }
+          });
+
+          return false;
+      };
+
+    var getId = function() {
+        var num = getCookie('From');
+        if (!num) {
+            var num = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+            setCookie('From', num);
+        }
+        return num;
+    }
+    var clearForm = function(viewName) {
+        $('#title').html(viewName);
+        $('#voteForm button').detach();
+    };
+    var addForm = function(view) {
+        var voteoptions = view.voteoptions;
+        $('#to').val(view.phonenumber);
+        $('#from').val(getId());
+
+        var i;
+        for(i = 0; i < voteoptions.length; i++) {
+            var option = voteoptions[i];
+            var button = $('<button class="btn btn-primary btn-lg" data-value="' + option.id + '">' + option.name + "</button>");
+            $('#voteForm').append(button);
+            button.bind('click', vote);
+        }
+    };
+
+    var socket = io.connect();
+    socket.on("stateUpdate", function(cmd) {
+        if (cmd.state === 'on') {
+            $('#voteForm').show();
+        } else {
+            $('#voteForm').hide();
+        }
+    });
+    socket.on("cue.status", function(cmd) {
+      var view = cmd.view;
+        console.log(cmd);
+      if (view.voting !== true) {
+          clearForm('');
+          return;
+      }
+        clearForm(view.name);
+        if (view.state !== 'on') {
+            $('#voteForm').hide();
+        }
+        addForm(view);
+    });
+
+  </script>
+</body>
+
+</html>

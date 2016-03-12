@@ -6,27 +6,61 @@
   <meta charset="utf-8">
   <title>{{ name }}</title>
   
-  <link href='http://fonts.googleapis.com/css?family=Josefin+Sans:400,600,700' rel='stylesheet' type='text/css' />
   <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
   <!--link href="/stylesheets/bootstrap-responsive.min.css" rel="stylesheet"-->
   <link href="/stylesheets/style.css" rel="stylesheet">
-  <link rel="stylesheet" href="/stylesheets/animations.css">{{#styles}}
-  <link rel="stylesheet" href="{{.}}">{{/styles}}
+  <link rel="stylesheet" href="/stylesheets/animations.css">
+  <link rel="stylesheet" href="/plugin/cue/sxsw/MyFontsWebfontsKit/MyFontsWebfontsKit.css">
+  {{#styles}}
+  <link rel="stylesheet" href="{{.}}">
+  {{/styles}}
   <style>
     body {
-      width: 1600px;
-      height: 1200px;
+      background: #2A333B url(/plugin/cue/sxsw/back.png);
+      width: 1920px;
+      height: 1080px;
       overflow: hidden;
       margin: 0 0 0 0;
+      background-size: cover;
+      background-repeat: no-repeat;
+      font-family: BrandonPrinted-One;
+    }
+    h1 {
+      text-align: center;
+      font-size: 22pt;
+      margin: 0;
     }
     .dimmer {
-      background-color: rgba(30, 30, 30, 0.30);
+      background: transparent;
       top: 0;
       left: 0;
-      width: 1600px;
-      height: 1200px;
+      width: 1920px;
+      height: 1080px;
       z-index: 10000;
       position: absolute;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    div.twitter {
+      position: absolute;
+      top: 215px;
+      right: 30px;
+      width: 370px;
+      z-index: 10500;
+      background: white;
+      height: 100%;
+      padding: 5px;
+    }
+    .logo {
+      background: url(/plugin/cue/sxsw/whirligig_logo.png);
+      top: 43px;
+      left: 38px;
+      width: 430px;
+      height: 189px;
+      z-index: 10500;
+      position: absolute;
+      background-size: contain;
+      background-repeat: no-repeat;
     }
     #backvid {
       top: 0;
@@ -67,7 +101,10 @@
     canvas {
       position: absolute;
       z-index: 50;
-      
+      width: 1343px;
+      height: 866px;
+      bottom: 0;
+      left: 0;
     }
     /*
     #hud .row {
@@ -84,7 +121,19 @@
       position: absolute;
       top: 100px;
       right: 20px;
+      color: white;
 
+    }
+    iframe.twitter-tweet {
+      margin-top: 1px !important;
+      margin-bottom: 1px !important;
+      opacity: 0;
+    }
+    .instructions {
+      color: white;
+      position: absolute;
+      right: 215px;
+      top: 76px;
     }
 
   </style>
@@ -93,12 +142,14 @@
 <body>
   
     
-  
+  <div class="logo">
+  </div>
+  <h1 class="instructions">Visit mtolympus.me/vote or text 512.872.4637</h1>
   <div id="timer">
 
   </div>
-  <div id="glasspane">
-  </div>
+  <!--div id="glasspane">
+  </div-->
   <canvas id="cue-canvas">
   </canvas>
   <div class="sxsw-view all-view">
@@ -106,39 +157,20 @@
   </div>
   <div id="sxsw" class="clearfix">
     <div class="row">
-      <div class="span4"><div class="twitter">
-        <h1>Twitter</h1>
-        <div id="tweets">
+      <div class="span4">
+        <div class="twitter">
+          <h1>#playinggod</h1>
+          <div id="tweets">
 
+          </div>
         </div>
       </div>
-      <div class="span8"><div class="voting">
-        <h1>Other</h1>
+      <div class="span8">
+        <div class="voting">
+          <h1>Other</h1>
         </div>
       </div>
     </div>
-
-      <!--div class="row clearfix" id='deity-counters'>
-        <div class="span3" id='apollo-icon'>
-          <span class='overlay'>PRAYER ANSWERED</span>
-          <img height="180px" src="/plugin/cue/images/GodIcon_Apollo.png"/>  
-          <div id='apollo-count'></div>
-        </div>
-        <div class="span3" id='hera-icon'>
-          <span class='overlay'>PRAYER ANSWERED</span>
-          <img src="/plugin/cue/images/GodIcon_Hera.png"/>
-          <div id='hera-count'></div>
-        </div>
-        <div class="span3" id='athena-icon'>
-          <span class='overlay'>PRAYER ANSWERED</span>
-          <img src="/plugin/cue/images/GodIcon_Athena.png"/>
-          <div id='athena-count'></div>
-        </div>
-        <div class="span3" id='zeus-icon'>
-          <span class='overlay'>PRAYER ANSWERED</span>
-          <img src="/plugin/cue/images/GodIcon_Zeus.png"/>
-          <div id='zeus-count'></div>
-        </div-->
     </div>
   </div>
   <!--video loop id="backvid" autoplay>
@@ -177,8 +209,8 @@
 
     
     var canvas = document.getElementById("cue-canvas");
-    canvas.width = $(window).width();
-    canvas.height = $(window).height();
+    canvas.width = $(canvas).width();
+    canvas.height = $(canvas).height();
     var stage = new createjs.Stage("cue-canvas");
     stage.autoClear = true;
     var elements = [];
@@ -204,51 +236,64 @@
       });
     });
     socket.on("/cue/dimmer", function(cmd) {
-      var dimmerColor = $('.dimmer').css('background-color');
-      console.log(dimmerColor);
-      if (dimmerColor.indexOf('rgba(30, 30, 30, 0.3') === 0 || dimmerColor.indexOf('rgba(30, 30, 30, 0.2') === 0) {
-        $('.dimmer').css('background-color', 'rgba(30, 30, 30, 0.8)');
-        return;
+      var dimmer = $('.dimmer').css('background');
+      if (dimmer.indexOf('sxsw') >= 0) {
+        $('.dimmer').css('background', 'transparent');
+      } else {
+        $('.dimmer').css('background', 'url(/plugin/cue/sxsw/bg_austin.png)');
       }
-      $('.dimmer').css('background-color', 'rgba(30, 30, 30, 0.30)');
     });
 
 
     socket.on("cue.tweet", function(cmd) {
       // append a tweet, have a limit for number of tweets and delete the last one before pushing a new one on
 
-      console.log(cmd);
       try {
 
 
         var parent = $('#tweets');
-        var tweets = parent.find('iframe');
-        if (tweets.length == 10) {
-          $(tweets[9]).remove();
+        var tweets = parent.find('div.wrapper');
+        if (tweets.length == 8) {
+          $(tweets[7]).remove();
         }
 
+        var wrapper = document.createElement("div");
+        wrapper.height = '100px';
+        parent.prepend(wrapper);
         twttr.widgets.createTweet(
                 cmd.id_str,
-                document.getElementById('tweets'),
+                wrapper,
                 {
-                  align: 'left'
+                  align: 'left',
+                  theme: 'light',
+                  conversation:	'none'
                 })
                 .then(function (el) {
-                  console.log("@ev's Tweet has been displayed.")
+                  try {
+                    el = jQuery(el);
+                    //el.contents().find('p.Tweet-text').html(new Date());
+                    el.contents().find('div.Tweet-brand,div.Tweet-metadata,ul.tweet-actions').css("display", "none");
+                    el.contents().find('.embeddedtweet-tweet').css("padding", "10px");
+                    // hack for an ugly issue with oversized boxes
+                    el.css('height', (el.height() + 1) + "px");
+                    el.fadeTo(1000, 1);
+
+                  } catch(e) {
+                    console.error(e);
+                  }
+
                 });
+
       } catch(e) {
         console.error(e);
       }
-
-
-      //$('div.twitter').append(Mustache.render(template, cmd));
-      //twttr.widgets.load();
     });
 
     socket.on("timer", function(cmd) {
       $('#timer').html(cmd.timer);
-      $('#timer').fadeIn(0);
-      $('#timer').fadeOut(600);
+      $('#timer').fadeIn(1, function() {
+        $('#timer').fadeOut(800);
+      });
     });
 
     socket.on("stateUpdate", function(cmd) {

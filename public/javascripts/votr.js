@@ -261,8 +261,18 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
   $scope.simulate = function() {
     socket.emit('/cue/sim', {});
   };
+  $scope.doTweet = function(event) {
+    socket.emit('tweet.msg', event._id);
+  };
   EventService.query(function(output) {
     $scope.events = output;
+    $scope.tweets = [];
+    var i = 0;
+    for (i = 0; i < output.length; i++) {
+      if (output[i].twitter) {
+        $scope.tweets.push(output[i]);
+      }
+    }
   });
   
   $scope.currentShow = undefined;

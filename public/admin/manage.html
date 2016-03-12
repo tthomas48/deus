@@ -21,13 +21,13 @@
   <script type="text/ng-template" id="tree_item_renderer.html">        
           <div ng-model="data" ng-show="data.nodes.length > 0" class="clearfix">
             <div class="pull-left">
-            <button class="btn btn-xs btn-expand" data-nodrag="" onclick="return false">
+            <button class="btn btn-small btn-expand" data-nodrag="" onclick="return false">
             <span class="icon-chevron-right"></span>
             </button>
             </div>
             <div class="pull-left">
             <cue show="currentShow" id="data.id" name="data.cueName"></cue>
-            <a class="btn btn-success btn-xs" ng-click="setCue(data.id)">Jump</a>
+            <a class="btn btn-success btn-small" ng-click="setCue(data.id)">Jump</a>
             
             <div class="onoffswitch" ng-show="data.voting">
               <input type="checkbox" name="onoffswitch" event-id="{{data.cue}}" class="onoffswitch-checkbox" id="onoff-{{data.id}}" ng-true-value="on" ng-false-value="off" ng-change="changeEventState(data.id)" ng-model="cueState[data.id]" cue-id="{{data.id}}" />
@@ -48,32 +48,38 @@
   
   <div class="row">
     <div class="span4">
-      <div style="position:fixed">
+      <div> 
         
       
       <div class="row">
         <a class="btn btn-success btn-xl" ng-click="go()">Go</a>  
       </div>
       <div class="row">
-        <a class="btn btn-default btn-xs" ng-click="vote()">Vote</a>  
-        <a class="btn btn-warning btn-xs" ng-click="simulate()">Simulate</a>  
+        <a class="btn btn-default btn-small" ng-click="vote()">Vote</a>  
+        <a class="btn btn-warning btn-small" ng-click="simulate()">Simulate</a>  
       </div>
       <div class="row">
         
       
-      <a class="btn btn-warning btn-xs" ng-click="clear('all')">Clear All</a>
-      <a class="btn btn-warning btn-xs" ng-click="clear('hud')">Clear HUD</a>
-      <a class="btn btn-warning btn-xs" ng-click="clear('oracle')">Clear Oracle</a>
+      <a class="btn btn-warning btn-small" ng-click="clear('all')">Clear All</a>
+      <a class="btn btn-warning btn-small" ng-click="clear('hud')">Clear HUD</a>
+      <a class="btn btn-warning btn-small" ng-click="clear('oracle')">Clear Oracle</a>
       </div>
       <div class="row">
-        <a class="btn btn-warning btn-xs" ng-click="leaderboard()">Toggle Leaderboard</a>
-        <a class="btn btn-warning btn-xs" ng-click="dimmer()">Toggle Dimmer</a>
+        <a class="btn btn-warning btn-small" ng-click="leaderboard()">Toggle Leaderboard</a>
+        <a class="btn btn-warning btn-small" ng-click="dimmer()">Toggle Dimmer</a>
       </div>
         <div class="well">
           <h3>Winner {{lastWinner}}</h3>
           <h3>Option 1: {{liveVotes[1]}}</h3>
           <h3>Option 2: {{liveVotes[2]}}</h3>
           <h3>Option 3: {{liveVotes[3]}}</h3>
+        </div>
+        <div ng-if="tweets && tweets.length > 0" class="well tweets">
+          <h3>Tweets</h3>
+          <ul>
+            <li ng-repeat="tweet in tweets">{{tweet.name}} <button class="btn btn-warning btn-small" ng-click="doTweet(tweet);">Tweet</button></li>
+          </ul>
         </div>
         <div class="well environmental">
           <h3>Environmental</h3>

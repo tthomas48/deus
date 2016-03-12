@@ -40,7 +40,6 @@
               });
         });
       var that = this;
-      window.console.log("Adding olympus clear handler");
         this.socket.on('clearOlympus', function(view) {
           that.clearScreen(view);
         });

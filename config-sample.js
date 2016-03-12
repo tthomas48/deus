@@ -4,6 +4,7 @@ config.couchdb = {};
 config.twilio = {};
 config.deus = {};
 config.twitter = {};
+config.messages = {};
 
 config.couchdb.url = 'https://couchserver:port/database';
 config.couchdb.secureUrl = 'https://username:password@couchserver:port/database';
@@ -21,6 +22,8 @@ config.deus.returningVotes = 1;
 config.deus.powerNumber = '';
 config.deus.powerVotes = 15;
 
+config.messages.duplicate = 'Sorry, the gods will only hear you once per prayer.';
+config.messages.success = 'The gods have heard your voice.';
 
 config.cookiesecret = 'make-this-a-secret';
 config.salt = 'make-this-match-your-square-webhook';

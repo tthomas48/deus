@@ -10,10 +10,41 @@ deus.sprite = (function($, createjs, undefined) {
     this.imagePath = imagePath;
     this.soundPath = soundPath;
     this.ouroborus = ouroboros;
+    this.x = undefined;
+    this.y = undefined;
   }
+
+
 
   Sprite.prototype = {
     constructor : Sprite,
+    initPos: function(stage, bounds) {
+      var x, y;
+      if (this.position === 1) {
+        x = 50;
+        y = 250;
+      }
+      else if (this.position === 2) {
+        x = stage.canvas.width - bounds.width - 50;
+        y = 250;
+      }
+      else if (this.position === 3) {
+        x = (stage.canvas.width - bounds.width) / 2;
+        y = 0;
+      }
+
+      console.log(this, x, y);
+      if (!this.x) {
+        this.x = x;
+      }
+
+      if (!this.y) {
+        this.y = y;
+      }
+
+      this.bitmap.x = this.x;
+      this.bitmap.y = this.y;
+    },
     add : function(stage) {
       
       if (this.soundPath) {
@@ -29,29 +60,8 @@ deus.sprite = (function($, createjs, undefined) {
 
       var that = this;
       this.bitmap.image.onload = function() {
-        var bounds = that.bitmap.getTransformedBounds();
-        if (that.position === 1) {
-          that.bitmap.x = 50;
-          that.bitmap.y = 250; 
-        }
-        else if (that.position === 2) {
-          that.bitmap.x = stage.canvas.width - bounds.width - 50;
-          that.bitmap.y = 250; 
-        }
-        else if (that.position === 3) {
-          that.bitmap.x = (stage.canvas.width - bounds.width) / 2;
-          that.bitmap.y = 0;
-        }
-        // 150 is the amount from the top, that the stage starts
-        // 
-//         if (that.totalOptions == 3 && (that.position == 1 || that.position == 2)) {
-//           that.bitmap.y = (stage.canvas.height - bounds.height) / 2; 
-//         }
-//         else {
-//           that.bitmap.y = 250; 
-//         }
-
-        //that.bitmap.y = (stage.canvas.height - bounds.height) / 2;
+        that.bounds = that.bitmap.getTransformedBounds();
+        that.initPos(stage, that.bounds);
       };
     },
     draw : function(stage) {

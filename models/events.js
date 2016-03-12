@@ -252,7 +252,7 @@ var config = require('../config'),
                 client.sendSms({
                   To: votesToSave[i].phonenumber,
                   From: votesToSave[i].event_phonenumber,
-                  Body: 'Sorry, the gods will only hear you once per prayer.'
+                  Body: config.messages.duplicate
                 });
                 dupes.push(votesToSave[i].phoneNumber);
               }
@@ -262,7 +262,7 @@ var config = require('../config'),
                 client.sendSms({
                   To: votesToSave[i].phonenumber,
                   From: votesToSave[i].event_phonenumber,
-                  Body: 'The gods have heard your voice.'
+                  Body: config.messages.success
                 });
                 notified.push(votesToSave[i].phonenumber);
               }
@@ -398,8 +398,8 @@ var config = require('../config'),
         }
       }
       else if (results['2'] == max) {
+        emitter.emit("cue.winner", {winner: 1, event: event});
         if (event.voteoptions && event.voteoptions.length > 1 && event.voteoptions[1].mov) {
-          emitter.emit("cue.winner", {winner: 1, event: event});
           io.sockets.emit("/cue/playvideo", {
             mov: event.voteoptions[1].mov
           })
@@ -407,8 +407,8 @@ var config = require('../config'),
         }
       }
       else if (results['3'] == max) {
+        emitter.emit("cue.winner", {winner: 2, event:event});
         if (event.voteoptions && event.voteoptions.length > 2 && event.voteoptions[2].mov) {
-          emitter.emit("cue.winner", {winner: 2, event:event});
           io.sockets.emit("/cue/playvideo", {
             mov: event.voteoptions[2].mov
           })

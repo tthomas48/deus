@@ -148,7 +148,8 @@ app.get ('/sxsw',    routes.getSxsw);
 app.get ('/leaderboard',    routes.getLeaderboard);
 
 app.get ('/events/:shortname',    routes.getEvent);
-app.get ('/e/:shortname',    routes.getEventSnippet);
+app.get ('/e/:shortname',         routes.getEventSnippet);
+app.get('/vote',                  routes.vote);
 app.post('/vote/sms',             routes.voteSMS);
 app.post('/vote/voice',           routes.voteVoice);
 app.post('/vote/voice/selection', routes.voiceSelection);

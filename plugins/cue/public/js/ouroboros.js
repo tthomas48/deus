@@ -9,6 +9,7 @@ deus.ouroboros = (function($, createjs, undefined) {
     this.timer = 0;
     this.bitmap = undefined;
     this.time = 0;
+    this.top = 150;
     this.initialX = 0;
     this.initialY = 0;
     this.xTarget = 0;
@@ -22,11 +23,15 @@ deus.ouroboros = (function($, createjs, undefined) {
     this.cuedWinner = undefined;
     this.spinning = false;
     this.loaded = false;
+    this.movingToWinner = false;
     this.transitionInstance = undefined;
     this.cues = cues;
     this.videoFade = false;
+    this.rotate = true;
     this.videoFadeParams = {};
     this.socket = io.connect();
+    this.img = "/plugin/cue/images/Ouroboros.png";
+    this.velocity = 2;
   }
 
   Ouroboros.prototype = {
@@ -37,9 +42,9 @@ deus.ouroboros = (function($, createjs, undefined) {
       $('#cue-view').show();
       $('canvas').show();
       
-      this.bitmap = new createjs.Bitmap("/plugin/cue/images/Ouroboros.png");
-      this.bitmap.scaleX = this.cues.length == 3 ? 0.5 : 0.75;
-      this.bitmap.scaleY = this.cues.length == 3 ? 0.5 : 0.75;
+      this.bitmap = new createjs.Bitmap(this.img);
+      this.bitmap.scaleX = this.cues.length === 3 ? 0.5 : 0.75;
+      this.bitmap.scaleY = this.cues.length === 3 ? 0.5 : 0.75;
       stage.addChild(this.bitmap);
       
       var that = this;
@@ -47,7 +52,7 @@ deus.ouroboros = (function($, createjs, undefined) {
         var bounds = that.bitmap.getTransformedBounds();
         that.bitmap.x = (stage.canvas.width) / 2;
         // 150 is the amount from the top, that the stage starts
-        that.bitmap.y = (stage.canvas.height - 150) / 2;
+        that.bitmap.y = (stage.canvas.height - that.top) / 2;
         that.bitmap.regX = that.bitmap.image.width / 2;
         that.bitmap.regY = that.bitmap.image.height / 2;
         that.initialX = that.bitmap.x;
@@ -57,18 +62,18 @@ deus.ouroboros = (function($, createjs, undefined) {
         //that.bitmap.regY = stage.canvas.height / 2;
         that.bitmap.cache(0, 0, that.bitmap.image.width, that.bitmap.image.height);
         
-        console.log(that.enbiggened);
         if (that.enbiggened) {
           that.bitmap.scaleX = 1.15;
           that.bitmap.scaleY = 1.15;
           that.bitmap.cache(0, 0, that.bitmap.image.width, that.bitmap.image.height);
         }
-        
+
         that.loaded = true;
       };
 
       this.socket.on('timer', that.setTime.bind(that));
-      this.socket.on('vote', that.moveRelative.bind(that));
+      this.socket.on('vote', that.saveVotes.bind(that));
+      this.socket.on('winner.display', that.doWinner.bind(that));
 
       this.socket.on('cue.status', function(data) {
         if (data.go === 'go' || data.go === 'vote') {
@@ -95,6 +100,20 @@ deus.ouroboros = (function($, createjs, undefined) {
     spinBig: function() {
       this.spinning = true;
       this.enbiggen();
+    },
+    doWinner: function(data) {
+      this.movingToWinner = true;
+      console.log("Winner", data);
+      if (data === 1) {
+        this.xTarget = - (this.stageWidth / this.totalVotes * (this.totalVotes));
+        //this.xTarget = 0;
+      }
+      if (data === 2) {
+        this.xTarget = this.stageWidth;
+        //this.xTarget = this.stageWidth;
+      }
+      console.log("xTarget", this.xTarget);
+
     },
     fadeOut: function(callback) {
       if (!this.sound.fadeOut) {
@@ -137,7 +156,9 @@ deus.ouroboros = (function($, createjs, undefined) {
             }
         }
         this.cuedWinner = false;
-        this.bitmap.rotation = this.bitmap.rotation - 3;
+        if (this.rotate) {
+          this.bitmap.rotation = this.bitmap.rotation - 3;
+        }
         
         if (this.enbiggened) {
 
@@ -154,20 +175,16 @@ deus.ouroboros = (function($, createjs, undefined) {
           }
         }
       }
-      if (this.spinning === false && this.cuedWinner === false && this.time == 0) {
+
+      if (this.spinning === false && this.cuedWinner === false && this.time === 0) {
+
         if (this.transitionInstance) {
           this.fadeOut(function () {
             if (this.enbiggened) {
               if (this.oneVotes >= this.twoVotes) {
-//                 ouroborus.filter([
-// 		              new createjs.ColorFilter(5,0,0,1, 0,0,255,0)
-// 	              ]);
 	              var instance = createjs.Sound.play("yes");
 	              instance.volume = 1;
               } else {
-// 	              ouroborus.filter([
-// 	                new createjs.ColorFilter(1,5,1,1, 0,0,255,0)
-//                 ]);
                 var instance = createjs.Sound.play("no");
                 instance.volume = 1;
               }
@@ -181,22 +198,31 @@ deus.ouroboros = (function($, createjs, undefined) {
         // we don't move the enbiggened
         return;
       }
+      if (!this.movingToWinner) {
+        this.moveRelative();
+      }
+      this.move();
+
+      this.bitmap.updateCache(this.bitmap.x, this.bitmap.y, this.bitmap.image.width, this.bitmap.image.height);
+    },
+    move: function() {
+      // so we could have a thing here that does the shake maybe if xTarget hasn't changed
+      // we could also increase the velocity for every vote that goes the same direction we're going
+      if (this.movingToWinner) {
+        this.velocity *= 1.05;
+      }
       if (this.bitmap.x > this.initialX + this.xTarget) {
-        this.bitmap.x -= 2;
+        this.bitmap.x -= this.velocity;
       }
       if (this.bitmap.x < this.initialX + this.xTarget) {
-        this.bitmap.x += 2;
+        this.bitmap.x += this.velocity;
       }
       if (this.bitmap.y > this.initialY + this.yTarget) {
-        this.bitmap.y -= 2;
+        this.bitmap.y -= this.velocity;
       }
       if (this.bitmap.y < this.initialY + this.yTarget) {
-        this.bitmap.y += 2;
+        this.bitmap.y += this.velocity;
       }
-      this.bitmap.updateCache(this.bitmap.x, this.bitmap.y, this.bitmap.image.width, this.bitmap.image.height);
-
-      //this.bitmap.updateCache();
-
     },
     startVideoFade: function() {
       this.videoFade = true;
@@ -220,13 +246,19 @@ deus.ouroboros = (function($, createjs, undefined) {
       this.bitmap.set({alpha: this.videoFadeParams.alpha});
     },
     setTime: function(data) {
-      this.time = data;
+      this.time = data.timer || 0;
     },
     moveRelative: function(vote) {
-      this.saveVotes(vote);
-      
-      this.xTarget = (this.stageWidth * (this.twoVotes - this.oneVotes)) / this.totalVotes;
-      this.yTarget = - ((this.stageHeight * this.threeVotes) / this.totalVotes);
+
+      //this.xTarget = (this.stageWidth * (this.twoVotes - this.oneVotes)) / this.totalVotes;
+      this.xTarget = (this.stageWidth / this.totalVotes * (this.twoVotes - this.oneVotes));
+      if (isNaN(this.xTarget)) {
+        this.xTarget = 0;
+      }
+      this.yTarget = -(this.stageWidth / this.totalVotes) * (this.threeVotes);
+      if (isNaN(this.yTarget)) {
+        this.yTarget = 0;
+      }
     },
     saveVotes: function(vote) {
       this.totalVotes++;

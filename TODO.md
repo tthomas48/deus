@@ -10,9 +10,11 @@ DONE
 
 DOING
 * make olympus messages config settings that can be changed
-
+  - send reactions to Rob
+* can we have 2 accounts for sending tweets
 
 NEXT
+* Can we have twitter votes be a cue.
 * degeneration rate for votes, graphs naturally decline over time as votes don't come in
 * can we freeze/snapshot the data?
 
@@ -24,3 +26,11 @@ NEXT
 
 
 
+
+SXSW Pass?
+
+Nice to Have
+------------
+Shrink and grow
+Labels
+Spin pointer

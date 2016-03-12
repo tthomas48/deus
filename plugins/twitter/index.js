@@ -6,20 +6,61 @@ function twitter(name, deps) {
 
   var Twitter = require('twitter');
 
-  var client = new Twitter(config.twitter.auth);
+  for (key in config.twitter.accounts) {
+    var account = config.twitter.accounts[key];
+    if (account.stream) {
+      console.log("Setting up streaming for twitter user " + key);
+      var client = new Twitter(account.auth);
+      client.stream('statuses/filter', {track: account.search}, function (stream) {
+        stream.on('data', function (tweet) {
+         console.log(tweet.text);
+          console.log(tweet);
 
-  client.stream('statuses/filter', {track: config.twitter.search}, function(stream) {
-    stream.on('data', function(tweet) {
-      console.log(tweet.text);
-      console.log(tweet);
+         deps.io.sockets.emit('cue.tweet', tweet);
 
-      deps.io.sockets.emit('cue.tweet', tweet);
+       });
 
-    });
+        stream.on('error', function (error) {
+          console.error(error);
+          //throw error;
+        });
+      });
 
-    stream.on('error', function(error) {
-      console.error(error);
-      //throw error;
+    }
+  }
+
+
+
+
+  deps.io.sockets.on('connection', function(socket) {
+    // TODO: iterate through and handle all accounts with stream variable set
+    var key;
+
+
+    socket.on('tweet.msg', function (eventid) {
+      "use strict";
+      events.findBy('all', {
+        key: [eventid],
+        reduce: false
+      }, function(err, event) {
+        for (key in config.twitter.accounts) {
+          if (key === event.twitterAccount) {
+            var account = config.twitter.accounts[key];
+            var client = new Twitter(account.auth);
+            client.post('statuses/update', {status: event.twitterMsg},  function(error, tweet, response) {
+              if(error) {
+                  console.error(error);
+                return;
+              }
+              console.log("Tweet sent for " + key);
+            });
+
+          }
+
+        }
+
+      });
+
     });
   });
 

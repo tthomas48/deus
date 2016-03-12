@@ -315,7 +315,15 @@ var smsify = function(str) {
    * POST new vote via SMS
    */
   ,
+  vote = exports.vote = function(req, res) {
+    "use strict";
+    res.render('vote', {
+      scripts: plugins.scripts,
+      styles: plugins.styles
+    });
+  },
   voteSMS = exports.voteSMS = function(request, response) {
+
     if(twilio.validateExpressRequest(request, config.twilio.key, {
       url: config.twilio.smsWebhook
     }) || config.twilio.disableSigCheck) {
