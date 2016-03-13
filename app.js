@@ -63,6 +63,11 @@ io.sockets.on('connection', function(socket) {
       console.log("Messaging to clear olympus");
       io.sockets.emit('clearOlympus', data);
     });
+
+  socket.on('/refresh', function(data) {
+    console.log("Messaging to refresh olympus");
+    io.sockets.emit('refreshOlympus', data);
+  });
   
     socket.on('/leaderboard', function(data) {
       console.log("Messaging to show leaderboard");

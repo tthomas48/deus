@@ -199,13 +199,8 @@ function cue(name, deps) {
       if(!cmd.go) {
         cmd.go = 'go';
       } else if(cmd.go == 'vote' && my.cueNumber != cmd.cue) {
-        //deps.io.sockets.emit('clearOlympus');
-        // jump to the cue
         my.cueNumber = String(cmd.cue);
       }
-      //       if (cmd.go == 'go') {
-      //         deps.io.sockets.emit('clearOlympus');
-      //       }
       emitStatus(deps, cmd.go);
     });
     socket.on('/cue/manual', function(cmd) {

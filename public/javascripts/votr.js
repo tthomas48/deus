@@ -238,6 +238,11 @@ app.controller('CueMapCtrl', function($scope, $location, $filter, TreeService, E
     socket.emit("/clear", view);
     return false;
   };
+  $scope.refreshOlympus = function(view) {
+    window.console.log("Emitting a refresh");
+    socket.emit("/refresh");
+    return false;
+  };
   $scope.leaderboard = function(view) {
     window.console.log("Toggling leaderboard");
     socket.emit("/leaderboard");

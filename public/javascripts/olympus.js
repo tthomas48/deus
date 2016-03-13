@@ -43,6 +43,9 @@
         this.socket.on('clearOlympus', function(view) {
           that.clearScreen(view);
         });
+        this.socket.on('refreshOlympus', function() {
+          that.refreshScreen();
+        });
         if($('.hud-view').length) {
           //window.console.log("adding environmental controls handlers");
           this.socket.on('/environmentControlsThreshold', function(deity_name) {
@@ -72,6 +75,13 @@
           $('.' + view + '-view').html('');
           this.stage.removeAllChildren();
           this.stage.update();      
+      };
+
+      this.refreshScreen = function() {
+        "use strict";
+        console.log("Refreshing");
+
+        document.location.reload();
       };
     };
 

@@ -85,7 +85,7 @@ deus.cue = (function(window, document, $, undefined) {
     
     $.get("/plugin/cue/" + view.view, function(responseText, textStatus) {
       var output = Mustache.render(responseText, view);
-      $('.' + view.screen + '-view').html($(output));
+      $('.' + view.screen + '-view').html($('<span class="' + view.shortname + '">' + output + '</span>'));
     });
   };
   window.Olympus.plugins.push(Cue);

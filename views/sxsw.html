@@ -48,7 +48,7 @@
       width: 370px;
       z-index: 10015;
       background: white;
-      height: 100%;
+      height: 740px;
       padding: 5px;
     }
     .logo {
@@ -126,6 +126,23 @@
       position: absolute;
       right: 215px;
       top: 76px;
+    }
+    .talk-the-talk:after, .tune-the-talk:after {
+      content: 'Technology';
+      position: absolute;
+      top: 877px;
+      left: 400px;
+      color: white;
+      font-size: 14px;
+    }
+    .talk-the-talk h1:after, .tune-the-talk h1:after {
+      content: 'Performance';
+      position: absolute;
+      top: 372px;
+      left: 860px;
+      color: white;
+      font-size: 14px;
+      font-weight: normal;
     }
 
   </style>
@@ -220,15 +237,6 @@
     window.olympusInstance = new Olympus(stage);
 
     var socket = io.connect();
-    socket.on("/cue/leaderboard", function(cmd) {
-      if($('section.leaderboard').length > 0) {
-        $('section.leaderboard').detach();
-        return;
-      }
-      $.get("/leaderboard", {}, function(responseText, textStatus) {
-        $('.hud-view').html($(responseText));
-      });
-    });
     socket.on("/cue/dimmer", function(cmd) {
       var dimmer = $('.dimmer').css('background');
       if (dimmer.indexOf('sxsw') >= 0) {
@@ -298,7 +306,7 @@
       
       socket.emit('/cue/manual', {
         event_id: '{{eventOverride}}',
-        screen: 'hud'
+        screen: 'sxsw'
       });
     {{/eventOverride}}
     
