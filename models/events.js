@@ -149,8 +149,9 @@ var config = require('../config'),
         
         if (voter.shows.indexOf(show._id) < 0) {
           voter.shows.push(show._id);
-          
-          if (voter.shows.length > 1) {
+
+          voter.votes = 1;
+          if (config.deus.showBonus && voter.shows.length > 1) {
             // returning voter give them a bonus
             console.log("Shows greater than 1, giving bonus");
             voter.votes = Math.max(1, Number(voter.shows.length) + Number(config.deus.returningVotes));
@@ -185,8 +186,9 @@ var config = require('../config'),
         
         if (voter.shows.indexOf(show._id) < 0) {
           voter.shows.push(show._id);
-          
-          if (voter.shows.length > 1) {
+
+          voter.votes = 1;
+          if (config.deus.showBonus && voter.shows.length > 1) {
             // returning voter give them a bonus
             console.log("Shows greater than 1, giving bonus");
             voter.votes = Math.max(1, Number(voter.shows.length) + Number(config.deus.returningVotes));

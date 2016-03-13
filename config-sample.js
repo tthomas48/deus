@@ -21,6 +21,7 @@ config.twilio.sendPrompts = false;
 config.deus.returningVotes = 1;
 config.deus.powerNumber = '';
 config.deus.powerVotes = 15;
+config.deus.showBonus = true;
 
 config.messages.duplicate = 'Sorry, the gods will only hear you once per prayer.';
 config.messages.success = 'The gods have heard your voice.';

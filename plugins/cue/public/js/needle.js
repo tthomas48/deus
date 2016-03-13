@@ -1,8 +1,8 @@
 var deus = deus || {};
-deus.ouroboros = (function($, createjs, undefined) {
+deus.needle = (function($, createjs, undefined) {
   "use strict";
 
-  function Ouroboros(cues, sound, enbiggened) {
+  function Needle(cues, sound, enbiggened) {
     console.log("Updating ouroborus", enbiggened);
     this.sound = sound;    
     this.enbiggened = enbiggened;
@@ -35,12 +35,12 @@ deus.ouroboros = (function($, createjs, undefined) {
     this.rotate = true;
     this.videoFadeParams = {};
     this.socket = io.connect();
-    this.img = "/plugin/cue/images/Ouroboros.png";
+    this.img = "/plugin/cue/images/Needle.png";
     this.velocity = 2;
   }
 
-  Ouroboros.prototype = {
-    constructor : Ouroboros,
+  Needle.prototype = {
+    constructor : Needle,
     add : function(stage) {
 
       $('header').show();
@@ -57,7 +57,7 @@ deus.ouroboros = (function($, createjs, undefined) {
         var bounds = that.bitmap.getTransformedBounds();
         that.bitmap.x = (stage.canvas.width) / 2;
         // 150 is the amount from the top, that the stage starts
-        that.bitmap.y = (stage.canvas.height - that.top) / 2;
+        that.bitmap.y = (stage.canvas.height - that.top) / 2 + 45;
         that.bitmap.regX = that.bitmap.image.width / 2;
         that.bitmap.regY = that.bitmap.image.height / 2;
         that.initialX = that.bitmap.x;
@@ -82,7 +82,7 @@ deus.ouroboros = (function($, createjs, undefined) {
 
       this.socket.on('cue.status', function(data) {
         if (data.go === 'go' || data.go === 'vote') {
-          console.log("Unbinding ouroboros");
+          console.log("Unbinding Needle");
           this.socket.removeListener('timer', that.setTime.bind(that));
           this.socket.removeListener('vote', that.moveRelative.bind(that));
           if (that.transitionInstance) {
@@ -108,16 +108,13 @@ deus.ouroboros = (function($, createjs, undefined) {
     },
     doWinner: function(data) {
       this.movingToWinner = true;
-      if (this.oneVotes === Math.max(this.oneVotes, this.twoVotes, this.threeVotes)) {
+      if (data === 1) {
         this.xTarget = - this.stageWidth;
         //this.xTarget = 0;
       }
-      else if (this.twoVotes === Math.max(this.oneVotes, this.twoVotes, this.threeVotes)) {
+      if (data === 2) {
         this.xTarget = this.stageWidth;
         //this.xTarget = this.stageWidth;
-      }
-      else if (this.threeVotes === Math.max(this.oneVotes, this.twoVotes, this.threeVotes)) {
-
       }
     },
     fadeOut: function(callback) {
@@ -211,35 +208,40 @@ deus.ouroboros = (function($, createjs, undefined) {
       this.bitmap.updateCache(this.bitmap.x, this.bitmap.y, this.bitmap.image.width, this.bitmap.image.height);
     },
     move: function() {
+
       // so we could have a thing here that does the shake maybe if xTarget hasn't changed
       // we could also increase the velocity for every vote that goes the same direction we're going
       if (this.movingToWinner) {
         this.velocity *= 1.05;
       }
-      if (this.bitmap.x > this.initialX + this.xTarget) {
-        this.bitmap.x -= this.velocity;
+      if (this.bitmap.rotation > this.xTarget) {
+        this.bitmap.rotation -= this.velocity;
       }
-      if (this.bitmap.x < this.initialX + this.xTarget) {
-        this.bitmap.x += this.velocity;
+      if (this.bitmap.rotation < this.xTarget) {
+        this.bitmap.rotation += this.velocity;
       }
+      /*
       if (this.bitmap.y > this.initialY + this.yTarget) {
         this.bitmap.y -= this.velocity;
       }
       if (this.bitmap.y < this.initialY + this.yTarget) {
         this.bitmap.y += this.velocity;
       }
+      */
 
       // when using halflife we want jiggle always
       if (this.time > 0 || this.halflife) {
         if (this.jiggleX && this.bitmap.x === this.lastX) {
           var jiggle = Math.floor(Math.random() * 21) - 10;
-          this.bitmap.x += jiggle;
+          this.bitmap.rotation += jiggle;
         }
 
+        /*
         if (this.jigglYX && this.bitmap.y === this.lastY) {
           var jiggle = Math.floor(Math.random() * 21) - 10;
           this.bitmap.y += jiggle;
         }
+        */
       }
 
       this.lastX = this.bitmap.x;
@@ -271,7 +273,23 @@ deus.ouroboros = (function($, createjs, undefined) {
     },
     moveRelative: function(vote) {
 
-      //this.xTarget = (this.stageWidth * (this.twoVotes - this.oneVotes)) / this.totalVotes;
+      //If I have 1 left and 2 right I should be at 45 to the right
+      //If I have 2 left and 1 right I should be at -45
+      //
+      //1 * -90 / 3  -90 / 3
+      //2 * 90   180 / 3
+
+
+
+
+      var one = this.oneVotes || 0;
+      var two = this.twoVotes || 0;
+      var total = this.totalVotes || 0;
+      var left = (-90 * one) / total;
+      var right = (90 * two) / total;
+
+      this.xTarget = left + right;
+      /*
       this.xTarget = (this.stageWidth / this.totalVotes * (this.twoVotes - this.oneVotes));
       if (isNaN(this.xTarget)) {
         this.xTarget = 0;
@@ -280,6 +298,7 @@ deus.ouroboros = (function($, createjs, undefined) {
       if (isNaN(this.yTarget)) {
         this.yTarget = 0;
       }
+      */
     },
     saveVotes: function(vote) {
       this.totalVotes++;
@@ -312,6 +331,6 @@ deus.ouroboros = (function($, createjs, undefined) {
   };
   
   return {
-    Ouroboros : Ouroboros
+    Needle : Needle
   };  
 })(jQuery, createjs);
