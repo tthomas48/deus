@@ -32,15 +32,37 @@
 
     elements = [];
     var ouroborus = new deus.ouroboros.Ouroboros(cues,
-            {name: "oracle-transition", repeat: false, fadeOut: false}, false
+            {name: "oracle-transition", repeat: false, fadeOut: true}, false
     );
     ouroborus.rotate = false;
-    ouroborus.img = '/plugin/cue/sxsw/vote_rope.png';
+    ouroborus.img = '/plugin/cue/sxsw/vote_tugofwar.png';
     ouroborus.top = -150;
     ouroborus.jiggleX = true;
+      {{#multiple}}
+      ouroborus.halflife = true;
+      {{/multiple}}
+      /*
+    ouroborus.socket.on('winner.display', function() {
+        var data = {
+            labels: ["Yes", "No"],
+            datasets: [
+                {
+                    fillColor: "rgba(220,220,220,0.5)",
+                    strokeColor: "rgba(220,220,220,0.8)",
+                    highlightFill: "rgba(220,220,220,0.75)",
+                    highlightStroke: "rgba(220,220,220,1)",
+                    data: [ouroborus.oneVotes || 0, ouroborus.twoVotes || 0]
+                }
+            ]
+        };
+        var myBarChart = new Chart(canvas.getContext('2d')).Bar(data);
+
+    });
+    */
 
 
-    elements.push(new deus.stage.DualStage());
+
+      elements.push(new deus.stage.DualStage());
     elements.push(ouroborus);
 
     var i = 0;

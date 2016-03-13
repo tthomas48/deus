@@ -18,6 +18,7 @@ deus.ouroboros = (function($, createjs, undefined) {
     this.jiggleX = false;
     this.lastY = 0;
     this.jiggleY = false;
+    this.halflife = false;
     this.totalVotes = 0;
     this.oneVotes = 0;
     this.twoVotes = 0;
@@ -225,7 +226,8 @@ deus.ouroboros = (function($, createjs, undefined) {
         this.bitmap.y += this.velocity;
       }
 
-      if (this.time > 0) {
+      // when using halflife we want jiggle always
+      if (this.time > 0 || this.halflife) {
         if (this.jiggleX && this.bitmap.x === this.lastX) {
           var jiggle = Math.floor(Math.random() * 21) - 10;
           this.bitmap.x += jiggle;
@@ -287,6 +289,14 @@ deus.ouroboros = (function($, createjs, undefined) {
       }
       else if(vote === 3) {
         this.threeVotes += 1;
+      }
+
+      if (this.halflife && this.totalVotes > 50) {
+        console.log("Cutting in half");
+        this.totalVotes /= 2;
+        this.oneVotes /= 2;
+        this.twoVotes /= 2;
+        this.threeVotes /= 2;
       }
     },
     filter: function(filters) {
