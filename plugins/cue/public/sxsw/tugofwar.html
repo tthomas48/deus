@@ -1,3 +1,15 @@
+<style>
+    h1.title {
+        position: absolute;
+        z-index: 50;
+        width: 1343px;
+        height: 866px;
+        top: 400px;
+        left: 0;
+        color: white;
+    }
+</style>
+<h1 class="title">{{name}}</h1>
 <div id="voting"></div>
 <script type="text/javascript" src="/plugin/cue/js/stages.js">
 </script>
@@ -6,6 +18,8 @@
 <script type="text/javascript" src="/plugin/cue/js/cue-view.js">
 </script>
 <script>
+
+
   
 
   function render() {
@@ -23,6 +37,7 @@
     ouroborus.rotate = false;
     ouroborus.img = '/plugin/cue/sxsw/vote_rope.png';
     ouroborus.top = -150;
+    ouroborus.jiggleX = true;
 
 
     elements.push(new deus.stage.DualStage());

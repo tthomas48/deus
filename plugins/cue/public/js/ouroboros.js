@@ -14,6 +14,10 @@ deus.ouroboros = (function($, createjs, undefined) {
     this.initialY = 0;
     this.xTarget = 0;
     this.yTarget = 0;
+    this.lastX = 0;
+    this.jiggleX = false;
+    this.lastY = 0;
+    this.jiggleY = false;
     this.totalVotes = 0;
     this.oneVotes = 0;
     this.twoVotes = 0;
@@ -103,17 +107,14 @@ deus.ouroboros = (function($, createjs, undefined) {
     },
     doWinner: function(data) {
       this.movingToWinner = true;
-      console.log("Winner", data);
       if (data === 1) {
-        this.xTarget = - (this.stageWidth / this.totalVotes * (this.totalVotes));
+        this.xTarget = - this.stageWidth;
         //this.xTarget = 0;
       }
       if (data === 2) {
         this.xTarget = this.stageWidth;
         //this.xTarget = this.stageWidth;
       }
-      console.log("xTarget", this.xTarget);
-
     },
     fadeOut: function(callback) {
       if (!this.sound.fadeOut) {
@@ -223,6 +224,21 @@ deus.ouroboros = (function($, createjs, undefined) {
       if (this.bitmap.y < this.initialY + this.yTarget) {
         this.bitmap.y += this.velocity;
       }
+
+      if (this.time > 0) {
+        if (this.jiggleX && this.bitmap.x === this.lastX) {
+          var jiggle = Math.floor(Math.random() * 21) - 10;
+          this.bitmap.x += jiggle;
+        }
+
+        if (this.jigglYX && this.bitmap.y === this.lastY) {
+          var jiggle = Math.floor(Math.random() * 21) - 10;
+          this.bitmap.y += jiggle;
+        }
+      }
+
+      this.lastX = this.bitmap.x;
+      this.lastY = this.bitmap.y;
     },
     startVideoFade: function() {
       this.videoFade = true;
