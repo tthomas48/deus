@@ -387,31 +387,31 @@ var config = require('../config'),
       }
       
       var max = Math.max(results['1'], results['2'], results['3'], 0);
-      
-      if (max === 0 || results['1'] == max) {
+
+      if (max === 0 || results['1'] === max) {
         emitter.emit("cue.winner", {winner: 0, event: event});
         if (event.voteoptions && event.voteoptions.length > 0 && event.voteoptions[0].mov) {
           io.sockets.emit("/cue/playvideo", {
             mov: event.voteoptions[0].mov
-          })
+          });
           
         }
       }
-      else if (results['2'] == max) {
+      else if (results['2'] === max) {
         emitter.emit("cue.winner", {winner: 1, event: event});
         if (event.voteoptions && event.voteoptions.length > 1 && event.voteoptions[1].mov) {
           io.sockets.emit("/cue/playvideo", {
             mov: event.voteoptions[1].mov
-          })
+          });
           
         }
       }
-      else if (results['3'] == max) {
+      else if (results['3'] === max) {
         emitter.emit("cue.winner", {winner: 2, event:event});
         if (event.voteoptions && event.voteoptions.length > 2 && event.voteoptions[2].mov) {
           io.sockets.emit("/cue/playvideo", {
             mov: event.voteoptions[2].mov
-          })
+          });
           
         }        
       }

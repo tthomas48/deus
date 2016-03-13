@@ -8,9 +8,20 @@
         left: 0;
         color: white;
     }
+    #result-chart {
+        display: block;
+        width: 998px !important;
+        height: 400px !important;
+        position: absolute;
+        top: 376px;
+        left: 167px;
+    }
 </style>
 <h1 class="title">{{name}}</h1>
 <div id="voting"></div>
+<canvas id="result-chart" width="200" height="200" style="width: 200px; height: 200px">
+
+</canvas>
 <script type="text/javascript" src="/plugin/cue/js/stages.js">
 </script>
 <script type="text/javascript" src="/plugin/cue/js/ouroboros.js">
@@ -18,6 +29,7 @@
 <script type="text/javascript" src="/plugin/cue/js/cue-view.js">
 </script>
 <script>
+
 
 
   
@@ -41,24 +53,42 @@
       {{#multiple}}
       ouroborus.halflife = true;
       {{/multiple}}
-      /*
-    ouroborus.socket.on('winner.display', function() {
+    ouroborus.socket.on('winner.display', function(cmd) {
+        console.log(cmd);
         var data = {
             labels: ["Yes", "No"],
             datasets: [
                 {
-                    fillColor: "rgba(220,220,220,0.5)",
-                    strokeColor: "rgba(220,220,220,0.8)",
-                    highlightFill: "rgba(220,220,220,0.75)",
-                    highlightStroke: "rgba(220,220,220,1)",
+                    fillColor: 'rgba(133,75,79, .80)',
+                    strokeColor: '#854B4F',
+                    highlightFill: '#854B4F',
+                    highlightStroke: '#854B4F',
                     data: [ouroborus.oneVotes || 0, ouroborus.twoVotes || 0]
                 }
             ]
         };
-        var myBarChart = new Chart(canvas.getContext('2d')).Bar(data);
 
+        var resultChart = document.getElementById('result-chart');
+        //resultChart.width = $(resultChart).width();
+        //resultChart.height = $(resultChart).height();
+        var myBarChart = new Chart(resultChart.getContext('2d')).Bar(data, {
+            barValueSpacing : 400,
+            tooltipTemplate: "<%= value %>",
+            tooltipFillColor: "rgba(0,0,0,0)",
+            tooltipFontColor: "#fff",
+            tooltipFontFamily: 'BrandonPrinted-One',
+            tooltipFontSize: 72,
+            tooltipEvents: [],
+            tooltipCaretSize: 0,
+            onAnimationComplete: function()
+            {
+                this.showTooltip(this.datasets[0].bars, true);
+            }
+        });
+        $('#cue-canvas').css('opacity', 0.2);
+        $('h1.title').css('opacity', 0.2);
+        $(resultChart).show();
     });
-    */
 
 
 
