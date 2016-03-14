@@ -79,12 +79,17 @@ deus.ouroboros = (function($, createjs, undefined) {
       this.socket.on('timer', that.setTime.bind(that));
       this.socket.on('vote', that.saveVotes.bind(that));
       this.socket.on('winner.display', that.doWinner.bind(that));
+      this.socket.on("stateUpdate", that.turnOffMusic.bind(that));
 
       this.socket.on('cue.status', function(data) {
+        console.log("STATUS", data);
         if (data.go === 'go' || data.go === 'vote') {
           console.log("Unbinding ouroboros");
-          this.socket.removeListener('timer', that.setTime.bind(that));
-          this.socket.removeListener('vote', that.moveRelative.bind(that));
+          this.cuedWinner = undefined;
+          that.socket.removeListener('timer', that.setTime.bind(that));
+          that.socket.removeListener('vote', that.moveRelative.bind(that));
+          that.socket.removeListener('winner.display', that.doWinner.bind(that));
+          that.socket.removeListener("stateUpdate", that.turnOffMusic.bind(that));
           if (that.transitionInstance) {
 
             that.transitionInstance.stop();
@@ -101,6 +106,15 @@ deus.ouroboros = (function($, createjs, undefined) {
         }
       });
 
+    },
+    turnOffMusic: function(cmd) {
+      if (cmd.state === "off" && this.sound) {
+        this.time = 0;
+        setTimeout(function() {
+          console.log("Forcing off sounds after 2 seconds");
+          createjs.Sound.stop();
+        }, 2000);
+      }
     },
     spinBig: function() {
       this.spinning = true;
