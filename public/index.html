@@ -1,15 +1,58 @@
 <!doctype html>
-<html>
+<html ng-app="register">
   <head>
-    <title>Deus Ex Machina</title>
-    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
+    <title>Mount Olympus</title>
+    <link rel='stylesheet' href='/stylesheets/flatly/bootstrap.min.css' />
     <link rel='stylesheet' href='/stylesheets/bootstrap-responsive.min.css' />
+
+    <link rel='stylesheet' href='/stylesheets/switch.css' />
     <link rel='stylesheet' href='/stylesheets/style.css' />
+
+    <script src="/javascripts/jquery.min.js"></script>
+    <script src="/javascripts/bootstrap.min.js"></script>
+    <script src="/javascripts/angular.js"></script>
+    <script src="/javascripts/angular-resource.min.js"></script>
+    <script src="/javascripts/angular-route.min.js"></script>
+    <script src="/javascripts/register.js"></script>
   </head>
   <body>
     <div class="container">
-      <h1>Deus Ex Machina</h1>
-      <a class="btn btn-primary" href="/admin/">Log-in to Admin</a>
+      <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+          <div style="margin-left:20px">
+            <a class="brand" href="#/">Mount Olympus</a>
+            <ul class="nav">
+              <li ng-hide="loggedIn"><a class="btn btn-primary" href="/admin/">Login</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="content" ng-controller="RegisterCtrl as register" style="margin-top: 50px">
+        <h1>Mount Olympus <span class="label label-danger">Alpha</span></h1>
+        <p>Create your own choose-your-own adventure plays. Get input using text messages or a small mobile website.</p>
+        <h2>Register</h2>
+        <form ng-submit="register.saveUser()" name="register.registerForm" novalidate class="css-form">
+
+          <fieldset class="form-group">
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email" ng-model="register.user.email" required />
+            <p class="help-block ng-show="register.registerForm.email.$error.required && !register.registerForm.email.$pristine">Email is required!</p>
+          </fieldset>
+
+          <fieldset class="form-group">
+            <input type="password" class="form-control" id="password" placeholder="Password" ng-model="register.user.password" required />
+            <span ng-show="register.registerForm.password.$dirty && register.registerForm.password.$error.required">Name is required!</span>
+          </fieldset>
+          <fieldset class="form-group">
+            <input type="password" class="form-control" id="password2" placeholder="Re-Type Password" ng-model="register.user.password2" required password-verify="password"/>
+          </fieldset>
+          <button type="submit" ng-disabled="register.registerForm.$invalid" type="submit" class="btn btn-success">Register</button>
+        </form>
+
+
+      </div>
+
+
+
     </div>
   </body>
 </html>

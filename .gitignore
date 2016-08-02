@@ -6,3 +6,4 @@ newrelic.log
 newrelic_agent.log
 .tmp
 .idea
+bower_components
